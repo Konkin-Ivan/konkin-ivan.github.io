@@ -1,0 +1,24 @@
+{{ define "main" }}
+<section class="hero">
+    <h1>Привет, я Иван</h1>
+    <p>Разработчик • Технолог • Блоггер</p>
+</section>
+
+<section class="recent-posts">
+    <h2>Последние посты</h2>
+    <div class="posts-grid">
+        {{ range first 5 (where .Site.RegularPages "Type" "posts") }}
+        <article class="post-card">
+            <h3><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
+            <div class="post-meta">
+                <time>{{ .Date.Format "2 January 2006" }}</time>
+            </div>
+            <div class="post-summary">
+                {{ .Summary }}
+            </div>
+            <a href="{{ .Permalink }}" class="read-more">Читать →</a>
+        </article>
+        {{ end }}
+    </div>
+</section>
+{{ end }}

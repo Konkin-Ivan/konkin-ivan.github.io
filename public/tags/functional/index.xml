@@ -1,27 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Привет, я Иван on Мой крутой блог на Hugo</title>
-    <link>http://localhost:1313/</link>
-    <description>Recent content in Привет, я Иван on Мой крутой блог на Hugo</description>
+    <title>Functional on Мой крутой блог на Hugo</title>
+    <link>http://localhost:1313/tags/functional/</link>
+    <description>Recent content in Functional on Мой крутой блог на Hugo</description>
     <generator>Hugo</generator>
     <language>ru-ru</language>
-    <lastBuildDate>Thu, 10 Jul 2025 15:47:18 +0300</lastBuildDate>
-    <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>РедОС: Идеальная система</title>
-      <link>http://localhost:1313/posts/red-os-codding/</link>
-      <pubDate>Thu, 10 Jul 2025 15:47:18 +0300</pubDate>
-      <guid>http://localhost:1313/posts/red-os-codding/</guid>
-      <description>&lt;h2 id=&#34;редос-идеальная-система-но-не-для-кодинга&#34;&gt;РедОС: Идеальная система, но не для кодинга?&lt;/h2&gt;&#xA;&lt;p&gt;Мой путь в Linux начался с Debian — строгого, надёжного, но порой слишком консервативного. Потом был Arch (и теперь есть) с его бесконечной гибкостью. Были и другие дистрибутивы: Fedora, AltLinux, openSUSE, даже Gentoo (но это уже другая история).&lt;/p&gt;&#xA;&lt;p&gt;И вот — &lt;strong&gt;РедОС&lt;/strong&gt;. Российский дистрибутив, о котором многие говорят, но мало кто реально использует. Мне стало интересно: что это за зверь такой? Маркетинговый пузырь или действительно рабочая альтернатива?&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>О сайте</title>
-      <link>http://localhost:1313/about/</link>
-      <pubDate>Sun, 06 Jul 2025 18:56:26 +0300</pubDate>
-      <guid>http://localhost:1313/about/</guid>
-      <description>&lt;h2 id=&#34;о-чем-я-пишу&#34;&gt;О чем я пишу&lt;/h2&gt;&#xA;&lt;p&gt;&lt;strong&gt;Привет!&lt;/strong&gt; Это блог практикующего разработчика, который &lt;strong&gt;фанатеет от Clojure&lt;/strong&gt; и функционального программирования. Здесь нет сухой теории из учебников - только &lt;strong&gt;прикладные знания&lt;/strong&gt;, хитрости и личный опыт.&lt;/p&gt;&#xA;&lt;p&gt;Я пишу о:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;Clojure&lt;/strong&gt; — как писать лаконичный и мощный код, избегая подводных камней.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Инструментах&lt;/strong&gt; — настройка IDE, REPL-driven development, скрипты для продуктивности.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Библиотеках и фреймворках&lt;/strong&gt; — что реально полезно, а что лишь хайп.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Функциональных подходах&lt;/strong&gt; — без фанатизма, с примерами «как это применить завтра».&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Войнах в продакшене&lt;/strong&gt; — как Clojure ведёт себя в бою, а не в песочнице.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;Этот блог — &lt;strong&gt;не академический курс&lt;/strong&gt;, а &lt;strong&gt;разговор начистоту&lt;/strong&gt;: без воды, с шутками, мемами и иногда матом (если код не работает).&lt;/p&gt;</description>
-    </item>
+    <lastBuildDate>Mon, 20 May 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/functional/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Примеры на Clojure</title>
       <link>http://localhost:1313/posts/test/</link>

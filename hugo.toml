@@ -1,8 +1,32 @@
 baseURL = 'https://konkin-ivan.github.io'
 languageCode = 'ru-ru'
 title = 'Мой крутой блог на Hugo'
-theme = 'hugo-coder'   # ananke, harbor, hermit
+theme = 'programmister'   # ananke, harbor, hermit
 
 # Дополнительные настройки для темы
 [params]
   description = "Описание моего блога"
+
+[[menu.main]]
+name = "О сайте"
+url = "/about/"
+weight = 1
+
+[[menu.main]]  
+name = "Блог"
+url = "/posts/"
+weight = 2
+
+[markup]
+  [markup.highlight]
+    codeFences = true
+    hl_Lines = ""
+    lineNoStart = 1
+    lineNos = false
+    guessSyntax = true
+    lineNumbersInTable = true
+    noClasses = true
+    style = "monokai"
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true

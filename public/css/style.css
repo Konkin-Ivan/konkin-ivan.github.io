@@ -1,0 +1,275 @@
+/* Catppuccin Latte (светлая) */
+[data-theme="catppuccin"] {
+  --bg: #eff1f5;
+  --text: #4c4f69;
+  --accent: #1e66f5;
+  --card: #ffffff;
+  --border: #ccd0da;
+  --meta: #6c6f85;
+}
+
+/* Dracula (тёмная) */
+[data-theme="dracula"] {
+  --bg: #282a36;
+  --text: #f8f8f2;
+  --accent: #bd93f9;
+  --card: #44475a;
+  --border: #6272a4;
+  --meta: #f1fa8c;
+}
+
+/* Общие стили */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1.6;
+  transition: all 0.3s ease;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Шапка */
+header {
+  padding: 2rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.theme-switcher {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.theme-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.theme-btn:hover {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+/* Главная страница */
+.hero {
+  text-align: center;
+  padding: 4rem 0;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: var(--accent);
+}
+
+.hero p {
+  font-size: 1.2rem;
+  opacity: 0.8;
+}
+
+/* Карточки постов */
+.posts-grid {
+  display: grid;
+  gap: 2rem;
+  margin: 3rem 0;
+}
+
+.post-card {
+  background: var(--card);
+  padding: 2rem;
+  border-radius: 8px;
+  border-left: 4px solid var(--accent);
+  transition: transform 0.2s ease;
+}
+
+.post-card:hover {
+  transform: translateY(-2px);
+}
+
+.post-card h3 {
+  margin-bottom: 0.5rem;
+}
+
+.post-card h3 a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.post-card h3 a:hover {
+  color: var(--accent);
+}
+
+.post-meta {
+  color: var(--meta);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.post-summary {
+  margin-bottom: 1rem;
+}
+
+.read-more {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* Подвал */
+footer {
+  text-align: center;
+  padding: 2rem 0;
+  margin-top: 4rem;
+  border-top: 1px solid var(--border);
+  opacity: 0.7;
+}
+
+/* Стили для блоков кода */
+pre {
+  background: var(--card) !important;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem !important;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+code {
+  background: var(--card);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9em;
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+/* Подсветка синтаксиса для Dracula */
+[data-theme="dracula"] .highlight {
+  background: #44475a !important;
+}
+
+[data-theme="dracula"] .highlight .hljs-keyword { color: #ff79c6; }
+[data-theme="dracula"] .highlight .hljs-built_in { color: #50fa7b; }
+[data-theme="dracula"] .highlight .hljs-string { color: #f1fa8c; }
+[data-theme="dracula"] .highlight .hljs-number { color: #bd93f9; }
+[data-theme="dracula"] .highlight .hljs-comment { color: #6272a4; }
+[data-theme="dracula"] .highlight .hljs-function { color: #50fa7b; }
+[data-theme="dracula"] .highlight .hljs-params { color: #f8f8f2; }
+[data-theme="dracula"] .highlight .hljs-title { color: #ffb86c; }
+
+/* Подсветка синтаксиса для Catppuccin */
+[data-theme="catppuccin"] .highlight {
+  background: #fafafa !important;
+}
+
+[data-theme="catppuccin"] .highlight .hljs-keyword { color: #8839ef; }
+[data-theme="catppuccin"] .highlight .hljs-built_in { color: #40a02b; }
+[data-theme="catppuccin"] .highlight .hljs-string { color: #df8e1d; }
+[data-theme="catppuccin"] .highlight .hljs-number { color: #fe640b; }
+[data-theme="catppuccin"] .highlight .hljs-comment { color: #8c8fa1; }
+[data-theme="catppuccin"] .highlight .hljs-function { color: #1e66f5; }
+[data-theme="catppuccin"] .highlight .hljs-params { color: #4c4f69; }
+[data-theme="catppuccin"] .highlight .hljs-title { color: #d20f39; }
+
+/* Номера строк (опционально) */
+.highlight table td {
+  padding: 0;
+}
+
+.highlight table pre {
+  margin: 0;
+}
+
+/* Скроллбар для блоков кода */
+pre::-webkit-scrollbar {
+  height: 6px;
+}
+
+pre::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+pre::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+pre::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* Специфичные стили для JSON/TOML/YAML */
+[data-theme="dracula"] .highlight .hljs-attr { color: #50fa7b; }      /* ключи */
+[data-theme="dracula"] .highlight .hljs-string { color: #f1fa8c; }    /* строки */
+[data-theme="dracula"] .highlight .hljs-number { color: #bd93f9; }    /* числа */
+[data-theme="dracula"] .highlight .hljs-literal { color: #ff79c6; }   /* true/false */
+[data-theme="dracula"] .highlight .hljs-punctuation { color: #f8f8f2; } /* скобки */
+
+[data-theme="catppuccin"] .highlight .hljs-attr { color: #40a02b; }    /* ключи */
+[data-theme="catppuccin"] .highlight .hljs-string { color: #df8e1d; }  /* строки */
+[data-theme="catppuccin"] .highlight .hljs-number { color: #fe640b; }  /* числа */
+[data-theme="catppuccin"] .highlight .hljs-literal { color: #8839ef; } /* true/false */
+[data-theme="catppuccin"] .highlight .hljs-punctuation { color: #4c4f69; } /* скобки */
+
+/* Clojure-specific syntax highlighting */
+[data-theme="dracula"] .highlight .hljs-keyword { color: #ff79c6; }      /* :keywords */
+[data-theme="dracula"] .highlight .hljs-symbol { color: #50fa7b; }       /* symbols */
+[data-theme="dracula"] .highlight .hljs-string { color: #f1fa8c; }       /* strings */
+[data-theme="dracula"] .highlight .hljs-number { color: #bd93f9; }       /* numbers */
+[data-theme="dracula"] .highlight .hljs-built_in { color: #8be9fd; }     /* built-ins */
+[data-theme="dracula"] .highlight .hljs-comment { color: #6272a4; }      ;; comments
+[data-theme="dracula"] .highlight .hljs-function { color: #ffb86c; }     /* functions */
+[data-theme="dracula"] .highlight .hljs-special { color: #ff5555; }      /* special forms */
+
+[data-theme="catppuccin"] .highlight .hljs-keyword { color: #8839ef; }    /* :keywords */
+[data-theme="catppuccin"] .highlight .hljs-symbol { color: #40a02b; }     /* symbols */
+[data-theme="catppuccin"] .highlight .hljs-string { color: #df8e1d; }     /* strings */
+[data-theme="catppuccin"] .highlight .hljs-number { color: #fe640b; }     /* numbers */
+[data-theme="catppuccin"] .highlight .hljs-built_in { color: #1e66f5; }   /* built-ins */
+[data-theme="catppuccin"] .highlight .hljs-comment { color: #8c8fa1; }    ;; comments
+[data-theme="catppuccin"] .highlight .hljs-function { color: #d20f39; }   /* functions */
+[data-theme="catppuccin"] .highlight .hljs-special { color: #e64553; }    /* special forms */
+
+/* Улучшения для лучшей читаемости скобок */
+.highlight .hljs-punctuation {
+  opacity: 0.7;
+}
+
+/* Подсветка парных скобок при наведении */
+.highlight:hover .hljs-punctuation {
+  opacity: 1;
+}
+
+/* Специфично для Clojure - выделение ключевых форм */
+[data-theme="dracula"] .highlight .hljs-name { color: #ff79c6; }  /* defn, let, etc */
+[data-theme="catppuccin"] .highlight .hljs-name { color: #8839ef; }

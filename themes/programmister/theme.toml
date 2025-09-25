@@ -1,0 +1,16 @@
+baseURL = "https://konkin-ivan.github.io/"
+title = "Блог Ивана"
+theme = "mytheme"
+
+[languages.ru]
+    weight = 1
+
+[[menu.main]]
+    name = "Блог"
+    url = "/posts/"
+    weight = 1
+
+[[menu.main]]
+    name = "Обо мне"
+    url = "/about/"
+    weight = 2

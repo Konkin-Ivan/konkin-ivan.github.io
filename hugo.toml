@@ -1,0 +1,8 @@
+baseURL = 'https://example.org/'
+languageCode = 'ru-ru'
+title = 'Мой крутой блог на Hugo'
+theme = 'hugo-coder'   # ananke, harbor, hermit
+
+# Дополнительные настройки для темы
+[params]
+  description = "Описание моего блога"

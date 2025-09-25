@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <title>
+  РедОС: Идеальная система · Мой крутой блог на Hugo
+</title>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+
+
+
+
+<meta name="description" content="
+  РедОС: Идеальная система, но не для кодинга?
+  
+    
+    Link to heading
+  
+
+Мой путь в Linux начался с Debian — строгого, надёжного, но порой слишком консервативного. Потом был Arch (и теперь есть) с его бесконечной гибкостью. Были и другие дистрибутивы: Fedora, AltLinux, openSUSE, даже Gentoo (но это уже другая история).
+И вот — РедОС. Российский дистрибутив, о котором многие говорят, но мало кто реально использует. Мне стало интересно: что это за зверь такой? Маркетинговый пузырь или действительно рабочая альтернатива?">
+<meta name="keywords" content="">
+
+
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="РедОС: Идеальная система">
+  <meta name="twitter:description" content="РедОС: Идеальная система, но не для кодинга? Link to heading Мой путь в Linux начался с Debian — строгого, надёжного, но порой слишком консервативного. Потом был Arch (и теперь есть) с его бесконечной гибкостью. Были и другие дистрибутивы: Fedora, AltLinux, openSUSE, даже Gentoo (но это уже другая история).
+И вот — РедОС. Российский дистрибутив, о котором многие говорят, но мало кто реально использует. Мне стало интересно: что это за зверь такой? Маркетинговый пузырь или действительно рабочая альтернатива?">
+
+<meta property="og:url" content="http://localhost:1313/posts/red-os-codding/">
+  <meta property="og:site_name" content="Мой крутой блог на Hugo">
+  <meta property="og:title" content="РедОС: Идеальная система">
+  <meta property="og:description" content="РедОС: Идеальная система, но не для кодинга? Link to heading Мой путь в Linux начался с Debian — строгого, надёжного, но порой слишком консервативного. Потом был Arch (и теперь есть) с его бесконечной гибкостью. Были и другие дистрибутивы: Fedora, AltLinux, openSUSE, даже Gentoo (но это уже другая история).
+И вот — РедОС. Российский дистрибутив, о котором многие говорят, но мало кто реально использует. Мне стало интересно: что это за зверь такой? Маркетинговый пузырь или действительно рабочая альтернатива?">
+  <meta property="og:locale" content="ru_ru">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-07-10T15:47:18+03:00">
+    <meta property="article:modified_time" content="2025-07-10T15:47:18+03:00">
+
+
+
+
+<link rel="canonical" href="http://localhost:1313/posts/red-os-codding/">
+
+
+<link rel="preload" href="/fonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
+
+
+  
+  
+  <link rel="stylesheet" href="/css/coder.css" media="screen">
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+<link rel="icon" type="image/svg+xml" href="/images/favicon.svg" sizes="any">
+<link rel="icon" type="image/png" href="/images/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/images/favicon-16x16.png" sizes="16x16">
+
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+
+
+
+
+
+
+</head>
+
+
+
+
+<body class="preload-transitions colorscheme-light">
+  
+<div class="float-container">
+    <a id="dark-mode-toggle" class="colorscheme-toggle">
+        <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+    </a>
+</div>
+
+
+  <main class="wrapper">
+    <nav class="navigation">
+  <section class="container">
+    
+    <a class="navigation-title" href="http://localhost:1313/">
+      Мой крутой блог на Hugo
+    </a>
+    
+    
+  </section>
+</nav>
+
+
+    <div class="content">
+      
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">
+            <a class="title-link" href="http://localhost:1313/posts/red-os-codding/">
+              РедОС: Идеальная система
+            </a>
+          </h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fa-solid fa-calendar" aria-hidden="true"></i>
+              <time datetime="2025-07-10T15:47:18&#43;03:00">
+                July 10, 2025
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fa-solid fa-clock" aria-hidden="true"></i>
+              10-minute read
+            </span>
+          </div>
+          
+          
+          
+        </div>
+      </header>
+
+      <div class="post-content">
+        
+        <h2 id="редос-идеальная-система-но-не-для-кодинга">
+  РедОС: Идеальная система, но не для кодинга?
+  <a class="heading-link" href="#%d1%80%d0%b5%d0%b4%d0%be%d1%81-%d0%b8%d0%b4%d0%b5%d0%b0%d0%bb%d1%8c%d0%bd%d0%b0%d1%8f-%d1%81%d0%b8%d1%81%d1%82%d0%b5%d0%bc%d0%b0-%d0%bd%d0%be-%d0%bd%d0%b5-%d0%b4%d0%bb%d1%8f-%d0%ba%d0%be%d0%b4%d0%b8%d0%bd%d0%b3%d0%b0">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p>Мой путь в Linux начался с Debian — строгого, надёжного, но порой слишком консервативного. Потом был Arch (и теперь есть) с его бесконечной гибкостью. Были и другие дистрибутивы: Fedora, AltLinux, openSUSE, даже Gentoo (но это уже другая история).</p>
+<p>И вот — <strong>РедОС</strong>. Российский дистрибутив, о котором многие говорят, но мало кто реально использует. Мне стало интересно: что это за зверь такой? Маркетинговый пузырь или действительно рабочая альтернатива?</p>
+<p><strong>Первые впечатления:</strong><br>
+Я ожидал боли. Обычно с новыми дистрибутивами так: Wi-Fi не работает, тачпад криво определяется, драйвера подбираешь неделю. Но тут… <strong>всё заработало сразу</strong>. Без танцев с бубном, без гугления просто — установил и пользуйся. Предыдущий опыт был с <a href="https://dzen.ru/a/ZxYypI87mSlPxSSo"  class="external-link" target="_blank" rel="noopener">Альт</a>, не на столько хорошим.</p>
+<p>Но главное — <strong>ноутбук перестал греться и шуметь вентиляторами</strong>.</p>
+<p>Однако всё изменилось, когда я попробовал использовать РедОС <strong>для разработки</strong>. Понятно, что РедОС заточен под корпоративный сектор, но попробуем его юзать не по прямому назначению. Уж очень хорошо эта ОС себя чувствует на моем:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>Kernel: 6.12.21-1.red80.x86_64 
+</span></span><span style="display:flex;"><span>CPU: Intel i5-3230M <span style="color:#f92672">(</span>4<span style="color:#f92672">)</span> @ 3.200GHz 
+</span></span><span style="display:flex;"><span>GPU: NVIDIA GeForce GT 650M 
+</span></span><span style="display:flex;"><span>GPU: Intel 3rd Gen Core processor Gr 
+</span></span><span style="display:flex;"><span>Memory: 1878MiB / 15876MiB 
+</span></span></code></pre></div><h2 id="установка-и-первое-впечатление">
+  <strong>Установка и первое впечатление</strong>
+  <a class="heading-link" href="#%d1%83%d1%81%d1%82%d0%b0%d0%bd%d0%be%d0%b2%d0%ba%d0%b0-%d0%b8-%d0%bf%d0%b5%d1%80%d0%b2%d0%be%d0%b5-%d0%b2%d0%bf%d0%b5%d1%87%d0%b0%d1%82%d0%bb%d0%b5%d0%bd%d0%b8%d0%b5">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p>Обычно установка Linux — это квест. Wi-Fi не ловит, тачпад не скроллит, драйвер видеокарты ставится через <code>--force-all</code>. Но с <strong>РедОС</strong> всё было иначе.</p>
+<h4 id="из-коробки--значит-действительно-из-коробки">
+  <strong>«Из коробки» — значит, действительно из коробки</strong>
+  <a class="heading-link" href="#%d0%b8%d0%b7-%d0%ba%d0%be%d1%80%d0%be%d0%b1%d0%ba%d0%b8--%d0%b7%d0%bd%d0%b0%d1%87%d0%b8%d1%82-%d0%b4%d0%b5%d0%b9%d1%81%d1%82%d0%b2%d0%b8%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be-%d0%b8%d0%b7-%d0%ba%d0%be%d1%80%d0%be%d0%b1%d0%ba%d0%b8">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h4>
+<ul>
+<li><strong>Wi-Fi</strong> заработал сразу — даже на моём ноутбуке с RTL8723AE PCIe Wireless Networ Adapter.</li>
+<li><strong>Тачпад</strong> распознался правильно: жесты, мультитач, скролл — без лишних <code>xinput</code> и <code>libinput</code>.</li>
+<li><strong>Драйвера NVIDIA</strong> не ставил, штатный nouveau хорошо справляется.</li>
+<li><strong>Языковая раскладка</strong> переключалась без танцев с <code>setxkbmap</code> — просто выбрал в настройках.</li>
+</ul>
+<h3 id="термический-рай">
+  <strong>Термический рай</strong>
+  <a class="heading-link" href="#%d1%82%d0%b5%d1%80%d0%bc%d0%b8%d1%87%d0%b5%d1%81%d0%ba%d0%b8%d0%b9-%d1%80%d0%b0%d0%b9">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>После Arch с его вечно взлетающими до 60°C на <code>htop</code> и Debian, <strong>РедОС показал чудеса энергоэффективности</strong>:</p>
+<ul>
+<li>В простое температура CPU — <strong>45-61°C</strong> (против 50-70°C в Debian).</li>
+<li>Под нагрузкой (браузер + пара терминалов) — <strong>максимум 65°C</strong>, и то ненадолго.</li>
+<li>Вентиляторы <strong>почти не слышно</strong> — даже при рендеринге видео в Firefox.</li>
+</ul>
+<p><strong>Вывод:</strong> Если бы мне нужно было <strong>просто поставить систему и забыть</strong> — я бы выбрал РедОС без колебаний.</p>
+<h3 id="кодинг-в-редос-стоит-зайти-в-терминал--и-добро-пожаловать-в-ад-зависимостей">
+  <strong>Кодинг в РедОС: «Стоит зайти в терминал — и добро пожаловать в ад зависимостей»</strong>
+  <a class="heading-link" href="#%d0%ba%d0%be%d0%b4%d0%b8%d0%bd%d0%b3-%d0%b2-%d1%80%d0%b5%d0%b4%d0%be%d1%81-%d1%81%d1%82%d0%be%d0%b8%d1%82-%d0%b7%d0%b0%d0%b9%d1%82%d0%b8-%d0%b2-%d1%82%d0%b5%d1%80%d0%bc%d0%b8%d0%bd%d0%b0%d0%bb--%d0%b8-%d0%b4%d0%be%d0%b1%d1%80%d0%be-%d0%bf%d0%be%d0%b6%d0%b0%d0%bb%d0%be%d0%b2%d0%b0%d1%82%d1%8c-%d0%b2-%d0%b0%d0%b4-%d0%b7%d0%b0%d0%b2%d0%b8%d1%81%d0%b8%d0%bc%d0%be%d1%81%d1%82%d0%b5%d0%b9">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>Поставил систему, в которой <strong>ничего не нужно настраивать</strong>. Но я же привык после установки что-то настраивать. И что настраивать в системе в которой ничего не нужно настраивать? Первое, за что взялся — <strong>рабочее окружение</strong>. Ведь я привык к тактильной эргономике: хоткеи под пальцы, tiling WM, кастомные скрипты — всё, без чего кодятся уже не так комфортно.</p>
+<h3 id="где-мой-hyprland-или-хотя-бы-swayfx">
+  <strong>«Где мой Hyprland? Или хотя бы SwayFX?»</strong>
+  <a class="heading-link" href="#%d0%b3%d0%b4%d0%b5-%d0%bc%d0%be%d0%b9-hyprland-%d0%b8%d0%bb%d0%b8-%d1%85%d0%be%d1%82%d1%8f-%d0%b1%d1%8b-swayfx">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>Первая же проверка репозиториев разочаровала:</p>
+<ul>
+<li><strong>Нет Hyprland</strong> в репозиториях.</li>
+<li><strong>Нет даже SwayFX и Hyprland</strong> не возможно поставить склонировав репозиторий.</li>
+<li><strong>Обычный Sway</strong> есть.</li>
+</ul>
+<p>«Ну окей, соберу из исходников!» — наивно подумал я.</p>
+<h3 id="сборка-из-исходников-ребус-из-зависимостей">
+  <strong>Сборка из исходников: «Ребус из зависимостей»</strong>
+  <a class="heading-link" href="#%d1%81%d0%b1%d0%be%d1%80%d0%ba%d0%b0-%d0%b8%d0%b7-%d0%b8%d1%81%d1%85%d0%be%d0%b4%d0%bd%d0%b8%d0%ba%d0%be%d0%b2-%d1%80%d0%b5%d0%b1%d1%83%d1%81-%d0%b8%d0%b7-%d0%b7%d0%b0%d0%b2%d0%b8%d1%81%d0%b8%d0%bc%d0%be%d1%81%d1%82%d0%b5%d0%b9">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>Тут начался настоящий квест:</p>
+<ol>
+<li><strong>Не хватает <code>wlroots</code></strong> — ладно, ставлю.</li>
+<li><strong>А этому <code>wlroots</code> нужны свои зависимости</strong>.</li>
+<li><strong>Добавляю EPEL</strong> — не помогло, там тоже не та версия.</li>
+<li>В системе установлены более старые некоторые пакеты, чем нужны для некоторых библиотек и все упирается в конфликт версий.</li>
+</ol>
+<p>Это напомнило мне <strong>игру в матрёшку</strong>: чтобы собрать X, нужен Y, а для Y — Z, который зависит от W… и так до бесконечности.</p>
+<h3 id="в-других-дистрах-это-есть-по-умолчанию">
+  <strong>«В других дистрах это есть по умолчанию!»</strong>
+  <a class="heading-link" href="#%d0%b2-%d0%b4%d1%80%d1%83%d0%b3%d0%b8%d1%85-%d0%b4%d0%b8%d1%81%d1%82%d1%80%d0%b0%d1%85-%d1%8d%d1%82%d0%be-%d0%b5%d1%81%d1%82%d1%8c-%d0%bf%d0%be-%d1%83%d0%bc%d0%be%d0%bb%d1%87%d0%b0%d0%bd%d0%b8%d1%8e">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>То, что в <strong>Arch</strong> или <strong>Fedora</strong> ставится одной командой (<code>pacman -S hyprland</code>), в РедОС превратилось в <strong>многочасовой квест</strong>. Причём половина зависимостей либо <strong>устарела</strong>, либо <strong>отсутствует</strong> даже в сторонних репозиториях.</p>
+<h2 id="редос-для-кодинга">
+  <strong>РедОС для кодинга</strong>
+  <a class="heading-link" href="#%d1%80%d0%b5%d0%b4%d0%be%d1%81-%d0%b4%d0%bb%d1%8f-%d0%ba%d0%be%d0%b4%d0%b8%d0%bd%d0%b3%d0%b0">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p><img src="https://img4.teletype.in/files/b0/0e/b00e8274-0773-440d-8f59-40c96cf433a1.png" alt=""></p>
+<p>РедОС + Sway</p>
+<p>После нескольких часов борьбы с зависимостями я понял: если хочешь modern Wayland-окружение в РедОС — используй sway. Вот как выглядел мой путь к рабочему окружению:</p>
+<h3 id="спасительный-sway-минимально-рабочий-вариант">
+  <strong>Спасительный Sway (минимально рабочий вариант)</strong>
+  <a class="heading-link" href="#%d1%81%d0%bf%d0%b0%d1%81%d0%b8%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d1%8b%d0%b9-sway-%d0%bc%d0%b8%d0%bd%d0%b8%d0%bc%d0%b0%d0%bb%d1%8c%d0%bd%d0%be-%d1%80%d0%b0%d0%b1%d0%be%d1%87%d0%b8%d0%b9-%d0%b2%d0%b0%d1%80%d0%b8%d0%b0%d0%bd%d1%82">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<ol>
+<li><strong>Базовый Sway из репозиториев</strong> — без красивостей</li>
+<li>Панель waybar</li>
+<li>wofi</li>
+<li>Neovim в качестве редактора</li>
+</ol>
+<h3 id="базовый-sway">
+  <strong>Базовый Sway</strong>
+  <a class="heading-link" href="#%d0%b1%d0%b0%d0%b7%d0%be%d0%b2%d1%8b%d0%b9-sway">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p><code>~/.config/sway/config</code></p>
+<p>Исходники <a href="https://gitflic.ru/project/konkin/sway"  class="external-link" target="_blank" rel="noopener">GitFlic</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Автозапуск ibus для работы с вводом (русская раскладка и т.д.)</span>
+</span></span><span style="display:flex;"><span>exec_always ibus-daemon -drx
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">### ВНЕШНИЙ ВИД ###</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Отступы между окнами</span>
+</span></span><span style="display:flex;"><span>gaps inner <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Отступы от краёв экрана</span>
+</span></span><span style="display:flex;"><span>gaps outer <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Дополнительные отступы для плавающих окон</span>
+</span></span><span style="display:flex;"><span>gaps horizontal <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>gaps vertical <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Умные отступы (автоматически скрываются при одном окне)</span>
+</span></span><span style="display:flex;"><span>smart_gaps on
+</span></span><span style="display:flex;"><span>smart_borders on
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Стиль границ окон (толщина 4px)</span>
+</span></span><span style="display:flex;"><span>default_border pixel <span style="color:#ae81ff">4</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Цветовая схема Dracula для окон:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># [активное] [неактивное] [неактивное+нефокус] [срочное]</span>
+</span></span><span style="display:flex;"><span>client.focused          <span style="color:#75715e">#8be9fd #44475a #f8f8f2 #8be9fd</span>
+</span></span><span style="display:flex;"><span>client.unfocused        <span style="color:#75715e">#282a36 #282a36 #6272a4 #282a36</span>
+</span></span><span style="display:flex;"><span>client.focused_inactive <span style="color:#75715e">#44475a #282a36 #f8f8f2 #44475a</span>
+</span></span><span style="display:flex;"><span>client.urgent          <span style="color:#75715e">#ff5555 #ff5555 #f8f8f2 #ff5555</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Тема курсора мыши (Catppuccin Mocha Dark)</span>
+</span></span><span style="display:flex;"><span>seat * xcursor_theme catppuccin-mocha-dark-cursors <span style="color:#ae81ff">25</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">### ПЕРЕМЕННЫЕ ###</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Основная модификаторная клавиша (Win)</span>
+</span></span><span style="display:flex;"><span>set $mod Mod4
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Навигация в стиле Vim</span>
+</span></span><span style="display:flex;"><span>set $left h
+</span></span><span style="display:flex;"><span>set $down j
+</span></span><span style="display:flex;"><span>set $up k
+</span></span><span style="display:flex;"><span>set $right l
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Терминал по умолчанию</span>
+</span></span><span style="display:flex;"><span>set $term foot
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">### НАСТРОЙКА ВЫВОДА ###</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Обои рабочего стола (заполнение экрана)</span>
+</span></span><span style="display:flex;"><span>output * bg ~/bg/i.webp fill
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">### СОЧЕТАНИЯ КЛАВИШ ###</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Основные:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Запуск терминала</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+Return exec $term
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Закрыть текущее окно</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+c kill
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Меню приложений (wofi)</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+space exec wofi --show drun
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Плавающий режим по умолчанию</span>
+</span></span><span style="display:flex;"><span>    floating_modifier $mod normal
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Перезагрузка конфига Sway</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+Shift+c reload
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Меню выключения (кастомный скрипт)</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+q exec ~/.config/sway/scripts/power-menu.sh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Навигация:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Перемещение фокуса</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+$left focus left
+</span></span><span style="display:flex;"><span>    bindsym $mod+$down focus down
+</span></span><span style="display:flex;"><span>    bindsym $mod+$up focus up
+</span></span><span style="display:flex;"><span>    bindsym $mod+$right focus right
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Альтернатива - стрелки</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+Left focus left
+</span></span><span style="display:flex;"><span>    bindsym $mod+Down focus down
+</span></span><span style="display:flex;"><span>    bindsym $mod+Up focus up
+</span></span><span style="display:flex;"><span>    bindsym $mod+Right focus right
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Перемещение окон</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+Shift+$left move left
+</span></span><span style="display:flex;"><span>    bindsym $mod+Shift+$down move down
+</span></span><span style="display:flex;"><span>    bindsym $mod+Shift+$up move up
+</span></span><span style="display:flex;"><span>    bindsym $mod+Shift+$right move right
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Альтернатива - стрелки</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+Shift+Left move left
+</span></span><span style="display:flex;"><span>    bindsym $mod+Shift+Down move down
+</span></span><span style="display:flex;"><span>    bindsym $mod+Shift+Up move up
+</span></span><span style="display:flex;"><span>    bindsym $mod+Shift+Right move right
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Рабочие пространства:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Переключение между рабочими пространствами 1-10</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+1 workspace number <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+2 workspace number <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+3 workspace number <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+4 workspace number <span style="color:#ae81ff">4</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+5 workspace number <span style="color:#ae81ff">5</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+6 workspace number <span style="color:#ae81ff">6</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+7 workspace number <span style="color:#ae81ff">7</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+8 workspace number <span style="color:#ae81ff">8</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+9 workspace number <span style="color:#ae81ff">9</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+0 workspace number <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Перемещение окон между рабочими пространствами</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+Shift+1 move container to workspace number <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+Shift+2 move container to workspace number <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+Shift+3 move container to workspace number <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+Shift+4 move container to workspace number <span style="color:#ae81ff">4</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+Shift+5 move container to workspace number <span style="color:#ae81ff">5</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+Shift+6 move container to workspace number <span style="color:#ae81ff">6</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+Shift+7 move container to workspace number <span style="color:#ae81ff">7</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+Shift+8 move container to workspace number <span style="color:#ae81ff">8</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+Shift+9 move container to workspace number <span style="color:#ae81ff">9</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+Shift+0 move container to workspace number <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Управление окнами:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Разделение окон (горизонтальное/вертикальное)</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+b splith
+</span></span><span style="display:flex;"><span>    bindsym $mod+v splitv
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Смена режима расположения окон</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+s layout stacking  <span style="color:#75715e"># стопка</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+w layout tabbed    <span style="color:#75715e"># вкладки</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+e layout toggle split  <span style="color:#75715e"># переключение режимов</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Полноэкранный режим</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+f fullscreen
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Переключение в плавающий режим</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+Shift+space floating toggle
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Переключение фокуса между плиточными и плавающими окнами</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+d focus mode_toggle
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Фокус на родительский контейнер</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+a focus parent
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Блокнот (Scratchpad):</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Отправить окно в блокнот</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+Shift+minus move scratchpad
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Показать/скрыть окно из блокнота</span>
+</span></span><span style="display:flex;"><span>    bindsym $mod+minus scratchpad show
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Изменение размеров окон:</span>
+</span></span><span style="display:flex;"><span>mode <span style="color:#e6db74">&#34;resize&#34;</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Управление размерами:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># h/j/k/l или стрелки - изменение размеров</span>
+</span></span><span style="display:flex;"><span>    bindsym $left resize shrink width 10px
+</span></span><span style="display:flex;"><span>    bindsym $down resize grow height 10px
+</span></span><span style="display:flex;"><span>    bindsym $up resize shrink height 10px
+</span></span><span style="display:flex;"><span>    bindsym $right resize grow width 10px
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Альтернатива - стрелки</span>
+</span></span><span style="display:flex;"><span>    bindsym Left resize shrink width 10px
+</span></span><span style="display:flex;"><span>    bindsym Down resize grow height 10px
+</span></span><span style="display:flex;"><span>    bindsym Up resize shrink height 10px
+</span></span><span style="display:flex;"><span>    bindsym Right resize grow width 10px
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Выход из режима изменения размеров</span>
+</span></span><span style="display:flex;"><span>    bindsym Return mode <span style="color:#e6db74">&#34;default&#34;</span>
+</span></span><span style="display:flex;"><span>    bindsym Escape mode <span style="color:#e6db74">&#34;default&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Активация режима изменения размеров</span>
+</span></span><span style="display:flex;"><span>bindsym $mod+r mode <span style="color:#e6db74">&#34;resize&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Скриншоты:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Весь экран - PrintScreen</span>
+</span></span><span style="display:flex;"><span>bindsym Print exec grim ~/Изображения/screenshot-<span style="color:#66d9ef">$(</span>date +<span style="color:#e6db74">&#34;%Y-%m-%d-%H%M%S&#34;</span><span style="color:#66d9ef">)</span>.png
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Выбранная область - Shift+PrintScreen</span>
+</span></span><span style="display:flex;"><span>bindsym Shift+Print exec grim -g <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>slurp<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span> ~/Изображения/screenshot-<span style="color:#66d9ef">$(</span>date +<span style="color:#e6db74">&#34;%Y-%m-%d-%H%M%S&#34;</span><span style="color:#66d9ef">)</span>.png
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Настройка клавиатуры (раскладки US/RU с переключением по Alt+Shift)</span>
+</span></span><span style="display:flex;"><span>input type:keyboard <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    xkb_layout <span style="color:#e6db74">&#34;us,ru&#34;</span>
+</span></span><span style="display:flex;"><span>    xkb_options <span style="color:#e6db74">&#34;grp:alt_shift_toggle&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Подключение дополнительных конфигов из системы</span>
+</span></span><span style="display:flex;"><span>include /etc/sway/config.d/*
+</span></span></code></pre></div><p>Шпаргалка по сочетаниям клавиш Sway</p>
+<p><strong>Основные:</strong></p>
+<ul>
+<li><code>Win+Enter</code> - запустить терминал (Foot)</li>
+<li><code>Win+c</code> - закрыть текущее окно</li>
+<li><code>Win+Space</code> - меню приложений (Wofi)</li>
+<li><code>Win+Shift+c</code> - перезагрузить конфиг</li>
+<li><code>Win+q</code> - меню выключения</li>
+</ul>
+<p><strong>Навигация:</strong></p>
+<ul>
+<li><code>Win+h/j/k/l</code> или <code>Win+Стрелки</code> - переместить фокус</li>
+<li><code>Win+Shift+h/j/k/l</code> или <code>Win+Shift+Стрелки</code> - переместить окно</li>
+</ul>
+<p><strong>Рабочие пространства:</strong></p>
+<ul>
+<li><code>Win+1..0</code> - переключиться на workspace 1-10</li>
+<li><code>Win+Shift+1..0</code> - переместить окно на workspace 1-10</li>
+</ul>
+<p><strong>Управление окнами:</strong></p>
+<ul>
+<li><code>Win+b</code> - разделить горизонтально</li>
+<li><code>Win+v</code> - разделить вертикально</li>
+<li><code>Win+s</code> - режим &ldquo;стопка&rdquo;</li>
+<li><code>Win+w</code> - режим &ldquo;вкладки&rdquo;</li>
+<li><code>Win+e</code> - переключить режим разделения</li>
+<li><code>Win+f</code> - полноэкранный режим</li>
+<li><code>Win+Shift+Space</code> - переключить плавающий режим</li>
+<li><code>Win+d</code> - переключить фокус между плиточными/плавающими окнами</li>
+</ul>
+<p><strong>Блокнот (Scratchpad):</strong></p>
+<ul>
+<li><code>Win+Shift+-</code> - отправить окно в блокнот</li>
+<li><code>Win+-</code> - показать/скрыть окно из блокнота</li>
+</ul>
+<p><strong>Изменение размеров:</strong></p>
+<ul>
+<li>
+<p><code>Win+r</code> - войти в режим изменения размеров</p>
+</li>
+<li>
+<p><code>h/j/k/l</code> или <code>Стрелки</code> - изменять размеры</p>
+</li>
+<li>
+<p><code>Enter/Esc</code> - выйти из режима</p>
+</li>
+</ul>
+<p><strong>Скриншоты:</strong></p>
+<ul>
+<li><code>PrintScreen</code> - снимок всего экрана</li>
+<li><code>Shift+PrintScreen</code> - снимок выделенной области</li>
+</ul>
+<p><strong>Раскладка клавиатуры:</strong></p>
+<ul>
+<li><code>Alt+Shift</code> - переключение US/RU</li>
+</ul>
+<p><strong>Советы:</strong></p>
+<ol>
+<li>Все сочетания работают через Win (Mod4)</li>
+<li>Для навигации можно использовать как Vim-стиль (h/j/k/l), так и стрелки</li>
+<li>В режиме изменения размеров сначала жмем <code>Win+r</code>, затем управляем размерами</li>
+</ol>
+<h3 id="панель-waybar">
+  Панель waybar
+  <a class="heading-link" href="#%d0%bf%d0%b0%d0%bd%d0%b5%d0%bb%d1%8c-waybar">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p><code>~/.config/waybar/config.json</code></p>
+<p>Исходники <a href="https://gitflic.ru/project/konkin/waybar"  class="external-link" target="_blank" rel="noopener">GitFlic</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;layer&#34;</span>: <span style="color:#e6db74">&#34;top&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;position&#34;</span>: <span style="color:#e6db74">&#34;top&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;height&#34;</span>: 34,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;spacing&#34;</span>: 3,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;modules-left&#34;</span>: <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;sway/workspaces&#34;</span><span style="color:#f92672">]</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;modules-center&#34;</span>: <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;sway/window&#34;</span><span style="color:#f92672">]</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;modules-right&#34;</span>: <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;cpu&#34;</span>, <span style="color:#e6db74">&#34;memory&#34;</span>, <span style="color:#e6db74">&#34;pulseaudio&#34;</span>, <span style="color:#e6db74">&#34;clock&#34;</span>, <span style="color:#e6db74">&#34;tray&#34;</span><span style="color:#f92672">]</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;sway/workspaces&#34;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;format&#34;</span>: <span style="color:#e6db74">&#34;{name}&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;on-click&#34;</span>: <span style="color:#e6db74">&#34;activate&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;all-outputs&#34;</span>: true
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;sway/window&#34;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;format&#34;</span>: <span style="color:#e6db74">&#34;{}&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;max-length&#34;</span>: 50,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;strip&#34;</span>: true
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;clock&#34;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;format&#34;</span>: <span style="color:#e6db74">&#34; {:%H:%M}&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;tooltip-format&#34;</span>: <span style="color:#e6db74">&#34; {:%d.%m.%Y}&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;cpu&#34;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;format&#34;</span>: <span style="color:#e6db74">&#34; {usage}%&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;interval&#34;</span>: <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;memory&#34;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;format&#34;</span>: <span style="color:#e6db74">&#34; {used:0.1f}G&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;interval&#34;</span>: <span style="color:#ae81ff">5</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;pulseaudio&#34;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;format&#34;</span>: <span style="color:#e6db74">&#34;{icon} {volume}%&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;format-muted&#34;</span>: <span style="color:#e6db74">&#34; MUTED&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;format-icons&#34;</span>: <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;&#34;</span>, <span style="color:#e6db74">&#34;&#34;</span>, <span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">]</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;on-click&#34;</span>: <span style="color:#e6db74">&#34;pactl set-sink-mute @DEFAULT_SINK@ toggle&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;on-scroll-up&#34;</span>: <span style="color:#e6db74">&#34;pactl set-sink-volume @DEFAULT_SINK@ +5%&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;on-scroll-down&#34;</span>: <span style="color:#e6db74">&#34;pactl set-sink-volume @DEFAULT_SINK@ -5%&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;tray&#34;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;spacing&#34;</span>: <span style="color:#ae81ff">6</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p><code>~/.config/waybar/style.css</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>* <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  min-height: 0;
+</span></span><span style="display:flex;"><span>  min-width: 0;
+</span></span><span style="display:flex;"><span>  font-family: Lexend, <span style="color:#e6db74">&#34;JetBrainsMono NFP&#34;</span>;
+</span></span><span style="display:flex;"><span>  font-size: 16px;
+</span></span><span style="display:flex;"><span>  font-weight: 600;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>window#waybar <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  transition-property: background-color;
+</span></span><span style="display:flex;"><span>  transition-duration: 0.5s;
+</span></span><span style="display:flex;"><span>  /* background-color: <span style="color:#75715e">#1e1e2e; */</span>
+</span></span><span style="display:flex;"><span>  /* background-color: <span style="color:#75715e">#181825; */</span>
+</span></span><span style="display:flex;"><span>  background-color: <span style="color:#75715e">#11111b;</span>
+</span></span><span style="display:flex;"><span>  /* background-color: rgba<span style="color:#f92672">(</span>24, 24, 37, 0.6<span style="color:#f92672">)</span>; */
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#workspaces button {</span>
+</span></span><span style="display:flex;"><span>  padding: 0.3rem 0.6rem;
+</span></span><span style="display:flex;"><span>  margin: 0.4rem 0.25rem;
+</span></span><span style="display:flex;"><span>  border-radius: 6px;
+</span></span><span style="display:flex;"><span>  /* background-color: <span style="color:#75715e">#181825; */</span>
+</span></span><span style="display:flex;"><span>  background-color: <span style="color:#75715e">#1e1e2e;</span>
+</span></span><span style="display:flex;"><span>  color: <span style="color:#75715e">#cdd6f4;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#workspaces button:hover {</span>
+</span></span><span style="display:flex;"><span>  color: <span style="color:#75715e">#1e1e2e;</span>
+</span></span><span style="display:flex;"><span>  background-color: <span style="color:#75715e">#cdd6f4;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#workspaces button.focused {</span>
+</span></span><span style="display:flex;"><span>  background-color: <span style="color:#75715e">#1e1e2e;</span>
+</span></span><span style="display:flex;"><span>  color: <span style="color:#75715e">#89b4fa;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#workspaces button.urgent {</span>
+</span></span><span style="display:flex;"><span>  background-color: <span style="color:#75715e">#1e1e2e;</span>
+</span></span><span style="display:flex;"><span>  color: <span style="color:#75715e">#f38ba8;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#clock,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#pulseaudio,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#custom-logo,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#custom-power,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#custom-spotify,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#custom-notification,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#cpu,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#tray,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#memory,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#window,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#mpris {</span>
+</span></span><span style="display:flex;"><span>  padding: 0.3rem 0.6rem;
+</span></span><span style="display:flex;"><span>  margin: 0.4rem 0.25rem;
+</span></span><span style="display:flex;"><span>  border-radius: 6px;
+</span></span><span style="display:flex;"><span>  /* background-color: <span style="color:#75715e">#181825; */</span>
+</span></span><span style="display:flex;"><span>  background-color: <span style="color:#75715e">#1e1e2e;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#mpris.playing {</span>
+</span></span><span style="display:flex;"><span>  color: <span style="color:#75715e">#a6e3a1;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#mpris.paused {</span>
+</span></span><span style="display:flex;"><span>  color: <span style="color:#75715e">#9399b2;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#custom-sep {</span>
+</span></span><span style="display:flex;"><span>  padding: 0px;
+</span></span><span style="display:flex;"><span>  color: <span style="color:#75715e">#585b70;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>window#waybar.empty <span style="color:#75715e">#window {</span>
+</span></span><span style="display:flex;"><span>  background-color: transparent;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#cpu {</span>
+</span></span><span style="display:flex;"><span>  color: <span style="color:#75715e">#94e2d5;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#memory {</span>
+</span></span><span style="display:flex;"><span>  color: <span style="color:#75715e">#cba6f7;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#clock {</span>
+</span></span><span style="display:flex;"><span>  color: <span style="color:#75715e">#74c7ec;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#clock.simpleclock {</span>
+</span></span><span style="display:flex;"><span>  color: <span style="color:#75715e">#89b4fa;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#window {</span>
+</span></span><span style="display:flex;"><span>  color: <span style="color:#75715e">#cdd6f4;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#pulseaudio {</span>
+</span></span><span style="display:flex;"><span>  color: <span style="color:#75715e">#b4befe;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#pulseaudio.muted {</span>
+</span></span><span style="display:flex;"><span>  color: <span style="color:#75715e">#a6adc8;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#custom-logo {</span>
+</span></span><span style="display:flex;"><span>  color: <span style="color:#75715e">#89b4fa;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#custom-power {</span>
+</span></span><span style="display:flex;"><span>  color: <span style="color:#75715e">#f38ba8;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>tooltip <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  background-color: <span style="color:#75715e">#181825;</span>
+</span></span><span style="display:flex;"><span>  border: 2px solid <span style="color:#75715e">#89b4fa;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h3 id="wofi">
+  wofi
+  <a class="heading-link" href="#wofi">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p><code>~/.config/wofi/config</code><br>
+Исходники <a href="https://gitflic.ru/project/konkin/fowi"  class="external-link" target="_blank" rel="noopener">GitFlic</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>width<span style="color:#f92672">=</span><span style="color:#ae81ff">500</span>
+</span></span><span style="display:flex;"><span>height<span style="color:#f92672">=</span><span style="color:#ae81ff">300</span>
+</span></span><span style="display:flex;"><span>location<span style="color:#f92672">=</span>center
+</span></span><span style="display:flex;"><span>allow_markup<span style="color:#f92672">=</span>true
+</span></span><span style="display:flex;"><span>always_parse_args<span style="color:#f92672">=</span>true
+</span></span><span style="display:flex;"><span>show<span style="color:#f92672">=</span>drun
+</span></span><span style="display:flex;"><span>prompt<span style="color:#f92672">=</span>🔍
+</span></span><span style="display:flex;"><span>term<span style="color:#f92672">=</span>foot
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>~/.config/wofi/style.css
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>/* Dracula Theme <span style="color:#66d9ef">for</span> Wofi */
+</span></span><span style="display:flex;"><span>window <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    margin: 5px;
+</span></span><span style="display:flex;"><span>    border: 2px solid <span style="color:#75715e">#bd93f9;</span>
+</span></span><span style="display:flex;"><span>    border-radius: 8px;
+</span></span><span style="display:flex;"><span>    background-color: <span style="color:#75715e">#282a36;</span>
+</span></span><span style="display:flex;"><span>    font-family: <span style="color:#e6db74">&#34;Fira Code&#34;</span>, monospace;
+</span></span><span style="display:flex;"><span>    font-size: 14px;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#input {</span>
+</span></span><span style="display:flex;"><span>    margin: 10px;
+</span></span><span style="display:flex;"><span>    padding: 8px;
+</span></span><span style="display:flex;"><span>    border: none;
+</span></span><span style="display:flex;"><span>    border-radius: 5px;
+</span></span><span style="display:flex;"><span>    color: <span style="color:#75715e">#f8f8f2;</span>
+</span></span><span style="display:flex;"><span>    background-color: <span style="color:#75715e">#44475a;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#inner-box {</span>
+</span></span><span style="display:flex;"><span>    margin: 5px;
+</span></span><span style="display:flex;"><span>    background-color: <span style="color:#75715e">#282a36;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#outer-box {</span>
+</span></span><span style="display:flex;"><span>    margin: 5px;
+</span></span><span style="display:flex;"><span>    background-color: <span style="color:#75715e">#282a36;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#scroll {</span>
+</span></span><span style="display:flex;"><span>    margin: 5px;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#text {</span>
+</span></span><span style="display:flex;"><span>    margin: 5px;
+</span></span><span style="display:flex;"><span>    color: <span style="color:#75715e">#f8f8f2;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#entry {</span>
+</span></span><span style="display:flex;"><span>    padding: 8px;
+</span></span><span style="display:flex;"><span>    border-radius: 5px;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#entry:selected {</span>
+</span></span><span style="display:flex;"><span>    background-color: <span style="color:#75715e">#44475a;</span>
+</span></span><span style="display:flex;"><span>    border: 1px solid <span style="color:#75715e">#bd93f9;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#entry &gt; box {</span>
+</span></span><span style="display:flex;"><span>    margin-left: 15px;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#entry image {</span>
+</span></span><span style="display:flex;"><span>    margin-right: 10px;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p><strong>Что работает в итоге</strong></p>
+<p>✅ Базовый tiling (окна, рабочие пространства)<br>
+✅ Горячие клавиши для управления<br>
+✅ Скрипты для быстрого запуска<br>
+✅ Минималистичный статус-бар</p>
+<p>❌ Анимации и скругления (Hyprland-style)<br>
+❌ Нативные screenshot-утилиты</p>
+<h3 id="мои-конфиги-и-инструкции">
+  <strong>Мои конфиги и инструкции</strong>
+  <a class="heading-link" href="#%d0%bc%d0%be%d0%b8-%d0%ba%d0%be%d0%bd%d1%84%d0%b8%d0%b3%d0%b8-%d0%b8-%d0%b8%d0%bd%d1%81%d1%82%d1%80%d1%83%d0%ba%d1%86%d0%b8%d0%b8">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>Все наработки, включая:</p>
+<ul>
+<li>Конфиги Sway и Waybar</li>
+<li>Скрипты для автозапуска</li>
+<li>Инструкцию по сборке ключевых компонентов</li>
+<li>Список работающих альтернатив стандартным тулзам</li>
+</ul>
+<p>На сегодняшний день, в такой конфигурации я и продолжаю работать. Все отлично, проблем не испытываю.</p>
+<h2 id="кому-подойдёт-редос-а-кому--категорически-нет">
+  <strong>Кому подойдёт РедОС, а кому — категорически нет?</strong>
+  <a class="heading-link" href="#%d0%ba%d0%be%d0%bc%d1%83-%d0%bf%d0%be%d0%b4%d0%be%d0%b9%d0%b4%d1%91%d1%82-%d1%80%d0%b5%d0%b4%d0%be%d1%81-%d0%b0-%d0%ba%d0%be%d0%bc%d1%83--%d0%ba%d0%b0%d1%82%d0%b5%d0%b3%d0%be%d1%80%d0%b8%d1%87%d0%b5%d1%81%d0%ba%d0%b8-%d0%bd%d0%b5%d1%82">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p>После пару месяцев использования РедОС в качестве основной системы я составил чёткий чек-лист:</p>
+<h3 id="-идеальная-аудитория">
+  <strong>✅ Идеальная аудитория:</strong>
+  <a class="heading-link" href="#-%d0%b8%d0%b4%d0%b5%d0%b0%d0%bb%d1%8c%d0%bd%d0%b0%d1%8f-%d0%b0%d1%83%d0%b4%d0%b8%d1%82%d0%be%d1%80%d0%b8%d1%8f">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<ul>
+<li><strong>Офисные работники</strong> — если ваш workflow это браузер + LibreOffice + Telegram</li>
+<li><strong>Госслужащие/бюджетники</strong> — когда важна сертификация и &ldquo;отечественное ПО&rdquo;</li>
+<li><strong>Линукс-новички</strong> — кто хочет &ldquo;как в Windows, но без вирусов&rdquo;</li>
+<li><strong>Владельцы старых ноутбуков</strong> — где важна энергоэффективность и тишина</li>
+</ul>
+<h3 id="-бегите-если-вы">
+  <strong>❌ Бегите, если вы:</strong>
+  <a class="heading-link" href="#-%d0%b1%d0%b5%d0%b3%d0%b8%d1%82%d0%b5-%d0%b5%d1%81%d0%bb%d0%b8-%d0%b2%d1%8b">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<ul>
+<li><strong>Разработчик</strong> — где последняя версия Node.js/Python/Rust критична</li>
+<li><strong>Гик-кастомер</strong> — мечтаете о Hyprland с анимациями под 165 Гц</li>
+<li><strong>Серверный админ</strong> — нужен современный Docker/Kubernetes</li>
+<li><strong>Геймер</strong></li>
+</ul>
+<h3 id="финал-стоит-ли-пробовать">
+  <strong>Финал: стоит ли пробовать?</strong>
+  <a class="heading-link" href="#%d1%84%d0%b8%d0%bd%d0%b0%d0%bb-%d1%81%d1%82%d0%be%d0%b8%d1%82-%d0%bb%d0%b8-%d0%bf%d1%80%d0%be%d0%b1%d0%be%d0%b2%d0%b0%d1%82%d1%8c">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>Если вам нужно <strong>&ldquo;просто работает&rdquo;</strong> — ставьте не задумываясь.<br>
+Если жить не можете без <strong>кастома и свежих пакетов</strong> — даже не тратьте время.</p>
+<p>P.S. Все мои костыли и конфиги тут: [<a href="https://gitflic.ru/user/konkin"  class="external-link" target="_blank" rel="noopener">gitflic.ru</a>] — может, вам повезёт больше чем мне!</p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+        
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+    </div>
+
+    <footer class="footer">
+  <section class="container">
+    ©
+    
+    2025
+    
+    ·
+    
+    Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/" target="_blank" rel="noopener">Coder</a>.
+    
+  </section>
+</footer>
+
+  </main>
+
+  
+
+  
+  
+  <script src="/js/coder.js"></script>
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+</html>

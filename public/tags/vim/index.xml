@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Clojure on Мой крутой блог на Hugo</title>
-    <link>http://localhost:1313/tags/clojure/</link>
-    <description>Recent content in Clojure on Мой крутой блог на Hugo</description>
+    <title>Vim on Мой крутой блог на Hugo</title>
+    <link>http://localhost:1313/tags/vim/</link>
+    <description>Recent content in Vim on Мой крутой блог на Hugo</description>
     <generator>Hugo</generator>
     <language>ru-ru</language>
     <lastBuildDate>Wed, 06 Aug 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/clojure/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/tags/vim/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Код как живой организм: от говнокода к архитектуре</title>
       <link>http://localhost:1313/posts/shitcode/</link>

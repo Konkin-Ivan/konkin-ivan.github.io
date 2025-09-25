@@ -1,0 +1,15 @@
+{{ define "main" }}
+<div class="terms-page">
+    <h1>{{ .Title }}</h1>
+    
+    <div class="terms-cloud">
+        {{ range .Site.Taxonomies.tags }}
+        <a href="{{ .Page.Permalink }}" class="tag">
+            {{ .Page.Title }} ({{ .Count }})
+        </a>
+        {{ else }}
+        <p>Тегов пока нет. Добавьте теги в посты.</p>
+        {{ end }}
+    </div>
+</div>
+{{ end }}

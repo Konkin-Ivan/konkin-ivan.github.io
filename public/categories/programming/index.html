@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dracula">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programming | Мой крутой блог на Hugo</title>
+    
+    <meta name="description" content="Описание моего блога">
+    
+    
+    <meta property="og:title" content="Programming">
+    <meta property="og:description" content="Описание моего блога">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:1313/categories/programming/">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="http://localhost:1313/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav>
+                <a href="http://localhost:1313/"><strong>Мой крутой блог на Hugo</strong></a>
+    
+                <div class="nav-links">
+                  <a href="/posts/">Все посты</a>
+                  <a href="/tags/">Теги</a>
+                </div>
+                <div class="theme-switcher">
+                    <button class="theme-btn" onclick="setTheme('catppuccin')">☀️ Latte</button>
+                    <button class="theme-btn" onclick="setTheme('dracula')">🌙 Dracula</button>
+                </div>
+            </nav>
+        </header>
+
+        <main>
+            
+<div class="tag-page">
+    <h1>Тег: Programming</h1>
+    <p>Постов: 1</p>
+    
+    <div class="posts-list">
+        
+        <article class="post-card">
+            <h3><a href="http://localhost:1313/posts/shitcode/">Код как живой организм: от говнокода к архитектуре</a></h3>
+            <div class="post-meta">
+                <time>6 August 2025</time>
+            </div>
+            <div class="post-summary">
+                <h1 id="код-как-живой-организм-от-говнокода-к-архитектуре">Код как живой организм: от говнокода к архитектуре</h1>
+<h3 id="как-страх-плохого-кода-мешает-развиваться"><strong>Как страх «плохого кода» мешает развиваться</strong></h3>
+<p>Когда я только начинал программировать, мне казалось, что хороший код должен выглядеть идеально с первой строчки:</p>
+<ul>
+<li>Чистые функции,</li>
+<li>Правильные паттерны,</li>
+<li>Идеальная архитектура&hellip;</li>
+</ul>
+<p>Я боялся браться за задачи, потому что думал:<br>
+<em>«А вдруг сделаю не по SOLID? А если нарушу DRY? А если опытные разработчики увидят мой код и назовут его говнокодом?»</em></p>
+<p>Результат? <strong>Паралич</strong>. Вместо кода — пустой файл, бесконечные раздумья и ноль результата.</p>
+            </div>
+            <a href="http://localhost:1313/posts/shitcode/" class="read-more">Читать →</a>
+        </article>
+        
+    </div>
+</div>
+
+        </main>
+
+        <footer>
+            <p>© 2025 Мой крутой блог на Hugo • Powered by Konkin</p>
+        </footer>
+    </div>
+
+    <script>
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        }
+        
+        
+        const savedTheme = localStorage.getItem('theme') || 'dracula';
+        setTheme(savedTheme);
+    </script>
+</body>
+</html>

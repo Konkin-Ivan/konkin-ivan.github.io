@@ -1,0 +1,21 @@
+<nav class="breadcrumbs">
+    <a href="{{ .Site.BaseURL }}">🏠 Главная</a>
+    
+    {{ if eq .Kind "term" }}
+        <!-- Для тегов: Главная → Теги → #linux -->
+        <span class="sep">→</span>
+        <a href="{{ "tags" | relURL }}">Теги</a>
+        <span class="sep">→</span>
+        <span class="current">#{{ .Title }}</span>
+    
+    {{ else if and (eq .Type "posts") (ne .Kind "home") (ne .Kind "section") }}
+        <!-- Для постов: Главная → Название поста (без раздела "Посты") -->
+        <span class="sep">→</span>
+        <span class="current">{{ .Title }}</span>
+    
+    {{ else if and (ne .Kind "home") (ne .Kind "section") }}
+        <!-- Для обычных страниц: Главная → О сайте -->
+        <span class="sep">→</span>
+        <span class="current">{{ .Title }}</span>
+    {{ end }}
+</nav>

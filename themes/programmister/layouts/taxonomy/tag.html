@@ -1,0 +1,13 @@
+{{ define "main" }}
+<div class="tags-page">
+    <h1>Все теги</h1>
+    
+    <div class="tags-cloud">
+        {{ range .Site.Taxonomies.tags }}
+        <a href="{{ .Page.Permalink }}" class="tag" style="font-size: {{ math.Add 1 (mul .Count 0.5) }}em;">
+            {{ .Page.Title }} ({{ .Count }})
+        </a>
+        {{ end }}
+    </div>
+</div>
+{{ end }}

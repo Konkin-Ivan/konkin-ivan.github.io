@@ -1,19 +1,900 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts on Мой крутой блог на Hugo</title>
+    <title>Мой крутой блог на Hugo</title>
     <link>http://localhost:1313/posts/</link>
-    <description>Recent content in Posts on Мой крутой блог на Hugo</description>
+    <description>Описание моего блога</description>
     <generator>Hugo</generator>
     <language>ru-ru</language>
-    <lastBuildDate>Thu, 10 Jul 2025 15:47:18 +0300</lastBuildDate>
-    <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+    <lastBuildDate>Thu, 25 Sep 2025 21:47:34 +0300</lastBuildDate>
+    <atom:link href="http://localhost:1313/posts/" rel="self" type="application/rss+xml" />
+    
     <item>
       <title>РедОС: Идеальная система</title>
       <link>http://localhost:1313/posts/red-os-codding/</link>
-      <pubDate>Thu, 10 Jul 2025 15:47:18 +0300</pubDate>
+      <pubDate>Thu, 25 Sep 2025 00:00:00 +0000</pubDate>
+      <author></author>
       <guid>http://localhost:1313/posts/red-os-codding/</guid>
-      <description>&lt;h2 id=&#34;редос-идеальная-система-но-не-для-кодинга&#34;&gt;РедОС: Идеальная система, но не для кодинга?&lt;/h2&gt;&#xA;&lt;p&gt;Мой путь в Linux начался с Debian — строгого, надёжного, но порой слишком консервативного. Потом был Arch (и теперь есть) с его бесконечной гибкостью. Были и другие дистрибутивы: Fedora, AltLinux, openSUSE, даже Gentoo (но это уже другая история).&lt;/p&gt;&#xA;&lt;p&gt;И вот — &lt;strong&gt;РедОС&lt;/strong&gt;. Российский дистрибутив, о котором многие говорят, но мало кто реально использует. Мне стало интересно: что это за зверь такой? Маркетинговый пузырь или действительно рабочая альтернатива?&lt;/p&gt;</description>
+      <description>Мой путь в Linux начался с Debian — строгого, надёжного, но порой слишком консервативного.</description>
+      <content type="html">&lt;h1 id=&#34;редос-идеальная-система-но-не-для-кодинга&#34;&gt;РедОС: Идеальная система, но не для кодинга?&lt;/h1&gt;
+&lt;p&gt;Мой путь в Linux начался с Debian — строгого, надёжного, но порой слишком консервативного. Потом был Arch (и теперь есть) с его бесконечной гибкостью. Были и другие дистрибутивы: Fedora, AltLinux, openSUSE, даже Gentoo (но это уже другая история).&lt;/p&gt;
+&lt;p&gt;И вот — &lt;strong&gt;РедОС&lt;/strong&gt;. Российский дистрибутив, о котором многие говорят, но мало кто реально использует. Мне стало интересно: что это за зверь такой? Маркетинговый пузырь или действительно рабочая альтернатива?&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Первые впечатления:&lt;/strong&gt;&lt;br&gt;
+Я ожидал боли. Обычно с новыми дистрибутивами так: Wi-Fi не работает, тачпад криво определяется, драйвера подбираешь неделю. Но тут… &lt;strong&gt;всё заработало сразу&lt;/strong&gt;. Без танцев с бубном, без гугления просто — установил и пользуйся. Предыдущий опыт был с &lt;a href=&#34;https://dzen.ru/a/ZxYypI87mSlPxSSo&#34;&gt;Альт&lt;/a&gt;, не на столько хорошим.&lt;/p&gt;
+&lt;p&gt;Но главное — &lt;strong&gt;ноутбук перестал греться и шуметь вентиляторами&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Однако всё изменилось, когда я попробовал использовать РедОС &lt;strong&gt;для разработки&lt;/strong&gt;. Понятно, что РедОС заточен под корпоративный сектор, но попробуем его юзать не по прямому назначению. Уж очень хорошо эта ОС себя чувствует на моем:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Kernel: 6.12.21-1.red80.x86_64 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;CPU: Intel i5-3230M &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;4&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; @ 3.200GHz 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;GPU: NVIDIA GeForce GT 650M 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;GPU: Intel 3rd Gen Core processor Gr 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Memory: 1878MiB / 15876MiB 
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;установка-и-первое-впечатление&#34;&gt;&lt;strong&gt;Установка и первое впечатление&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;Обычно установка Linux — это квест. Wi-Fi не ловит, тачпад не скроллит, драйвер видеокарты ставится через &lt;code&gt;--force-all&lt;/code&gt;. Но с &lt;strong&gt;РедОС&lt;/strong&gt; всё было иначе.&lt;/p&gt;
+&lt;h4 id=&#34;из-коробки--значит-действительно-из-коробки&#34;&gt;&lt;strong&gt;«Из коробки» — значит, действительно из коробки&lt;/strong&gt;&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Wi-Fi&lt;/strong&gt; заработал сразу — даже на моём ноутбуке с RTL8723AE PCIe Wireless Networ Adapter.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Тачпад&lt;/strong&gt; распознался правильно: жесты, мультитач, скролл — без лишних &lt;code&gt;xinput&lt;/code&gt; и &lt;code&gt;libinput&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Драйвера NVIDIA&lt;/strong&gt; не ставил, штатный nouveau хорошо справляется.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Языковая раскладка&lt;/strong&gt; переключалась без танцев с &lt;code&gt;setxkbmap&lt;/code&gt; — просто выбрал в настройках.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;термический-рай&#34;&gt;&lt;strong&gt;Термический рай&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;После Arch с его вечно взлетающими до 60°C на &lt;code&gt;htop&lt;/code&gt; и Debian, &lt;strong&gt;РедОС показал чудеса энергоэффективности&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;В простое температура CPU — &lt;strong&gt;45-61°C&lt;/strong&gt; (против 50-70°C в Debian).&lt;/li&gt;
+&lt;li&gt;Под нагрузкой (браузер + пара терминалов) — &lt;strong&gt;максимум 65°C&lt;/strong&gt;, и то ненадолго.&lt;/li&gt;
+&lt;li&gt;Вентиляторы &lt;strong&gt;почти не слышно&lt;/strong&gt; — даже при рендеринге видео в Firefox.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Вывод:&lt;/strong&gt; Если бы мне нужно было &lt;strong&gt;просто поставить систему и забыть&lt;/strong&gt; — я бы выбрал РедОС без колебаний.&lt;/p&gt;
+&lt;h3 id=&#34;кодинг-в-редос-стоит-зайти-в-терминал--и-добро-пожаловать-в-ад-зависимостей&#34;&gt;&lt;strong&gt;Кодинг в РедОС: «Стоит зайти в терминал — и добро пожаловать в ад зависимостей»&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Поставил систему, в которой &lt;strong&gt;ничего не нужно настраивать&lt;/strong&gt;. Но я же привык после установки что-то настраивать. И что настраивать в системе в которой ничего не нужно настраивать? Первое, за что взялся — &lt;strong&gt;рабочее окружение&lt;/strong&gt;. Ведь я привык к тактильной эргономике: хоткеи под пальцы, tiling WM, кастомные скрипты — всё, без чего кодятся уже не так комфортно.&lt;/p&gt;
+&lt;h3 id=&#34;где-мой-hyprland-или-хотя-бы-swayfx&#34;&gt;&lt;strong&gt;«Где мой Hyprland? Или хотя бы SwayFX?»&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Первая же проверка репозиториев разочаровала:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Нет Hyprland&lt;/strong&gt; в репозиториях.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Нет даже SwayFX и Hyprland&lt;/strong&gt; не возможно поставить склонировав репозиторий.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Обычный Sway&lt;/strong&gt; есть.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;«Ну окей, соберу из исходников!» — наивно подумал я.&lt;/p&gt;
+&lt;h3 id=&#34;сборка-из-исходников-ребус-из-зависимостей&#34;&gt;&lt;strong&gt;Сборка из исходников: «Ребус из зависимостей»&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Тут начался настоящий квест:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Не хватает &lt;code&gt;wlroots&lt;/code&gt;&lt;/strong&gt; — ладно, ставлю.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;А этому &lt;code&gt;wlroots&lt;/code&gt; нужны свои зависимости&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Добавляю EPEL&lt;/strong&gt; — не помогло, там тоже не та версия.&lt;/li&gt;
+&lt;li&gt;В системе установлены более старые некоторые пакеты, чем нужны для некоторых библиотек и все упирается в конфликт версий.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Это напомнило мне &lt;strong&gt;игру в матрёшку&lt;/strong&gt;: чтобы собрать X, нужен Y, а для Y — Z, который зависит от W… и так до бесконечности.&lt;/p&gt;
+&lt;h3 id=&#34;в-других-дистрах-это-есть-по-умолчанию&#34;&gt;&lt;strong&gt;«В других дистрах это есть по умолчанию!»&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;То, что в &lt;strong&gt;Arch&lt;/strong&gt; или &lt;strong&gt;Fedora&lt;/strong&gt; ставится одной командой (&lt;code&gt;pacman -S hyprland&lt;/code&gt;), в РедОС превратилось в &lt;strong&gt;многочасовой квест&lt;/strong&gt;. Причём половина зависимостей либо &lt;strong&gt;устарела&lt;/strong&gt;, либо &lt;strong&gt;отсутствует&lt;/strong&gt; даже в сторонних репозиториях.&lt;/p&gt;
+&lt;h2 id=&#34;редос-для-кодинга&#34;&gt;&lt;strong&gt;РедОС для кодинга&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://img4.teletype.in/files/b0/0e/b00e8274-0773-440d-8f59-40c96cf433a1.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;РедОС + Sway&lt;/p&gt;
+&lt;p&gt;После нескольких часов борьбы с зависимостями я понял: если хочешь modern Wayland-окружение в РедОС — используй sway. Вот как выглядел мой путь к рабочему окружению:&lt;/p&gt;
+&lt;h3 id=&#34;спасительный-sway-минимально-рабочий-вариант&#34;&gt;&lt;strong&gt;Спасительный Sway (минимально рабочий вариант)&lt;/strong&gt;&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Базовый Sway из репозиториев&lt;/strong&gt; — без красивостей&lt;/li&gt;
+&lt;li&gt;Панель waybar&lt;/li&gt;
+&lt;li&gt;wofi&lt;/li&gt;
+&lt;li&gt;Neovim в качестве редактора&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;базовый-sway&#34;&gt;&lt;strong&gt;Базовый Sway&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;~/.config/sway/config&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Исходники &lt;a href=&#34;https://gitflic.ru/project/konkin/sway&#34;&gt;GitFlic&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Автозапуск ibus для работы с вводом (русская раскладка и т.д.)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;exec_always ibus-daemon -drx
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;### ВНЕШНИЙ ВИД ###&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Отступы между окнами&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;gaps inner &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Отступы от краёв экрана&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;gaps outer &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Дополнительные отступы для плавающих окон&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;gaps horizontal &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;gaps vertical &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Умные отступы (автоматически скрываются при одном окне)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;smart_gaps on
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;smart_borders on
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Стиль границ окон (толщина 4px)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;default_border pixel &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Цветовая схема Dracula для окон:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# [активное] [неактивное] [неактивное+нефокус] [срочное]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;client.focused          &lt;span style=&#34;color:#75715e&#34;&gt;#8be9fd #44475a #f8f8f2 #8be9fd&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;client.unfocused        &lt;span style=&#34;color:#75715e&#34;&gt;#282a36 #282a36 #6272a4 #282a36&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;client.focused_inactive &lt;span style=&#34;color:#75715e&#34;&gt;#44475a #282a36 #f8f8f2 #44475a&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;client.urgent          &lt;span style=&#34;color:#75715e&#34;&gt;#ff5555 #ff5555 #f8f8f2 #ff5555&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Тема курсора мыши (Catppuccin Mocha Dark)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;seat * xcursor_theme catppuccin-mocha-dark-cursors &lt;span style=&#34;color:#ae81ff&#34;&gt;25&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;### ПЕРЕМЕННЫЕ ###&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Основная модификаторная клавиша (Win)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;set $mod Mod4
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Навигация в стиле Vim&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;set $left h
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;set $down j
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;set $up k
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;set $right l
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Терминал по умолчанию&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;set $term foot
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;### НАСТРОЙКА ВЫВОДА ###&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Обои рабочего стола (заполнение экрана)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;output * bg ~/bg/i.webp fill
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;### СОЧЕТАНИЯ КЛАВИШ ###&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Основные:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Запуск терминала&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+Return exec $term
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Закрыть текущее окно&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+c kill
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Меню приложений (wofi)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+space exec wofi --show drun
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Плавающий режим по умолчанию&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    floating_modifier $mod normal
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Перезагрузка конфига Sway&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+Shift+c reload
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Меню выключения (кастомный скрипт)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+q exec ~/.config/sway/scripts/power-menu.sh
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Навигация:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Перемещение фокуса&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+$left focus left
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+$down focus down
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+$up focus up
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+$right focus right
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Альтернатива - стрелки&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+Left focus left
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+Down focus down
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+Up focus up
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+Right focus right
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Перемещение окон&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+Shift+$left move left
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+Shift+$down move down
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+Shift+$up move up
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+Shift+$right move right
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Альтернатива - стрелки&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+Shift+Left move left
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+Shift+Down move down
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+Shift+Up move up
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+Shift+Right move right
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Рабочие пространства:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Переключение между рабочими пространствами 1-10&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+1 workspace number &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+2 workspace number &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+3 workspace number &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+4 workspace number &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+5 workspace number &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+6 workspace number &lt;span style=&#34;color:#ae81ff&#34;&gt;6&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+7 workspace number &lt;span style=&#34;color:#ae81ff&#34;&gt;7&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+8 workspace number &lt;span style=&#34;color:#ae81ff&#34;&gt;8&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+9 workspace number &lt;span style=&#34;color:#ae81ff&#34;&gt;9&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+0 workspace number &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Перемещение окон между рабочими пространствами&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+Shift+1 move container to workspace number &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+Shift+2 move container to workspace number &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+Shift+3 move container to workspace number &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+Shift+4 move container to workspace number &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+Shift+5 move container to workspace number &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+Shift+6 move container to workspace number &lt;span style=&#34;color:#ae81ff&#34;&gt;6&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+Shift+7 move container to workspace number &lt;span style=&#34;color:#ae81ff&#34;&gt;7&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+Shift+8 move container to workspace number &lt;span style=&#34;color:#ae81ff&#34;&gt;8&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+Shift+9 move container to workspace number &lt;span style=&#34;color:#ae81ff&#34;&gt;9&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+Shift+0 move container to workspace number &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Управление окнами:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Разделение окон (горизонтальное/вертикальное)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+b splith
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+v splitv
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Смена режима расположения окон&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+s layout stacking  &lt;span style=&#34;color:#75715e&#34;&gt;# стопка&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+w layout tabbed    &lt;span style=&#34;color:#75715e&#34;&gt;# вкладки&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+e layout toggle split  &lt;span style=&#34;color:#75715e&#34;&gt;# переключение режимов&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Полноэкранный режим&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+f fullscreen
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Переключение в плавающий режим&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+Shift+space floating toggle
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Переключение фокуса между плиточными и плавающими окнами&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+d focus mode_toggle
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Фокус на родительский контейнер&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+a focus parent
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Блокнот (Scratchpad):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Отправить окно в блокнот&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+Shift+minus move scratchpad
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Показать/скрыть окно из блокнота&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $mod+minus scratchpad show
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Изменение размеров окон:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;mode &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;resize&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Управление размерами:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# h/j/k/l или стрелки - изменение размеров&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $left resize shrink width 10px
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $down resize grow height 10px
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $up resize shrink height 10px
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym $right resize grow width 10px
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Альтернатива - стрелки&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym Left resize shrink width 10px
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym Down resize grow height 10px
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym Up resize shrink height 10px
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym Right resize grow width 10px
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Выход из режима изменения размеров&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym Return mode &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;default&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    bindsym Escape mode &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;default&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Активация режима изменения размеров&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;bindsym $mod+r mode &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;resize&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Скриншоты:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Весь экран - PrintScreen&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;bindsym Print exec grim ~/Изображения/screenshot-&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;date +&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;%Y-%m-%d-%H%M%S&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;.png
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Выбранная область - Shift+PrintScreen&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;bindsym Shift+Print exec grim -g &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;slurp&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; ~/Изображения/screenshot-&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;date +&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;%Y-%m-%d-%H%M%S&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;.png
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Настройка клавиатуры (раскладки US/RU с переключением по Alt+Shift)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;input type:keyboard &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    xkb_layout &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;us,ru&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    xkb_options &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;grp:alt_shift_toggle&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Подключение дополнительных конфигов из системы&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;include /etc/sway/config.d/*
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Шпаргалка по сочетаниям клавиш Sway&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Основные:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Win+Enter&lt;/code&gt; - запустить терминал (Foot)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Win+c&lt;/code&gt; - закрыть текущее окно&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Win+Space&lt;/code&gt; - меню приложений (Wofi)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Win+Shift+c&lt;/code&gt; - перезагрузить конфиг&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Win+q&lt;/code&gt; - меню выключения&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Навигация:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Win+h/j/k/l&lt;/code&gt; или &lt;code&gt;Win+Стрелки&lt;/code&gt; - переместить фокус&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Win+Shift+h/j/k/l&lt;/code&gt; или &lt;code&gt;Win+Shift+Стрелки&lt;/code&gt; - переместить окно&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Рабочие пространства:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Win+1..0&lt;/code&gt; - переключиться на workspace 1-10&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Win+Shift+1..0&lt;/code&gt; - переместить окно на workspace 1-10&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Управление окнами:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Win+b&lt;/code&gt; - разделить горизонтально&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Win+v&lt;/code&gt; - разделить вертикально&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Win+s&lt;/code&gt; - режим &amp;ldquo;стопка&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Win+w&lt;/code&gt; - режим &amp;ldquo;вкладки&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Win+e&lt;/code&gt; - переключить режим разделения&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Win+f&lt;/code&gt; - полноэкранный режим&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Win+Shift+Space&lt;/code&gt; - переключить плавающий режим&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Win+d&lt;/code&gt; - переключить фокус между плиточными/плавающими окнами&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Блокнот (Scratchpad):&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Win+Shift+-&lt;/code&gt; - отправить окно в блокнот&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Win+-&lt;/code&gt; - показать/скрыть окно из блокнота&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Изменение размеров:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;Win+r&lt;/code&gt; - войти в режим изменения размеров&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;h/j/k/l&lt;/code&gt; или &lt;code&gt;Стрелки&lt;/code&gt; - изменять размеры&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;Enter/Esc&lt;/code&gt; - выйти из режима&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Скриншоты:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;PrintScreen&lt;/code&gt; - снимок всего экрана&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Shift+PrintScreen&lt;/code&gt; - снимок выделенной области&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Раскладка клавиатуры:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Alt+Shift&lt;/code&gt; - переключение US/RU&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Советы:&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Все сочетания работают через Win (Mod4)&lt;/li&gt;
+&lt;li&gt;Для навигации можно использовать как Vim-стиль (h/j/k/l), так и стрелки&lt;/li&gt;
+&lt;li&gt;В режиме изменения размеров сначала жмем &lt;code&gt;Win+r&lt;/code&gt;, затем управляем размерами&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;панель-waybar&#34;&gt;Панель waybar&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;~/.config/waybar/config.json&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Исходники &lt;a href=&#34;https://gitflic.ru/project/konkin/waybar&#34;&gt;GitFlic&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;layer&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;top&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;position&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;top&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;height&amp;#34;&lt;/span&gt;: 34,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;spacing&amp;#34;&lt;/span&gt;: 3,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;modules-left&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;sway/workspaces&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;modules-center&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;sway/window&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;modules-right&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;cpu&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;memory&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;pulseaudio&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;clock&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;tray&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;sway/workspaces&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;format&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;{name}&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;on-click&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;activate&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;all-outputs&amp;#34;&lt;/span&gt;: true
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;sway/window&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;format&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;{}&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;max-length&amp;#34;&lt;/span&gt;: 50,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;strip&amp;#34;&lt;/span&gt;: true
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;clock&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;format&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34; {:%H:%M}&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;tooltip-format&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34; {:%d.%m.%Y}&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;cpu&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;format&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34; {usage}%&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;interval&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;memory&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;format&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34; {used:0.1f}G&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;interval&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;pulseaudio&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;format&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;{icon} {volume}%&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;format-muted&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34; MUTED&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;format-icons&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;on-click&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;pactl set-sink-mute @DEFAULT_SINK@ toggle&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;on-scroll-up&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;pactl set-sink-volume @DEFAULT_SINK@ +5%&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;on-scroll-down&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;pactl set-sink-volume @DEFAULT_SINK@ -5%&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;tray&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;spacing&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;6&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;~/.config/waybar/style.css&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;* &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  min-height: 0;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  min-width: 0;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  font-family: Lexend, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;JetBrainsMono NFP&amp;#34;&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  font-size: 16px;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  font-weight: 600;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;window#waybar &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  transition-property: background-color;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  transition-duration: 0.5s;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  /* background-color: &lt;span style=&#34;color:#75715e&#34;&gt;#1e1e2e; */&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  /* background-color: &lt;span style=&#34;color:#75715e&#34;&gt;#181825; */&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  background-color: &lt;span style=&#34;color:#75715e&#34;&gt;#11111b;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  /* background-color: rgba&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;24, 24, 37, 0.6&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;; */
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#workspaces button {&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  padding: 0.3rem 0.6rem;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  margin: 0.4rem 0.25rem;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  border-radius: 6px;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  /* background-color: &lt;span style=&#34;color:#75715e&#34;&gt;#181825; */&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  background-color: &lt;span style=&#34;color:#75715e&#34;&gt;#1e1e2e;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  color: &lt;span style=&#34;color:#75715e&#34;&gt;#cdd6f4;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#workspaces button:hover {&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  color: &lt;span style=&#34;color:#75715e&#34;&gt;#1e1e2e;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  background-color: &lt;span style=&#34;color:#75715e&#34;&gt;#cdd6f4;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#workspaces button.focused {&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  background-color: &lt;span style=&#34;color:#75715e&#34;&gt;#1e1e2e;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  color: &lt;span style=&#34;color:#75715e&#34;&gt;#89b4fa;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#workspaces button.urgent {&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  background-color: &lt;span style=&#34;color:#75715e&#34;&gt;#1e1e2e;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  color: &lt;span style=&#34;color:#75715e&#34;&gt;#f38ba8;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#clock,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#pulseaudio,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#custom-logo,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#custom-power,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#custom-spotify,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#custom-notification,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#cpu,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#tray,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#memory,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#window,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#mpris {&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  padding: 0.3rem 0.6rem;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  margin: 0.4rem 0.25rem;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  border-radius: 6px;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  /* background-color: &lt;span style=&#34;color:#75715e&#34;&gt;#181825; */&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  background-color: &lt;span style=&#34;color:#75715e&#34;&gt;#1e1e2e;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#mpris.playing {&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  color: &lt;span style=&#34;color:#75715e&#34;&gt;#a6e3a1;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#mpris.paused {&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  color: &lt;span style=&#34;color:#75715e&#34;&gt;#9399b2;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#custom-sep {&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  padding: 0px;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  color: &lt;span style=&#34;color:#75715e&#34;&gt;#585b70;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;window#waybar.empty &lt;span style=&#34;color:#75715e&#34;&gt;#window {&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  background-color: transparent;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#cpu {&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  color: &lt;span style=&#34;color:#75715e&#34;&gt;#94e2d5;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#memory {&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  color: &lt;span style=&#34;color:#75715e&#34;&gt;#cba6f7;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#clock {&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  color: &lt;span style=&#34;color:#75715e&#34;&gt;#74c7ec;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#clock.simpleclock {&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  color: &lt;span style=&#34;color:#75715e&#34;&gt;#89b4fa;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#window {&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  color: &lt;span style=&#34;color:#75715e&#34;&gt;#cdd6f4;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#pulseaudio {&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  color: &lt;span style=&#34;color:#75715e&#34;&gt;#b4befe;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#pulseaudio.muted {&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  color: &lt;span style=&#34;color:#75715e&#34;&gt;#a6adc8;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#custom-logo {&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  color: &lt;span style=&#34;color:#75715e&#34;&gt;#89b4fa;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#custom-power {&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  color: &lt;span style=&#34;color:#75715e&#34;&gt;#f38ba8;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;tooltip &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  background-color: &lt;span style=&#34;color:#75715e&#34;&gt;#181825;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  border: 2px solid &lt;span style=&#34;color:#75715e&#34;&gt;#89b4fa;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;wofi&#34;&gt;wofi&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;~/.config/wofi/config&lt;/code&gt;&lt;br&gt;
+Исходники &lt;a href=&#34;https://gitflic.ru/project/konkin/fowi&#34;&gt;GitFlic&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;width&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;500&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;height&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;300&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;location&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;center
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;allow_markup&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;true
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;always_parse_args&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;true
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;show&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;drun
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;prompt&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;🔍
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;term&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;foot
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;~/.config/wofi/style.css
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;/* Dracula Theme &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; Wofi */
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;window &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    margin: 5px;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    border: 2px solid &lt;span style=&#34;color:#75715e&#34;&gt;#bd93f9;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    border-radius: 8px;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    background-color: &lt;span style=&#34;color:#75715e&#34;&gt;#282a36;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    font-family: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Fira Code&amp;#34;&lt;/span&gt;, monospace;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    font-size: 14px;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#input {&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    margin: 10px;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    padding: 8px;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    border: none;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    border-radius: 5px;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    color: &lt;span style=&#34;color:#75715e&#34;&gt;#f8f8f2;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    background-color: &lt;span style=&#34;color:#75715e&#34;&gt;#44475a;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#inner-box {&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    margin: 5px;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    background-color: &lt;span style=&#34;color:#75715e&#34;&gt;#282a36;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#outer-box {&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    margin: 5px;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    background-color: &lt;span style=&#34;color:#75715e&#34;&gt;#282a36;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#scroll {&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    margin: 5px;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#text {&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    margin: 5px;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    color: &lt;span style=&#34;color:#75715e&#34;&gt;#f8f8f2;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#entry {&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    padding: 8px;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    border-radius: 5px;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#entry:selected {&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    background-color: &lt;span style=&#34;color:#75715e&#34;&gt;#44475a;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    border: 1px solid &lt;span style=&#34;color:#75715e&#34;&gt;#bd93f9;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#entry &amp;gt; box {&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    margin-left: 15px;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#entry image {&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    margin-right: 10px;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Что работает в итоге&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;✅ Базовый tiling (окна, рабочие пространства)&lt;br&gt;
+✅ Горячие клавиши для управления&lt;br&gt;
+✅ Скрипты для быстрого запуска&lt;br&gt;
+✅ Минималистичный статус-бар&lt;/p&gt;
+&lt;p&gt;❌ Анимации и скругления (Hyprland-style)&lt;br&gt;
+❌ Нативные screenshot-утилиты&lt;/p&gt;
+&lt;h3 id=&#34;мои-конфиги-и-инструкции&#34;&gt;&lt;strong&gt;Мои конфиги и инструкции&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Все наработки, включая:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Конфиги Sway и Waybar&lt;/li&gt;
+&lt;li&gt;Скрипты для автозапуска&lt;/li&gt;
+&lt;li&gt;Инструкцию по сборке ключевых компонентов&lt;/li&gt;
+&lt;li&gt;Список работающих альтернатив стандартным тулзам&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;На сегодняшний день, в такой конфигурации я и продолжаю работать. Все отлично, проблем не испытываю.&lt;/p&gt;
+&lt;h2 id=&#34;кому-подойдёт-редос-а-кому--категорически-нет&#34;&gt;&lt;strong&gt;Кому подойдёт РедОС, а кому — категорически нет?&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;После пару месяцев использования РедОС в качестве основной системы я составил чёткий чек-лист:&lt;/p&gt;
+&lt;h3 id=&#34;-идеальная-аудитория&#34;&gt;&lt;strong&gt;✅ Идеальная аудитория:&lt;/strong&gt;&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Офисные работники&lt;/strong&gt; — если ваш workflow это браузер + LibreOffice + Telegram&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Госслужащие/бюджетники&lt;/strong&gt; — когда важна сертификация и &amp;ldquo;отечественное ПО&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Линукс-новички&lt;/strong&gt; — кто хочет &amp;ldquo;как в Windows, но без вирусов&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Владельцы старых ноутбуков&lt;/strong&gt; — где важна энергоэффективность и тишина&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;-бегите-если-вы&#34;&gt;&lt;strong&gt;❌ Бегите, если вы:&lt;/strong&gt;&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Разработчик&lt;/strong&gt; — где последняя версия Node.js/Python/Rust критична&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Гик-кастомер&lt;/strong&gt; — мечтаете о Hyprland с анимациями под 165 Гц&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Серверный админ&lt;/strong&gt; — нужен современный Docker/Kubernetes&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Геймер&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;финал-стоит-ли-пробовать&#34;&gt;&lt;strong&gt;Финал: стоит ли пробовать?&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Если вам нужно &lt;strong&gt;&amp;ldquo;просто работает&amp;rdquo;&lt;/strong&gt; — ставьте не задумываясь.&lt;br&gt;
+Если жить не можете без &lt;strong&gt;кастома и свежих пакетов&lt;/strong&gt; — даже не тратьте время.&lt;/p&gt;
+&lt;p&gt;P.S. Все мои костыли и конфиги тут: [&lt;a href=&#34;https://gitflic.ru/user/konkin&#34;&gt;gitflic.ru&lt;/a&gt;] — может, вам повезёт больше чем мне!&lt;/p&gt;
+</content>
     </item>
+    
+    <item>
+      <title>Код как живой организм: от говнокода к архитектуре</title>
+      <link>http://localhost:1313/posts/shitcode/</link>
+      <pubDate>Wed, 06 Aug 2025 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://localhost:1313/posts/shitcode/</guid>
+      <description>Когда я только начинал программировать, мне казалось, что хороший код должен выглядеть идеально с первой строчки:</description>
+      <content type="html">&lt;h1 id=&#34;код-как-живой-организм-от-говнокода-к-архитектуре&#34;&gt;Код как живой организм: от говнокода к архитектуре&lt;/h1&gt;
+&lt;h3 id=&#34;как-страх-плохого-кода-мешает-развиваться&#34;&gt;&lt;strong&gt;Как страх «плохого кода» мешает развиваться&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Когда я только начинал программировать, мне казалось, что хороший код должен выглядеть идеально с первой строчки:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Чистые функции,&lt;/li&gt;
+&lt;li&gt;Правильные паттерны,&lt;/li&gt;
+&lt;li&gt;Идеальная архитектура&amp;hellip;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Я боялся браться за задачи, потому что думал:&lt;br&gt;
+&lt;em&gt;«А вдруг сделаю не по SOLID? А если нарушу DRY? А если опытные разработчики увидят мой код и назовут его говнокодом?»&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Результат? &lt;strong&gt;Паралич&lt;/strong&gt;. Вместо кода — пустой файл, бесконечные раздумья и ноль результата.&lt;/p&gt;
+&lt;p&gt;Пока не осознал простую вещь:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Код — как живой организм. Он рождается слабым, обрастает мускулами и только потом становится сильным.&lt;/strong&gt;&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;И это нормально.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;почему-первый-код--это-почти-всегда-говнокод-и-это-не-плохо&#34;&gt;&lt;strong&gt;Почему первый код — это почти всегда «говнокод» (и это не плохо)&lt;/strong&gt;&lt;/h3&gt;
+&lt;h4 id=&#34;working-solution--perfect-architecture&#34;&gt;&lt;strong&gt;Working solution &amp;gt; Perfect architecture&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Твоя задача — не написать шедевр, а &lt;strong&gt;решить проблему&lt;/strong&gt;.&lt;/p&gt;
+&lt;h4 id=&#34;пример-функция-на-clojure&#34;&gt;&lt;strong&gt;Пример: функция на Clojure&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Допустим, нам нужно отфильтровать список чисел, оставив только чётные.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Первый вариант (наивный, «говнокод»):&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;filter-even [numbers]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#66d9ef&#34;&gt;loop &lt;/span&gt;[nums numbers result []]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#66d9ef&#34;&gt;if &lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;empty?&lt;/span&gt; nums)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      result
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      (&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[num (first nums)]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        (&lt;span style=&#34;color:#66d9ef&#34;&gt;if &lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;even?&lt;/span&gt; num)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          (&lt;span style=&#34;color:#a6e22e&#34;&gt;recur&lt;/span&gt; (rest nums) (conj result num))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          (&lt;span style=&#34;color:#a6e22e&#34;&gt;recur&lt;/span&gt; (rest nums) result)))))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;em&gt;Что не так?&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Громоздкий &lt;code&gt;loop/recur&lt;/code&gt;, хотя в Clojure есть &lt;code&gt;filter&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Избыточность, ручное управление состоянием.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Но &lt;strong&gt;это работает!&lt;/strong&gt; И это главное.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;3-эволюция-кода-как-хаос-превращается-в-порядок&#34;&gt;&lt;strong&gt;3. Эволюция кода: как хаос превращается в порядок&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Теперь, когда есть работающее решение, можно его улучшать.&lt;/p&gt;
+&lt;h4 id=&#34;рефакторинг-1-используем&#34;&gt;&lt;strong&gt;Рефакторинг #1: используем &lt;code&gt;filter&lt;/code&gt;&lt;/strong&gt;&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;filter-even [numbers]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (filter even? numbers))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Уже лучше! Но что, если нужно ещё и удвоить чётные числа?&lt;/p&gt;
+&lt;h4 id=&#34;рефакторинг-2-добавляем&#34;&gt;&lt;strong&gt;Рефакторинг #2: добавляем &lt;code&gt;map&lt;/code&gt;&lt;/strong&gt;&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;process-numbers [numbers]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#a6e22e&#34;&gt;-&amp;gt;&amp;gt;&lt;/span&gt; numbers
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       (filter even?)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       (map &lt;span style=&#34;color:#f92672&#34;&gt;#&lt;/span&gt;(* % &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;))))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Теперь код:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Лаконичный,&lt;/li&gt;
+&lt;li&gt;Читаемый,&lt;/li&gt;
+&lt;li&gt;Расширяемый.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Что изменилось?&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Мы &lt;strong&gt;не планировали&lt;/strong&gt; эту архитектуру заранее.&lt;/li&gt;
+&lt;li&gt;Она &lt;strong&gt;появилась естественно&lt;/strong&gt;, когда потребовалось добавить новую логику.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;4-почему-паттерны-и-solid--это-результат-а-не-старт&#34;&gt;&lt;strong&gt;4. Почему паттерны и SOLID — это результат, а не старт&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Многие думают, что нужно &lt;strong&gt;сначала выучить все принципы&lt;/strong&gt;, а потом писать код.&lt;/p&gt;
+&lt;p&gt;Но на практике:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Ты пишешь &lt;strong&gt;как получается&lt;/strong&gt;,&lt;/li&gt;
+&lt;li&gt;Сталкиваешься с проблемами,&lt;/li&gt;
+&lt;li&gt;И только потом &lt;strong&gt;осознаёшь&lt;/strong&gt;, что твой код — это, например, &lt;em&gt;Стратегия&lt;/em&gt; или &lt;em&gt;Фабрика&lt;/em&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;пример-случайный-паттерн&#34;&gt;&lt;strong&gt;Пример: «случайный» паттерн&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Допустим, у нас есть:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;save-data [data storage-type]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#a6e22e&#34;&gt;cond&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (= storage-type &lt;span style=&#34;color:#e6db74&#34;&gt;:db&lt;/span&gt;)  (&lt;span style=&#34;color:#a6e22e&#34;&gt;save-to-db&lt;/span&gt; data)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (= storage-type &lt;span style=&#34;color:#e6db74&#34;&gt;:file&lt;/span&gt;) (&lt;span style=&#34;color:#a6e22e&#34;&gt;save-to-file&lt;/span&gt; data)))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;какие-проблемы-возникают&#34;&gt;&lt;strong&gt;Какие проблемы возникают?&lt;/strong&gt;&lt;/h3&gt;
+&lt;h4 id=&#34;1-трудно-масштабировать&#34;&gt;&lt;strong&gt;1. Трудно масштабировать&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Допустим, появился новый тип хранилища — &lt;code&gt;:s3&lt;/code&gt;. Теперь нужно:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Лезть в исходную функцию.&lt;/li&gt;
+&lt;li&gt;Добавлять новую ветку &lt;code&gt;cond&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Рисковать сломать существующую логику.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Проблема&lt;/strong&gt;: Нарушение &lt;strong&gt;Open-Closed Principle&lt;/strong&gt; (код открыт для изменений, но закрыт для модификаций).&lt;/p&gt;
+&lt;h4 id=&#34;2-жёсткая-связанность&#34;&gt;&lt;strong&gt;2. Жёсткая связанность&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Функция &lt;code&gt;save-data&lt;/code&gt; явно зависит от:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Конкретных ключей (&lt;code&gt;:db&lt;/code&gt;, &lt;code&gt;:file&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;Конкретных функций (&lt;code&gt;save-to-db&lt;/code&gt;, &lt;code&gt;save-to-file&lt;/code&gt;).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Что если&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Ключи поменяются?&lt;/li&gt;
+&lt;li&gt;Нужно будет добавить валидацию &lt;code&gt;data&lt;/code&gt; перед сохранением?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;сложно-тестировать&#34;&gt;&lt;strong&gt;Сложно тестировать&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Чтобы протестировать &lt;code&gt;save-data&lt;/code&gt;, нужно:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Мокать &lt;code&gt;save-to-db&lt;/code&gt; и &lt;code&gt;save-to-file&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Контролировать все ветки &lt;code&gt;cond&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Позже мы понимаем, что это &lt;strong&gt;Strategy&lt;/strong&gt; — и выносим логику в отдельные функции:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defmulti &lt;/span&gt;save-data (&lt;span style=&#34;color:#66d9ef&#34;&gt;fn &lt;/span&gt;[data storage-type] storage-type))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defmethod &lt;/span&gt;save-data &lt;span style=&#34;color:#e6db74&#34;&gt;:db&lt;/span&gt; [data _] (&lt;span style=&#34;color:#a6e22e&#34;&gt;save-to-db&lt;/span&gt; data))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defmethod &lt;/span&gt;save-data &lt;span style=&#34;color:#e6db74&#34;&gt;:file&lt;/span&gt; [data _] (&lt;span style=&#34;color:#a6e22e&#34;&gt;save-to-file&lt;/span&gt; data))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;как-прийти-к-этому-решению-на-практике&#34;&gt;&lt;strong&gt;Как прийти к этому решению на практике?&lt;/strong&gt;&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Сначала&lt;/strong&gt; пишем «лобовой» код через &lt;code&gt;cond&lt;/code&gt;/&lt;code&gt;case&lt;/code&gt; (это нормально!).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Замечаем&lt;/strong&gt;, что веток становится слишком много.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Рефакторим&lt;/strong&gt;, когда:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;Появляется новый тип хранилища.&lt;/li&gt;
+&lt;li&gt;Начинаются проблемы с тестами.&lt;/li&gt;
+&lt;li&gt;Код становится неподдерживаемым.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Задача&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Есть список пользователей, и нужно:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Отфильтровать только активных (&lt;code&gt;:active? true&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;Оставить их имена.&lt;/li&gt;
+&lt;li&gt;Отсортировать по алфавиту.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;1-первая-мысль-сделаю-через-циклы-потому-что-это-очевидно&#34;&gt;&lt;strong&gt;1. Первая мысль: «Сделаю через циклы!» (потому что это «очевидно»)&lt;/strong&gt;&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;get-active-usernames [users]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[active-users (&lt;span style=&#34;color:#66d9ef&#34;&gt;loop &lt;/span&gt;[users users result []]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                       (&lt;span style=&#34;color:#66d9ef&#34;&gt;if &lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;empty?&lt;/span&gt; users)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                         result
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                         (&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[user (first users)]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                           (&lt;span style=&#34;color:#66d9ef&#34;&gt;if &lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;:active?&lt;/span&gt; user)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                             (&lt;span style=&#34;color:#a6e22e&#34;&gt;recur&lt;/span&gt; (rest users) (conj result user))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                             (&lt;span style=&#34;color:#a6e22e&#34;&gt;recur&lt;/span&gt; (rest users) result)))))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        usernames    (&lt;span style=&#34;color:#66d9ef&#34;&gt;loop &lt;/span&gt;[users active-users result []]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                       (&lt;span style=&#34;color:#66d9ef&#34;&gt;if &lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;empty?&lt;/span&gt; users)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                         result
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                         (&lt;span style=&#34;color:#a6e22e&#34;&gt;recur&lt;/span&gt; (rest users) (conj result (&lt;span style=&#34;color:#e6db74&#34;&gt;:name&lt;/span&gt; (first users))))))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        sorted-names (sort usernames)]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    sorted-names))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Почему так происходит?&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Мозг сразу тянется к &lt;strong&gt;императивному подходу&lt;/strong&gt; («перебрать, проверить, собрать»).&lt;/li&gt;
+&lt;li&gt;Страх перед «неизвестными» функциями (&lt;code&gt;filter&lt;/code&gt;, &lt;code&gt;map&lt;/code&gt;, &lt;code&gt;comp&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;Кажется, что «так надёжнее» (хотя код превращается в лапшу).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;2-момент-осознания-а-ведь-это-можно-упростить&#34;&gt;&lt;strong&gt;2. Момент осознания: «А ведь это можно упростить…»&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;После того как код работает, появляется мысль:&lt;br&gt;
+&lt;em&gt;«Наверное, есть способ лучше»&lt;/em&gt; → гуглим/спрашиваем/экспериментируем.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Рефакторинг: шаг за шагом&lt;/strong&gt;&lt;/p&gt;
+&lt;h4 id=&#34;шаг-1-замена-ручного-фильтра-на&#34;&gt;&lt;strong&gt;Шаг 1. Замена ручного фильтра на &lt;code&gt;filter&lt;/code&gt;&lt;/strong&gt;&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;get-active-usernames [users]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[active-users (filter &lt;span style=&#34;color:#e6db74&#34;&gt;:active?&lt;/span&gt; users)  &lt;span style=&#34;color:#75715e&#34;&gt;; &amp;lt;- магия keyword как предиката!&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        usernames    (map &lt;span style=&#34;color:#e6db74&#34;&gt;:name&lt;/span&gt; active-users)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        sorted-names (sort usernames)]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    sorted-names))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;шаг-2-убираем-промежуточные-переменные&#34;&gt;&lt;strong&gt;Шаг 2. Убираем промежуточные переменные&lt;/strong&gt;&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;get-active-usernames [users]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (sort (map &lt;span style=&#34;color:#e6db74&#34;&gt;:name&lt;/span&gt; (filter &lt;span style=&#34;color:#e6db74&#34;&gt;:active?&lt;/span&gt; users))))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;шаг-3-тред-ласт-макрос-&#34;&gt;&lt;strong&gt;Шаг 3. Тред-ласт макрос (&lt;code&gt;-&amp;gt;&amp;gt;&lt;/code&gt;) для читаемости&lt;/strong&gt;&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;get-active-usernames [users]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#a6e22e&#34;&gt;-&amp;gt;&amp;gt;&lt;/span&gt; users
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       (filter &lt;span style=&#34;color:#e6db74&#34;&gt;:active?&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       (map &lt;span style=&#34;color:#e6db74&#34;&gt;:name&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       (&lt;span style=&#34;color:#a6e22e&#34;&gt;sort&lt;/span&gt;)))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id=&#34;психологический-подтекст&#34;&gt;&lt;strong&gt;Психологический подтекст&lt;/strong&gt;&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Страх «незнания»&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;Сначала кажется, что &lt;code&gt;loop/recur&lt;/code&gt; — это «безопасно», потому что понятно.&lt;/li&gt;
+&lt;li&gt;Функции высшего порядка (&lt;code&gt;filter&lt;/code&gt;, &lt;code&gt;map&lt;/code&gt;) требуют &lt;strong&gt;доверия&lt;/strong&gt; к языку.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;&lt;strong&gt;Эффект «Я это сделал!»&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;После рабочего, но громоздкого кода, приходит &lt;strong&gt;облегчение&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Теперь можно &lt;strong&gt;сфокусироваться на улучшениях&lt;/strong&gt; (а не на панике).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;5&#34;&gt;
+&lt;li&gt;&lt;strong&gt;Архитектура через рефакторинг&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;Изначально ты не задумываешься о «чистоте» — просто решал задачу.&lt;/li&gt;
+&lt;li&gt;Но после рефакторинга код &lt;strong&gt;сам стал похож на паттерн&lt;/strong&gt; (например, &lt;em&gt;Pipeline&lt;/em&gt;).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;индустрия-программирования-создаёт-токсичный-перфекционизм&#34;&gt;&lt;strong&gt;Индустрия программирования создаёт токсичный перфекционизм&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;Курсы, собеседования, статьи&lt;/strong&gt; — все твердят:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;«SOLID, паттерны, чистый код!»&lt;/li&gt;
+&lt;li&gt;«Если не знаешь DRY/KISS/YAGNI — ты не разработчик!»&lt;/li&gt;
+&lt;li&gt;«Архитектура должна быть идеальной с первого коммита».&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Результат?&lt;/strong&gt;&lt;br&gt;
+Новички (и даже мидлы) впадают в &lt;strong&gt;паралич анализа&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;«Вдруг я сделаю не по стандартам?»&lt;/li&gt;
+&lt;li&gt;«А что если мой код назовут говнокодом?»&lt;/li&gt;
+&lt;li&gt;«Я не понимаю, как применить Factory Method здесь… Может, не браться за задачу?»&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Но правда в том, что:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Лучшие практики — это выводы, а не входные данные.&lt;/strong&gt;&lt;br&gt;
+Их нельзя «выучить». Их можно только &lt;strong&gt;прочувствовать через боль&lt;/strong&gt;.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;почему-быстрый-говнокод--это-не-стыдно-а-необходимо&#34;&gt;&lt;strong&gt;Почему «быстрый говнокод» — это не стыдно, а необходимо&lt;/strong&gt;&lt;/h3&gt;
+&lt;h4 id=&#34;пример-из-жизни&#34;&gt;&lt;strong&gt;Пример из жизни&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Представь, что ты учишься играть на гитаре:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Теория:&lt;/strong&gt; «Вот 100 аккордов, вот 20 гамм, играй как Хендрикс».&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Реальность:&lt;/strong&gt; Сначала ты бренчишь &lt;em&gt;«Кузнечика»&lt;/em&gt; на трёх аккордах — и это нормально.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;То же с кодом. &lt;strong&gt;Алгоритм эффективного обучения:&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Накидал прототип&lt;/strong&gt; (пусть криво, но работает).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Понял задачу&lt;/strong&gt; (ага, вот где подводные камни).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Улучшил&lt;/strong&gt; (рефакторинг, паттерны, оптимизация).&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;почему-clojur-разработчикам-тут-повезло&#34;&gt;&lt;strong&gt;Почему Clojur-разработчикам тут повезло&lt;/strong&gt;&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;ФП + иммутабельность&lt;/strong&gt; = меньше последствий от хаотичного прототипирования.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;REPL&lt;/strong&gt; = моментальная проверка гипотез без «перезапуска проекта».&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Парадигма «данные &amp;gt; функции»&lt;/strong&gt; = легко пересобирать логику.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;3-как-бороться-со-страхом-неидеального-кода&#34;&gt;&lt;strong&gt;3. Как бороться со страхом «неидеального кода»&lt;/strong&gt;&lt;/h3&gt;
+&lt;h4 id=&#34;принять-первый-код-почти-всегда-плох&#34;&gt;&lt;strong&gt;Принять: первый код почти всегда плох&lt;/strong&gt;&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Linus Torvalds&lt;/strong&gt; не написал Git «с нуля идеальным».&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Rich Hickey&lt;/strong&gt; до Clojure делал десятки прототипов.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Твой код — &lt;strong&gt;черновик&lt;/strong&gt;, а не высеченный в мраморе памятник.&lt;/p&gt;
+&lt;h4 id=&#34;отделяй-эксперимент-от-продакшна&#34;&gt;&lt;strong&gt;Отделяй «эксперимент» от «продакшна»&lt;/strong&gt;&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Создайте ветку &lt;code&gt;shitcode-prototype&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Пиши в ней &lt;strong&gt;как угодно&lt;/strong&gt;, чтобы проверить гипотезу.&lt;/li&gt;
+&lt;li&gt;Если идея сработала — &lt;strong&gt;тогда&lt;/strong&gt; рефакторь.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;спрашивай-не-как-сделать-идеально-а-как-сделать-сейчас&#34;&gt;&lt;strong&gt;Спрашивай не «Как сделать идеально?», а «Как сделать сейчас?»&lt;/strong&gt;&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Плохо:&lt;/strong&gt; «Я не знаю, как применить Command Pattern здесь…»&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Хорошо:&lt;/strong&gt; «Сначала сделаю через &lt;code&gt;cond&lt;/code&gt;, потом посмотрю, что можно улучшить».&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;4-что-говорят-практики&#34;&gt;&lt;strong&gt;4. Что говорят практики&lt;/strong&gt;&lt;/h3&gt;
+&lt;h4 id=&#34;кен-бек-автор-tdd&#34;&gt;&lt;strong&gt;Кен Бек (автор TDD):&lt;/strong&gt;&lt;/h4&gt;
+&lt;blockquote&gt;
+&lt;p&gt;«Сначала сделайте так, чтобы оно работало. Затем сделайте правильно. И только потом — быстро».&lt;/p&gt;&lt;/blockquote&gt;
+&lt;h4 id=&#34;роберт-мартин-clean-code&#34;&gt;&lt;strong&gt;Роберт Мартин (Clean Code):&lt;/strong&gt;&lt;/h4&gt;
+&lt;blockquote&gt;
+&lt;p&gt;«Единственный способ написать чистый код — сначала написать грязный, а потом почистить его».&lt;/p&gt;&lt;/blockquote&gt;
+&lt;h4 id=&#34;clojure-разработчик-в-дикой-природе&#34;&gt;&lt;strong&gt;Clojure-разработчик в дикой природе:&lt;/strong&gt;&lt;/h4&gt;
+&lt;blockquote&gt;
+&lt;p&gt;«80% моего кода начинаются как &lt;code&gt;(-&amp;gt;&amp;gt; data (map ...) (filter ...) (грубая агрегация))&lt;/code&gt;.&lt;br&gt;
+А потом я удаляю половину и получаю хорошее решение».&lt;/p&gt;&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;вывод-принцип-сначала-практика-потом-теория&#34;&gt;&lt;strong&gt;Вывод: принцип «Сначала практика, потом теория»&lt;/strong&gt;&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Курсы/книги&lt;/strong&gt; учат «как должно быть», но не «как дойти до этого».&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Твой опыт&lt;/strong&gt; важнее чем мнение «экспертов».&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Clojure&lt;/strong&gt; — идеальный язык, чтобы &lt;strong&gt;быстро ваять прототипы&lt;/strong&gt; и &lt;strong&gt;виртуозно рефакторить&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;P.S.:&lt;/strong&gt; Попробуй сегодня:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Намеренно напиши &lt;strong&gt;максимально «плохой» код&lt;/strong&gt; для задачи.&lt;/li&gt;
+&lt;li&gt;Заставь его работать.&lt;/li&gt;
+&lt;li&gt;Затем &lt;strong&gt;улучши&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Почувствуй разницу!&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;Вывод: кайфуй от процесса, а не гонись за идеалом&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Не бойся писать плохой код&lt;/strong&gt; — это этап, а не приговор.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Архитектура рождается в процессе&lt;/strong&gt; — а не в вакууме.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Паттерны — результат опыта&lt;/strong&gt; — а не его условие.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Первый вариант кода — это не «плохо», это &lt;strong&gt;исследование&lt;/strong&gt;.&lt;br&gt;
+Мы не пишем архитектуру — мы её &lt;strong&gt;открываем&lt;/strong&gt; в процессе.&lt;br&gt;
+Сначала — работающий код. Потом — красивый. И только затем — «идеальный» (если он вообще нужен).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Главное — начать.&lt;/strong&gt;&lt;/p&gt;
+</content>
+    </item>
+    
   </channel>
 </rss>

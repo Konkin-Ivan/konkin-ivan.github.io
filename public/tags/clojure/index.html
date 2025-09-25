@@ -3,15 +3,15 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Posts | Мой крутой блог на Hugo</title>
+    <title>Clojure | Мой крутой блог на Hugo</title>
     
     <meta name="description" content="Описание моего блога">
     
     
-    <meta property="og:title" content="Posts">
+    <meta property="og:title" content="Clojure">
     <meta property="og:description" content="Описание моего блога">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="http://localhost:1313/posts/">
+    <meta property="og:url" content="http://localhost:1313/tags/clojure/">
     <meta property="og:image" content="http://localhost:1313/images/og-image.jpg">
     <meta property="og:site_name" content="Мой крутой блог на Hugo">
     <meta name="twitter:card" content="summary_large_image">
@@ -27,7 +27,6 @@
                 <div class="nav-links">
                   <a href="/about">О сайте</a>
                   <a href="/tags">Теги</a>
-                  <a href="/index.xml" title="RSS">📡 RSS</a>
                 </div>
                 <div class="theme-switcher">
                     <button class="theme-btn" onclick="setTheme('catppuccin')">☀️ Latte</button>
@@ -38,26 +37,25 @@
 
         <main>
             
-<article class="post">
+<div class="tags-page">
+    <h1>Все теги</h1>
     
-    <nav class="breadcrumbs">
-    <a href="http://localhost:1313/">🏠 Главная</a>
-    
-    
-</nav>
-
-
-    <header>
-        <h1>Posts</h1>
-        <time>25 September 2025</time>
+    <div class="tags-cloud">
         
+        <a href="http://localhost:1313/tags/clojure/" class="tag" style="font-size: 1.5em;">
+            Clojure (1)
+        </a>
         
-    </header>
-    
-    <div class="content">
+        <a href="http://localhost:1313/tags/linux/" class="tag" style="font-size: 1.5em;">
+            Linux (1)
+        </a>
+        
+        <a href="http://localhost:1313/tags/vim/" class="tag" style="font-size: 1.5em;">
+            Vim (1)
+        </a>
         
     </div>
-</article>
+</div>
 
         </main>
 
@@ -66,18 +64,6 @@
         </footer>
     </div>
 
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "BlogPosting",
-        "headline": "Posts",
-        "description": "",
-          "author": {
-          "@type": "Person",
-          "name": "Иван"
-        }
-      }
-    </script>
     <script>
         function setTheme(theme) {
             document.documentElement.setAttribute('data-theme', theme);
@@ -87,28 +73,6 @@
         
         const savedTheme = localStorage.getItem('theme') || 'dracula';
         setTheme(savedTheme);
-    </script>
-    <div id="reading-progress"></div>
-
-    <script>
-    
-    const progressBar = document.getElementById('reading-progress');
-
-    function updateProgressBar() {
-      const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight - windowHeight;
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    
-      const progress = (scrollTop / documentHeight) * 100;
-      progressBar.style.width = progress + '%';
-    }
-
-    
-    if (document.querySelector('.post')) {
-      progressBar.style.display = 'block';
-      window.addEventListener('scroll', updateProgressBar);
-      window.addEventListener('resize', updateProgressBar);
-    }
     </script>
 </body>
 </html>

@@ -3,9 +3,19 @@ languageCode = 'ru-ru'
 title = 'Мой крутой блог на Hugo'
 theme = 'programmister'   # ananke, harbor, hermit
 
+[taxonomies]
+  tag = "tags"
+  category = "categories"
+
 # Дополнительные настройки для темы
 [params]
   description = "Описание моего блога"
+
+[services.rss]
+  limit = 20
+
+[outputs]
+  home = ["HTML", "RSS"]
 
 [[menu.main]]
 name = "О сайте"

@@ -6,3 +6,6 @@ theme = 'hugo-coder'   # ananke, harbor, hermit
 # Дополнительные настройки для темы
 [params]
   description = "Описание моего блога"
+
+# Добавьте эту строку:
+publishDir = 'docs'

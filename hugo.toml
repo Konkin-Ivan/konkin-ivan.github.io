@@ -8,4 +8,4 @@ theme = 'hugo-coder'   # ananke, harbor, hermit
   description = "Описание моего блога"
 
 # Добавьте эту строку:
-publishDir = 'root'
+publishDir = 'public'

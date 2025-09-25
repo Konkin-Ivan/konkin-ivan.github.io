@@ -1,4 +1,4 @@
-baseURL = 'https://example.org/'
+baseURL = 'https://konkin-ivan.github.io'
 languageCode = 'ru-ru'
 title = 'Мой крутой блог на Hugo'
 theme = 'hugo-coder'   # ananke, harbor, hermit

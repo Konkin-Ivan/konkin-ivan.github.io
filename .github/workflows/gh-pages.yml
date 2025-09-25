@@ -12,7 +12,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Важно для Hugo
+          fetch-depth: 0
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
@@ -23,10 +23,11 @@ jobs:
       - name: Build site
         run: hugo --minify
 
-      - name: Deploy to root
+      - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
-          force_orphan: true  # Очищает ветку gh-pages перед деплоем
-          destination_dir: ./
+          force_orphan: true
+          # УБИРАЕМ destination_dir - он не нужен!
+          # publish_branch: gh-pages  # можно добавить для ясности

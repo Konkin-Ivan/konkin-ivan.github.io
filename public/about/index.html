@@ -21,10 +21,11 @@
 <body>
     <div class="container">
         <header>
-            <nav>
+            <nav class="nav">
                 <a href="http://localhost:1313/"><strong>Mr.Proger</strong></a>
     
-                <div class="nav-links">
+                <button class="nav-toggle" aria-expanded="false" aria-label="Меню">☰</button>
+                <div class="nav-links" id="navLinks">
                   <a href="/about">О сайте</a>
                   <a href="/tags">Теги</a>
                   <a href="/index.xml" title="RSS">📡 RSS</a>
@@ -94,6 +95,8 @@ document.addEventListener('DOMContentLoaded', function() {
 <p><strong>Код — в продакшене, скобки — в сердце.</strong></p>
 <p>Канал ТГ: <a href="https://t.me/konkin_info">@konkin86</a></p>
 
+        <span class="views">👁‍🗨 0</span>
+        <span class="likes">💛 0</span>
     </div>
 </article>
 
@@ -149,5 +152,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     </script>
     <script src="http://localhost:1313/js/analytics.js"></script>
+    <script src="http://localhost:1313/js/toogle_menu.js"></script>
 </body>
 </html>

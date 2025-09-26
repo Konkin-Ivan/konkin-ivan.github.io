@@ -21,10 +21,11 @@
 <body>
     <div class="container">
         <header>
-            <nav>
+            <nav class="nav">
                 <a href="{{ .Site.BaseURL }}"><strong>{{ .Site.Title }}</strong></a>
     
-                <div class="nav-links">
+                <button class="nav-toggle" aria-expanded="false" aria-label="Меню">☰</button>
+                <div class="nav-links" id="navLinks">
                   <a href="{{ "about" | relURL }}">О сайте</a>
                   <a href="{{ "tags" | relURL }}">Теги</a>
                   <a href="{{ "index.xml" | relURL }}" title="RSS">📡 RSS</a>
@@ -90,5 +91,6 @@
     }
     </script>
     <script src="{{ "js/analytics.js" | absURL }}"></script>
+    <script src="{{ "js/toogle_menu.js" | absURL }}"></script>
 </body>
 </html>

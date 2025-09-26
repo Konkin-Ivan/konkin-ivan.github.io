@@ -1,0 +1,9 @@
+<div class="user-badge">
+  <div class="user-badge__avatar">
+    <img src="{{ .Get "avatar" | default "/images/avatar.jpg" }}" alt="Аватар {{ .Get "name" }}">
+  </div>
+  <div class="user-badge__info">
+    <div class="user-badge__name">{{ .Get "name" }}</div>
+    <a href="{{ .Get "link" }}" class="user-badge__link">{{ .Get "username" }}</a>
+  </div>
+</div>

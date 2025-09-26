@@ -9,7 +9,7 @@
     
     
     
-    <lastBuildDate>Fri, 26 Sep 2025 18:57:29 +0300</lastBuildDate>
+    <lastBuildDate>Fri, 26 Sep 2025 22:04:55 +0300</lastBuildDate>
     <atom:link href="http://localhost:1313/tags/%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B0_taljure/" rel="self" type="application/rss+xml" />
     
     <item>
@@ -18,10 +18,10 @@
       <pubDate>Thu, 21 Aug 2025 00:00:00 +0000</pubDate>
       <author></author>
       <guid>http://localhost:1313/posts/taljure-0/</guid>
-      <description>Этим и начинаю цикл статей, в котором с чистого листа буду разрабатывать open-source библиотеку для алгоритмического трейдинга. Цель — создать инструмент, который будет максимально кложур-френдли, прозрачным в работе и полезным как для изучения основ алготрейдинга, так и для использования в более серьезных проектах.</description>
+      <description>Этим и начинаю цикл статей, в котором с чистого листа буду разрабатывать open-source библиотеку для алгоритмического трейдинга.</description>
       <content type="html">&lt;h1 id=&#34;библиотека-для-трейдинга-начало&#34;&gt;Библиотека для трейдинга: начало&lt;/h1&gt;
 &lt;h2 id=&#34;запуск-open-source-проекта-clojure-библиотека-для-алготрейдинга-с-нуля&#34;&gt;Запуск Open-Source проекта: Clojure библиотека для алготрейдинга с нуля&lt;/h2&gt;
-&lt;p&gt;&lt;img src=&#34;https://img3.teletype.in/files/e4/17/e417a861-70f6-488d-9434-953b846161ad.png&#34; alt=&#34;Запуск open-source taljure&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/posts/taljure/taljure-0.png&#34; alt=&#34;Запуск open-source taljure&#34;&gt;&lt;/p&gt;
 &lt;p&gt;Запуск open-source taljure&lt;/p&gt;
 &lt;p&gt;Этим и начинаю цикл статей, в котором с чистого листа буду разрабатывать open-source библиотеку для алгоритмического трейдинга. Цель — создать инструмент, который будет максимально кложур-френдли, прозрачным в работе и полезным как для изучения основ алготрейдинга, так и для использования в более серьезных проектах.&lt;/p&gt;
 &lt;h3 id=&#34;зачем-это-нужно&#34;&gt;Зачем это нужно?&lt;/h3&gt;

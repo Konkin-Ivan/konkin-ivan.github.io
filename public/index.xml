@@ -9,7 +9,7 @@
     
     
     
-    <lastBuildDate>Fri, 26 Sep 2025 18:57:29 +0300</lastBuildDate>
+    <lastBuildDate>Fri, 26 Sep 2025 22:30:17 +0300</lastBuildDate>
     <atom:link href="http://localhost:1313/" rel="self" type="application/rss+xml" />
     
     <item>
@@ -43,8 +43,17 @@
 ✅ &lt;strong&gt;Разбираться в Clojure&lt;/strong&gt; без скучных мануалов.&lt;br&gt;
 ✅ &lt;strong&gt;Настраивать среду&lt;/strong&gt; как профессионал.&lt;br&gt;
 ✅ &lt;strong&gt;Понимать ФП&lt;/strong&gt; на реальных кейсах, а не на абстрактных примерах.&lt;/p&gt;
+&lt;div class=&#34;user-badge&#34;&gt;
+  &lt;div class=&#34;user-badge__avatar&#34;&gt;
+    &lt;img src=&#34;http://localhost:1313/images/logo.png&#34; alt=&#34;Аватар Иван Конкин&#34;&gt;
+  &lt;/div&gt;
+  &lt;div class=&#34;user-badge__info&#34;&gt;
+    &lt;div class=&#34;user-badge__name&#34;&gt;Иван Конкин&lt;/div&gt;
+    &lt;a href=&#34;https://t.me/konkin86&#34; class=&#34;user-badge__link&#34;&gt;@konkin86&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
 &lt;p&gt;&lt;strong&gt;Код — в продакшене, скобки — в сердце.&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Канал ТГ: &lt;a href=&#34;https://t.me/konkin_info&#34;&gt;@konkin86&lt;/a&gt;&lt;/p&gt;
 </content>
     </item>
     

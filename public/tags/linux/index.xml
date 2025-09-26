@@ -9,7 +9,7 @@
     
     
     
-    <lastBuildDate>Fri, 26 Sep 2025 18:57:29 +0300</lastBuildDate>
+    <lastBuildDate>Fri, 26 Sep 2025 22:04:55 +0300</lastBuildDate>
     <atom:link href="http://localhost:1313/tags/linux/" rel="self" type="application/rss+xml" />
     
     <item>
@@ -70,8 +70,7 @@
 &lt;h3 id=&#34;в-других-дистрах-это-есть-по-умолчанию&#34;&gt;&lt;strong&gt;«В других дистрах это есть по умолчанию!»&lt;/strong&gt;&lt;/h3&gt;
 &lt;p&gt;То, что в &lt;strong&gt;Arch&lt;/strong&gt; или &lt;strong&gt;Fedora&lt;/strong&gt; ставится одной командой (&lt;code&gt;pacman -S hyprland&lt;/code&gt;), в РедОС превратилось в &lt;strong&gt;многочасовой квест&lt;/strong&gt;. Причём половина зависимостей либо &lt;strong&gt;устарела&lt;/strong&gt;, либо &lt;strong&gt;отсутствует&lt;/strong&gt; даже в сторонних репозиториях.&lt;/p&gt;
 &lt;h2 id=&#34;редос-для-кодинга&#34;&gt;&lt;strong&gt;РедОС для кодинга&lt;/strong&gt;&lt;/h2&gt;
-&lt;p&gt;&lt;img src=&#34;https://img4.teletype.in/files/b0/0e/b00e8274-0773-440d-8f59-40c96cf433a1.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;p&gt;РедОС + Sway&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/posts/redos/redos.png&#34; alt=&#34;РедОС + Sway&#34;&gt;&lt;/p&gt;
 &lt;p&gt;После нескольких часов борьбы с зависимостями я понял: если хочешь modern Wayland-окружение в РедОС — используй sway. Вот как выглядел мой путь к рабочему окружению:&lt;/p&gt;
 &lt;h3 id=&#34;спасительный-sway-минимально-рабочий-вариант&#34;&gt;&lt;strong&gt;Спасительный Sway (минимально рабочий вариант)&lt;/strong&gt;&lt;/h3&gt;
 &lt;ol&gt;

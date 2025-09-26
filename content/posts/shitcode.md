@@ -3,6 +3,9 @@ date = '2025-08-06'
 draft = false
 title = 'Код как живой организм: от говнокода к архитектуре'
 description = 'Когда я только начинал программировать, мне казалось, что хороший код должен выглядеть идеально с первой строчки:'
+summary = "Отдельный анонс для карточки на главной"  # Новое поле!
+image = "https://images.steamusercontent.com/ugc/44578298336738380/5DD5433B14F5E40D8518D973A0751D0DB4A55934/?imw=512&amp;imh=278&amp;ima=fit&amp;impolicy=Letterbox&amp;imcolor=%23000000&amp;letterbox=true"  # Обложка поста
+image_alt = "Описание картинки"
 tags = ["clojure", "vim"]
 +++
 

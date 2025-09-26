@@ -3,7 +3,7 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clojure | Мой крутой блог на Hugo</title>
+    <title>Clojure | Mr.Proger</title>
     
     <meta name="description" content="Описание моего блога">
     
@@ -13,7 +13,7 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="http://localhost:1313/tags/clojure/">
     <meta property="og:image" content="http://localhost:1313/images/og-image.jpg">
-    <meta property="og:site_name" content="Мой крутой блог на Hugo">
+    <meta property="og:site_name" content="Mr.Proger">
     <meta name="twitter:card" content="summary_large_image">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="http://localhost:1313/css/style.css">
@@ -22,15 +22,16 @@
     <div class="container">
         <header>
             <nav>
-                <a href="http://localhost:1313/"><strong>Мой крутой блог на Hugo</strong></a>
+                <a href="http://localhost:1313/"><strong>Mr.Proger</strong></a>
     
                 <div class="nav-links">
                   <a href="/about">О сайте</a>
-                  <a href="/tags">Теги</a> 
+                  <a href="/tags">Теги</a>
+                  <a href="/index.xml" title="RSS">📡 RSS</a>
                 </div>
                 <div class="theme-switcher">
-                    <button class="theme-btn" onclick="setTheme('catppuccin')">☀️ Latte</button>
-                    <button class="theme-btn" onclick="setTheme('dracula')">🌙 Dracula</button>
+                    <button class="theme-btn" onclick="setTheme('catppuccin')">☀️</button>
+                    <button class="theme-btn" onclick="setTheme('dracula')">🌙</button>
                 </div>
             </nav>
         </header>
@@ -60,7 +61,7 @@
         </main>
 
         <footer>
-            <p>© 2025 Мой крутой блог на Hugo • Powered by Konkin <a href="/index.xml" title="RSS">📡 RSS</a></p>
+            <p>© 2025 Mr.Proger • Powered by Konkin</p>
         </footer>
     </div>
 
@@ -108,5 +109,6 @@
       window.addEventListener('resize', updateProgressBar);
     }
     </script>
+    <script src="http://localhost:1313/js/analytics.js"></script>
 </body>
 </html>

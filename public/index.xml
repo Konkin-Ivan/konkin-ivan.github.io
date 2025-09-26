@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Мой крутой блог на Hugo</title>
+    <title>Mr.Proger</title>
     <link>http://localhost:1313/</link>
     <description>Описание моего блога</description>
     <generator>Hugo</generator>
@@ -9,7 +9,7 @@
     
     
     
-    <lastBuildDate>Thu, 25 Sep 2025 21:58:56 +0300</lastBuildDate>
+    <lastBuildDate>Fri, 26 Sep 2025 11:56:57 +0300</lastBuildDate>
     <atom:link href="http://localhost:1313/" rel="self" type="application/rss+xml" />
     
     <item>
@@ -25,12 +25,11 @@
     <item>
       <title>О сайте</title>
       <link>http://localhost:1313/about/</link>
-      <pubDate>Sun, 06 Jul 2025 18:56:26 +0300</pubDate>
+      <pubDate>Sun, 06 Jul 2025 00:00:00 +0000</pubDate>
       <author></author>
       <guid>http://localhost:1313/about/</guid>
       <description></description>
-      <content type="html">&lt;h2 id=&#34;о-чем-я-пишу&#34;&gt;О чем я пишу&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;Привет!&lt;/strong&gt; Это блог практикующего разработчика, который &lt;strong&gt;фанатеет от Clojure&lt;/strong&gt; и функционального программирования. Здесь нет сухой теории из учебников - только &lt;strong&gt;прикладные знания&lt;/strong&gt;, хитрости и личный опыт.&lt;/p&gt;
+      <content type="html">&lt;p&gt;&lt;strong&gt;Привет!&lt;/strong&gt; Это блог практикующего разработчика, который &lt;strong&gt;фанатеет от Clojure&lt;/strong&gt; и функционального программирования. Здесь нет сухой теории из учебников - только &lt;strong&gt;прикладные знания&lt;/strong&gt;, хитрости и личный опыт.&lt;/p&gt;
 &lt;p&gt;Я пишу о:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Clojure&lt;/strong&gt; — как писать лаконичный и мощный код, избегая подводных камней.&lt;/li&gt;
@@ -45,6 +44,7 @@
 ✅ &lt;strong&gt;Настраивать среду&lt;/strong&gt; как профессионал.&lt;br&gt;
 ✅ &lt;strong&gt;Понимать ФП&lt;/strong&gt; на реальных кейсах, а не на абстрактных примерах.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Код — в продакшене, скобки — в сердце.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Канал ТГ: &lt;a href=&#34;https://t.me/konkin_info&#34;&gt;@konkin86&lt;/a&gt;&lt;/p&gt;
 </content>
     </item>
     

@@ -1,7 +1,6 @@
 {{ define "main" }}
-<article class="post">
-    <header>
-        {{ partial "breadcrumbs.html" . }}
+<article class="post" data-post-id="{{ .File.UniqueID }}">
+    <header> 
         <h1>{{ .Title }}</h1>
         <time>{{ .Date.Format "2 January 2006" }}</time>
         <div class="post-tags">
@@ -31,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+        {{ partial "breadcrumbs.html" . }}
         {{ .Content }}
     </div>
 </article>

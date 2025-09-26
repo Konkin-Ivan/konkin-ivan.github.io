@@ -1,6 +1,7 @@
 baseURL = 'https://konkin-ivan.github.io'
 languageCode = 'ru-ru'
-title = 'Мой крутой блог на Hugo'
+defaultContentLanguage = "ru"
+title = 'Mr.Proger'
 theme = 'programmister'   # ananke, harbor, hermit
 
 [taxonomies]

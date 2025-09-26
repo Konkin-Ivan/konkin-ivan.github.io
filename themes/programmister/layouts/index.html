@@ -1,29 +1,42 @@
 {{ define "main" }}
 <section class="hero">
     <h1>Привет, я Иван</h1>
-    <p>Разработчик • Технолог • Блоггер</p>
+    <p>Это блог практикующего разработчика, который фанатеет от Clojure и функционального программирования. Здесь нет сухой теории из учебников.</p>
 </section>
 
-<section class="recent-posts">
-    <h2>Последние посты</h2>
-    <div class="posts-grid">
-        {{ range first 5 (where .Site.RegularPages "Type" "posts") }}
-        <article class="post-card">
-            <h3><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
-            <div class="post-meta">
-                <time>{{ .Date.Format "2 January 2006" }}</time>
-            </div>
-            <div class="post-summary">
-                <div class="post-tags">
-                  {{ range .Params.tags }}
-                  <a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}" class="tag">#{{ . }}</a>
-                  {{ end }}
-                </div>
-                {{ .Summary }}
-            </div>
-            <a href="{{ .Permalink }}" class="read-more">Читать →</a>
-        </article>
+<section class="posts-grid">
+    {{ range where .Site.RegularPages "Type" "posts" }}
+    <article class="post-card" data-post-id="{{ .File.UniqueID }}"> 
+        
+        <div class="post-content">
+            <h2><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
+            <!-- Обложка поста -->
+        {{ if .Params.image }}
+        <div class="post-image">
+            <img src="{{ .Params.image | absURL }}" alt="{{ .Params.image_alt | default .Title }}" loading="lazy">
+        </div>
         {{ end }}
-    </div>
+            <div class="post-meta">
+                <time>{{ .Date.Format "2006.01.02" }}</time>
+                <span class="views">👁‍🗨 0</span>
+                <span class="likes">💛 0</span>
+            </div>
+            
+            <!-- Кастомный анонс или авто-сниппет -->
+            <div class="post-summary">
+                {{ .Params.summary | default .Summary }}
+            </div>
+            
+            <!-- Теги -->
+            {{ if .Params.tags }}
+            <div class="post-tags">
+                {{ range .Params.tags }}
+                <a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}" class="tag">#{{ . }}</a>
+                {{ end }}
+            </div>
+            {{ end }}
+        </div>
+    </article>
+    {{ end }}
 </section>
 {{ end }}

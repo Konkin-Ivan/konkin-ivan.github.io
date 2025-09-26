@@ -2,8 +2,10 @@
 [data-theme="catppuccin"] {
   --bg: #eff1f5;
   --text: #4c4f69;
+  --code-text: #acaeb2;
   --accent: #1e66f5;
-  --card: #ffffff;
+  --card: #212631;
+  --post-card: #29154529;
   --border: #ccd0da;
   --meta: #6c6f85;
 }
@@ -12,24 +14,36 @@
 [data-theme="dracula"] {
   --bg: #282a36;
   --text: #f8f8f2;
+  --code-text: #ffffff;
   --accent: #bd93f9;
   --card: #44475a;
+  --post-card: #44475a;
   --border: #6272a4;
   --meta: #f1fa8c;
 }
 
 /* Общие стили */
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
+}
+
+img {
+    width: 100%;
+}
+
+a {
+  color: dodgerblue;
+}
+
+a:hover {
+  color: darkgray;
 }
 
 body {
   background: var(--bg);
   color: var(--text);
   font-family: 'JetBrains Mono', monospace;
-  line-height: 1.6;
+  line-height: 2.0;
   transition: all 0.3s ease;
   min-height: 100vh;
 }
@@ -62,7 +76,7 @@ nav {
   border: 1px solid var(--border);
   color: var(--text);
   padding: 0.5rem;
-  border-radius: 4px;
+  border-radius: 30px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -97,7 +111,7 @@ nav {
 }
 
 .post-card {
-  background: var(--card);
+  background: var(--post-card);
   padding: 2rem;
   border-radius: 8px;
   border-left: 4px solid var(--accent);
@@ -108,17 +122,21 @@ nav {
   transform: translateY(-2px);
 }
 
-.post-card h3 {
+.post-card h2 {
   margin-bottom: 0.5rem;
 }
 
-.post-card h3 a {
+.post-card h2 a {
   color: var(--text);
   text-decoration: none;
 }
 
-.post-card h3 a:hover {
+.post-card h2 a:hover {
   color: var(--accent);
+}
+
+.post-card img {
+  border-radius: 4px;
 }
 
 .post-meta {
@@ -165,6 +183,7 @@ code {
   border-radius: 4px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.9em;
+  color: var(--code-text);
 }
 
 pre code {
@@ -341,6 +360,7 @@ pre::-webkit-scrollbar-thumb:hover {
     margin-bottom: 2rem;
     padding: 0.5rem 0;
     color: var(--meta);
+    display: block;
 }
 
 .breadcrumbs a {
@@ -384,4 +404,35 @@ pre::-webkit-scrollbar-thumb:hover {
 /* Для Catppuccin темы */
 [data-theme="catppuccin"] #reading-progress {
     background: #1e66f5;
+}
+
+.likes {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.likes:hover {
+    transform: scale(1.1);
+}
+
+.likes.liked {
+    color: #ff4757 !important;
+    font-weight: bold;
+}
+
+.likes.liked .count {
+    color: #ff4757;
+}
+
+/* Анимация лайка */
+@keyframes heartBeat {
+    0% { transform: scale(1); }
+    25% { transform: scale(1.3); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.likes:active {
+    animation: heartBeat 0.6s ease;
 }

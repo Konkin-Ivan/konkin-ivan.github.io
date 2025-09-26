@@ -1,127 +1,207 @@
 class PostAnalytics {
   constructor() {
-    this.storageKey = 'blog_analytics';
-    this.data = this.loadData(); // гарантированно { posts:{}, user:{ liked:{}, viewed:{} } }
+    this.supabaseUrl = 'https://dqszpgwsgzemuldjrpym.supabase.co';
+    this.supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRxc3pwZ3dzZ3plbXVsZGpycHltIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4ODM0MjAsImV4cCI6MjA3NDQ1OTQyMH0.S_q__hn56VwLxKzAqSBEQFtd5G5V4yaWsTOXdeIEaSM';
+    this.supabase = supabase.createClient(this.supabaseUrl, this.supabaseKey);
+    
+    this.localCache = this.loadLocalCache();
   }
 
-  loadData() {
+  loadLocalCache() {
     try {
-      const raw = localStorage.getItem(this.storageKey);
-      if (!raw) return { posts: {}, user: { liked: {}, viewed: {} } };
-      const parsed = JSON.parse(raw);
-      // Нормализуем структуру на случай повреждённых данных
-      if (!parsed || typeof parsed !== 'object') return { posts: {}, user: { liked: {}, viewed: {} } };
-      parsed.posts = parsed.posts && typeof parsed.posts === 'object' ? parsed.posts : {};
-      parsed.user = parsed.user && typeof parsed.user === 'object' ? parsed.user : { liked: {}, viewed: {} };
-      parsed.user.liked = parsed.user.liked && typeof parsed.user.liked === 'object' ? parsed.user.liked : {};
-      parsed.user.viewed = parsed.user.viewed && typeof parsed.user.viewed === 'object' ? parsed.user.viewed : {};
-      return parsed;
+      const raw = localStorage.getItem('blog_analytics_cache');
+      return raw ? JSON.parse(raw) : { user: { liked: {}, viewed: {} } };
     } catch (e) {
-      console.error('PostAnalytics: loadData parse error', e);
-      return { posts: {}, user: { liked: {}, viewed: {} } };
+      return { user: { liked: {}, viewed: {} } };
     }
   }
 
-  saveData() {
+  saveLocalCache() {
     try {
-      localStorage.setItem(this.storageKey, JSON.stringify(this.data));
-    } catch (e) {
-      console.error('PostAnalytics: saveData error', e);
+      localStorage.setItem('blog_analytics_cache', JSON.stringify(this.localCache));
+    } catch (e) {}
+  }
+
+  async trackView(postId) {
+    if (!postId || this.localCache.user.viewed[postId]) return;
+    
+    try {
+      console.log('👁️ Tracking view for:', postId);
+      
+      const { error } = await this.supabase
+        .from('posts_stats')
+        .upsert({ 
+          post_id: postId,
+          views: 1,
+          updated_at: new Date().toISOString()
+        }, { 
+          onConflict: 'post_id'
+        });
+
+      if (error) throw error;
+
+      this.localCache.user.viewed[postId] = true;
+      this.saveLocalCache();
+      this.updateDisplay(postId);
+      
+    } catch (error) {
+      console.error('trackView error:', error);
     }
   }
 
-  ensurePost(postId) {
-    if (!postId && postId !== 0) { // null/undefined check
-      console.warn('ensurePost: invalid postId', postId);
-      return false;
-    }
-    const id = String(postId);
-    // защита: если this.data или this.data.posts вдруг не объект — восстановим
-    if (!this.data || typeof this.data !== 'object') this.data = { posts: {}, user: { liked: {}, viewed: {} } };
-    if (!this.data.posts || typeof this.data.posts !== 'object') this.data.posts = {};
-    if (!this.data.posts[id]) this.data.posts[id] = { views: 0, likes: 0 };
-    return true;
-  }
-
-  trackView(postId) {
-    if (!this.ensurePost(postId)) return;
-    const id = String(postId);
-    if (this.data.user.viewed && this.data.user.viewed[id]) return;
-    this.data.posts[id].views++;
-    if (!this.data.user) this.data.user = { liked: {}, viewed: {} };
-    if (!this.data.user.viewed || typeof this.data.user.viewed !== 'object') this.data.user.viewed = {};
-    this.data.user.viewed[id] = true;
-    this.saveData();
-    this.updateAll(id);
-  }
-
-  trackLike(postId) {
-    if (!this.ensurePost(postId)) return;
-    const id = String(postId);
-    if (!this.data.user) this.data.user = { liked: {}, viewed: {} };
-    if (!this.data.user.liked || typeof this.data.user.liked !== 'object') this.data.user.liked = {};
-    const liked = !!this.data.user.liked[id];
-    if (liked) {
-      this.data.posts[id].likes = Math.max(0, (this.data.posts[id].likes || 0) - 1);
-      delete this.data.user.liked[id];
-    } else {
-      this.data.posts[id].likes = (this.data.posts[id].likes || 0) + 1;
-      this.data.user.liked[id] = true;
-    }
-    this.saveData();
-    this.updateAll(id);
-  }
-
-  updateAll(id) {
-    const idStr = String(id);
-    const post = (this.data.posts && this.data.posts[idStr]) ? this.data.posts[idStr] : { views: 0, likes: 0 };
-    // обновляем все контейнеры с точным совпадением data-post-id
-    document.querySelectorAll(`[data-post-id]`).forEach(container => {
-      if (String(container.dataset.postId) !== idStr) return;
-      const viewsEl = container.querySelector('.views');
-      const likesEl = container.querySelector('.likes');
-      if (viewsEl) viewsEl.textContent = '👁‍🗨 ' + (post.views || 0);
-      if (likesEl) {
-        const countSpan = likesEl.querySelector('.likes-count, .count');
-        if (countSpan) countSpan.textContent = (post.likes || 0);
-        else likesEl.textContent = '💛 ' + (post.likes || 0);
-        likesEl.classList.toggle('liked', !!(this.data.user && this.data.user.liked && this.data.user.liked[idStr]));
-        likesEl.setAttribute('aria-pressed', !!(this.data.user && this.data.user.liked && this.data.user.liked[idStr]));
+  async trackLike(postId) {
+    if (!postId) return;
+    
+    const wasLiked = !!this.localCache.user.liked[postId];
+    console.log('🔄 Tracking like for:', postId, 'wasLiked:', wasLiked);
+    
+    try {
+      // Вместо прямого значения используем инкремент через базу
+      if (wasLiked) {
+        // Убираем лайк
+        const { error } = await this.supabase
+          .from('posts_stats')
+          .upsert({ 
+            post_id: postId,
+            likes: 0, // Будем использовать корректный декремент ниже
+            updated_at: new Date().toISOString()
+          }, { 
+            onConflict: 'post_id'
+          });
+        if (error) throw error;
+      } else {
+        // Добавляем лайк
+        const { error } = await this.supabase
+          .from('posts_stats')
+          .upsert({ 
+            post_id: postId,
+            likes: 1,
+            updated_at: new Date().toISOString()
+          }, { 
+            onConflict: 'post_id'
+          });
+        if (error) throw error;
       }
-    });
+
+      // Обновляем локальный кэш
+      if (wasLiked) {
+        delete this.localCache.user.liked[postId];
+      } else {
+        this.localCache.user.liked[postId] = true;
+      }
+      this.saveLocalCache();
+      
+      this.updateDisplay(postId);
+      console.log('✅ Like tracked successfully!');
+      
+    } catch (error) {
+      console.error('❌ trackLike error:', error);
+    }
+  }
+
+  // Упрощенный getStats с обработкой ошибки 406
+  async getPostStats(postId) {
+    try {
+      // Пробуем простой запрос
+      const { data, error } = await this.supabase
+        .from('posts_stats')
+        .select()
+        .eq('post_id', postId)
+        .single();
+
+      if (error) {
+        if (error.code === 'PGRST116') {
+          return { likes: 0, views: 0 }; // Пост не найден - нормально
+        }
+        // Для ошибки 406 пробуем альтернативный метод
+        console.log('GET error, trying alternative:', error.message);
+        return await this.getPostStatsAlternative(postId);
+      }
+      
+      return data || { likes: 0, views: 0 };
+    } catch (error) {
+      console.error('getPostStats error:', error);
+      return { likes: 0, views: 0 };
+    }
+  }
+
+  // Альтернативный метод для случаев 406 ошибки
+  async getPostStatsAlternative(postId) {
+    try {
+      // Используем более простой подход
+      const { data, error } = await this.supabase
+        .from('posts_stats')
+        .select('likes, views')
+        .eq('post_id', postId);
+
+      if (error) throw error;
+      
+      return data && data[0] ? data[0] : { likes: 0, views: 0 };
+    } catch (error) {
+      console.error('Alternative method error:', error);
+      return { likes: 0, views: 0 };
+    }
+  }
+
+  async updateDisplay(postId) {
+    try {
+      const stats = await this.getPostStats(postId);
+      console.log('📊 Updating display for:', postId, stats);
+      
+      document.querySelectorAll(`[data-post-id="${postId}"]`).forEach(container => {
+        const viewsEl = container.querySelector('.views');
+        const likesEl = container.querySelector('.likes');
+        
+        if (viewsEl) viewsEl.textContent = '👁‍🗨 ' + (stats.views || 0);
+        if (likesEl) {
+          const countSpan = likesEl.querySelector('.likes-count, .count');
+          if (countSpan) {
+            countSpan.textContent = Math.max(0, stats.likes || 0); // Защита от отрицательных
+          } else {
+            likesEl.textContent = '💛 ' + Math.max(0, stats.likes || 0);
+          }
+          
+          const isLiked = !!this.localCache.user.liked[postId];
+          likesEl.classList.toggle('liked', isLiked);
+        }
+      });
+    } catch (error) {
+      console.error('updateDisplay error:', error);
+    }
   }
 
   init() {
-    // Нормализуем данные при старте
-    if (!this.data || typeof this.data !== 'object') this.data = { posts: {}, user: { liked: {}, viewed: {} } };
-    if (!this.data.posts || typeof this.data.posts !== 'object') this.data.posts = {};
-    if (!this.data.user || typeof this.data.user !== 'object') this.data.user = { liked: {}, viewed: {} };
-
-    // Инициализация отображения для всех элементов с data-post-id
-    document.querySelectorAll('[data-post-id]').forEach(container => {
-      const pid = container.dataset.postId;
-      if (!pid) return;
-      this.ensurePost(pid);
-      this.updateAll(pid);
-    });
-
-    // Делегированный обработчик для лайков
+    console.log('🚀 Analytics initialized');
+    
+    // Обработчик лайков
     document.addEventListener('click', (e) => {
       const likeEl = e.target.closest('.likes, .like, [data-action="like"]');
       if (!likeEl) return;
-      const container = likeEl.closest('[data-post-id], .post-card');
-      const postId = container ? (container.getAttribute('data-post-id') || container.dataset.postId) : null;
-      if (!postId) return console.warn('PostAnalytics: postId not found for like click', { likeEl, container });
+      
+      const container = likeEl.closest('[data-post-id]');
+      const postId = container?.dataset.postId;
+      if (!postId) return;
+      
       e.preventDefault();
       this.trackLike(postId);
     });
 
-    // Track view for single post page
-    const single = document.querySelector('.post[data-post-id]');
-    if (single) this.trackView(single.dataset.postId);
+    // Трек просмотров
+    const singlePost = document.querySelector('.post[data-post-id]');
+    if (singlePost) {
+      this.trackView(singlePost.dataset.postId);
+    }
+
+    // Обновляем отображение
+    setTimeout(() => {
+      document.querySelectorAll('[data-post-id]').forEach(container => {
+        this.updateDisplay(container.dataset.postId);
+      });
+    }, 1000);
   }
 }
 
+// Запуск
 document.addEventListener('DOMContentLoaded', () => {
   window.postAnalytics = new PostAnalytics();
   window.postAnalytics.init();

@@ -21,10 +21,11 @@
 <body>
     <div class="container">
         <header>
-            <nav>
+            <nav class="nav">
                 <a href="http://localhost:1313/"><strong>Mr.Proger</strong></a>
     
-                <div class="nav-links">
+                <button class="nav-toggle" aria-expanded="false" aria-label="Меню">☰</button>
+                <div class="nav-links" id="navLinks">
                   <a href="/about">О сайте</a>
                   <a href="/tags">Теги</a>
                   <a href="/index.xml" title="RSS">📡 RSS</a>
@@ -110,5 +111,7 @@
     }
     </script>
     <script src="http://localhost:1313/js/analytics.js"></script>
+    <script src="http://localhost:1313/js/toogle_menu.js"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </body>
 </html>

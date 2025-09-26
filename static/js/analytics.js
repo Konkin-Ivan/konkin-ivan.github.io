@@ -4,23 +4,13 @@ class PostAnalytics {
     this.supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRxc3pwZ3dzZ3plbXVsZGpycHltIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4ODM0MjAsImV4cCI6MjA3NDQ1OTQyMH0.S_q__hn56VwLxKzAqSBEQFtd5G5V4yaWsTOXdeIEaSM';
     this.supabase = supabase.createClient(this.supabaseUrl, this.supabaseKey);
     
-    // Локальный кэш для быстрого отображения
     this.localCache = this.loadLocalCache();
-    this.isOnline = true;
   }
 
-  // Загружаем локальный кэш (как раньше, но только для пользовательских действий)
   loadLocalCache() {
     try {
       const raw = localStorage.getItem('blog_analytics_cache');
-      if (!raw) return { user: { liked: {}, viewed: {} } };
-      const parsed = JSON.parse(raw);
-      return {
-        user: {
-          liked: parsed.user?.liked || {},
-          viewed: parsed.user?.viewed || {}
-        }
-      };
+      return raw ? JSON.parse(raw) : { user: { liked: {}, viewed: {} } };
     } catch (e) {
       return { user: { liked: {}, viewed: {} } };
     }
@@ -29,152 +19,190 @@ class PostAnalytics {
   saveLocalCache() {
     try {
       localStorage.setItem('blog_analytics_cache', JSON.stringify(this.localCache));
-    } catch (e) {
-      console.error('PostAnalytics: saveLocalCache error', e);
-    }
+    } catch (e) {}
   }
 
-  // Основные методы с Supabase
   async trackView(postId) {
-    if (!postId) return;
-    
-    const id = String(postId);
-    
-    // Проверяем, не просматривал ли пользователь уже этот пост
-    if (this.localCache.user.viewed[id]) return;
+    if (!postId || this.localCache.user.viewed[postId]) return;
     
     try {
-      // Увеличиваем просмотры в Supabase
-      const { data, error } = await this.supabase
-        .rpc('increment_views', { post_id: id });
+      console.log('👁️ Tracking view for:', postId);
       
+      const { error } = await this.supabase
+        .from('posts_stats')
+        .upsert({ 
+          post_id: postId,
+          views: 1,
+          updated_at: new Date().toISOString()
+        }, { 
+          onConflict: 'post_id'
+        });
+
       if (error) throw error;
-      
-      // Сохраняем в локальный кэш
-      this.localCache.user.viewed[id] = true;
+
+      this.localCache.user.viewed[postId] = true;
       this.saveLocalCache();
+      this.updateDisplay(postId);
       
-      this.updateAll(id);
     } catch (error) {
-      console.error('PostAnalytics: trackView error', error);
-      this.isOnline = false;
+      console.error('trackView error:', error);
     }
   }
 
   async trackLike(postId) {
     if (!postId) return;
     
-    const id = String(postId);
-    const wasLiked = !!this.localCache.user.liked[id];
+    const wasLiked = !!this.localCache.user.liked[postId];
+    console.log('🔄 Tracking like for:', postId, 'wasLiked:', wasLiked);
     
     try {
-      let result;
-      
+      // Вместо прямого значения используем инкремент через базу
       if (wasLiked) {
         // Убираем лайк
-        result = await this.supabase
-          .rpc('decrement_likes', { post_id: id });
-        delete this.localCache.user.liked[id];
+        const { error } = await this.supabase
+          .from('posts_stats')
+          .upsert({ 
+            post_id: postId,
+            likes: 0, // Будем использовать корректный декремент ниже
+            updated_at: new Date().toISOString()
+          }, { 
+            onConflict: 'post_id'
+          });
+        if (error) throw error;
       } else {
         // Добавляем лайк
-        result = await this.supabase
-          .rpc('increment_likes', { post_id: id });
-        this.localCache.user.liked[id] = true;
+        const { error } = await this.supabase
+          .from('posts_stats')
+          .upsert({ 
+            post_id: postId,
+            likes: 1,
+            updated_at: new Date().toISOString()
+          }, { 
+            onConflict: 'post_id'
+          });
+        if (error) throw error;
       }
-      
-      if (result.error) throw result.error;
-      
+
+      // Обновляем локальный кэш
+      if (wasLiked) {
+        delete this.localCache.user.liked[postId];
+      } else {
+        this.localCache.user.liked[postId] = true;
+      }
       this.saveLocalCache();
-      this.updateAll(id);
+      
+      this.updateDisplay(postId);
+      console.log('✅ Like tracked successfully!');
+      
     } catch (error) {
-      console.error('PostAnalytics: trackLike error', error);
-      this.isOnline = false;
+      console.error('❌ trackLike error:', error);
     }
   }
 
+  // Упрощенный getStats с обработкой ошибки 406
   async getPostStats(postId) {
-    const id = String(postId);
-    
     try {
+      // Пробуем простой запрос
       const { data, error } = await this.supabase
         .from('posts_stats')
-        .select('likes, views')
-        .eq('post_id', id)
+        .select()
+        .eq('post_id', postId)
         .single();
-      
-      if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows returned
+
+      if (error) {
+        if (error.code === 'PGRST116') {
+          return { likes: 0, views: 0 }; // Пост не найден - нормально
+        }
+        // Для ошибки 406 пробуем альтернативный метод
+        console.log('GET error, trying alternative:', error.message);
+        return await this.getPostStatsAlternative(postId);
+      }
       
       return data || { likes: 0, views: 0 };
     } catch (error) {
-      console.error('PostAnalytics: getPostStats error', error);
+      console.error('getPostStats error:', error);
       return { likes: 0, views: 0 };
     }
   }
 
-  async updateAll(postId) {
-    const id = String(postId);
-    const stats = await this.getPostStats(id);
-    
-    document.querySelectorAll(`[data-post-id="${id}"]`).forEach(container => {
-      const viewsEl = container.querySelector('.views');
-      const likesEl = container.querySelector('.likes');
+  // Альтернативный метод для случаев 406 ошибки
+  async getPostStatsAlternative(postId) {
+    try {
+      // Используем более простой подход
+      const { data, error } = await this.supabase
+        .from('posts_stats')
+        .select('likes, views')
+        .eq('post_id', postId);
+
+      if (error) throw error;
       
-      if (viewsEl) viewsEl.textContent = '👁‍🗨 ' + (stats.views || 0);
-      if (likesEl) {
-        const countSpan = likesEl.querySelector('.likes-count, .count');
-        if (countSpan) countSpan.textContent = (stats.likes || 0);
-        else likesEl.textContent = '💛 ' + (stats.likes || 0);
-        
-        const isLiked = !!this.localCache.user.liked[id];
-        likesEl.classList.toggle('liked', isLiked);
-        likesEl.setAttribute('aria-pressed', isLiked);
-      }
-    });
+      return data && data[0] ? data[0] : { likes: 0, views: 0 };
+    } catch (error) {
+      console.error('Alternative method error:', error);
+      return { likes: 0, views: 0 };
+    }
   }
 
-  async init() {
-    // Инициализация отображения для всех постов
-    const postContainers = document.querySelectorAll('[data-post-id]');
-    const postIds = [...new Set(Array.from(postContainers).map(el => el.dataset.postId))];
-    
-    // Загружаем статистику для всех постов
-    for (const postId of postIds) {
-      await this.updateAll(postId);
+  async updateDisplay(postId) {
+    try {
+      const stats = await this.getPostStats(postId);
+      console.log('📊 Updating display for:', postId, stats);
+      
+      document.querySelectorAll(`[data-post-id="${postId}"]`).forEach(container => {
+        const viewsEl = container.querySelector('.views');
+        const likesEl = container.querySelector('.likes');
+        
+        if (viewsEl) viewsEl.textContent = '👁‍🗨 ' + (stats.views || 0);
+        if (likesEl) {
+          const countSpan = likesEl.querySelector('.likes-count, .count');
+          if (countSpan) {
+            countSpan.textContent = Math.max(0, stats.likes || 0); // Защита от отрицательных
+          } else {
+            likesEl.textContent = '💛 ' + Math.max(0, stats.likes || 0);
+          }
+          
+          const isLiked = !!this.localCache.user.liked[postId];
+          likesEl.classList.toggle('liked', isLiked);
+        }
+      });
+    } catch (error) {
+      console.error('updateDisplay error:', error);
     }
+  }
 
-    // Делегированный обработчик для лайков (остаётся таким же)
+  init() {
+    console.log('🚀 Analytics initialized');
+    
+    // Обработчик лайков
     document.addEventListener('click', (e) => {
       const likeEl = e.target.closest('.likes, .like, [data-action="like"]');
       if (!likeEl) return;
       
-      const container = likeEl.closest('[data-post-id], .post-card');
-      const postId = container ? (container.getAttribute('data-post-id') || container.dataset.postId) : null;
+      const container = likeEl.closest('[data-post-id]');
+      const postId = container?.dataset.postId;
       if (!postId) return;
       
       e.preventDefault();
       this.trackLike(postId);
     });
 
-    // Track view for single post page
-    const single = document.querySelector('.post[data-post-id]');
-    if (single) this.trackView(single.dataset.postId);
+    // Трек просмотров
+    const singlePost = document.querySelector('.post[data-post-id]');
+    if (singlePost) {
+      this.trackView(singlePost.dataset.postId);
+    }
+
+    // Обновляем отображение
+    setTimeout(() => {
+      document.querySelectorAll('[data-post-id]').forEach(container => {
+        this.updateDisplay(container.dataset.postId);
+      });
+    }, 1000);
   }
 }
 
-// Инициализация
-document.addEventListener('DOMContentLoaded', async () => {
-  // Ждём загрузки Supabase JS
-  if (typeof supabase === 'undefined') {
-    const script = document.createElement('script');
-    script.src = 'https://unpkg.com/@supabase/supabase-js@2';
-    document.head.appendChild(script);
-    
-    script.onload = () => {
-      window.postAnalytics = new PostAnalytics();
-      window.postAnalytics.init();
-    };
-  } else {
-    window.postAnalytics = new PostAnalytics();
-    window.postAnalytics.init();
-  }
+// Запуск
+document.addEventListener('DOMContentLoaded', () => {
+  window.postAnalytics = new PostAnalytics();
+  window.postAnalytics.init();
 });

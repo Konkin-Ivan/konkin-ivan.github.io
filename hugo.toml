@@ -4,6 +4,8 @@ defaultContentLanguage = "ru"
 title = 'Mr.Proger'
 theme = 'programmister'   # ananke, harbor, hermit
 
+enableEmoji = true
+
 [taxonomies]
   tag = "tags"
   category = "categories"

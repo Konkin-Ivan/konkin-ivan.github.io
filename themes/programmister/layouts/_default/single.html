@@ -2,7 +2,7 @@
 <article class="post" data-post-id="{{ .File.UniqueID }}">
     <header> 
         <h1>{{ .Title }}</h1>
-        <time>{{ .Date.Format "2 January 2006" }}</time>
+        <time>{{ .Date.Format "2006.01.02" }}</time>
         <div class="post-tags">
           {{ range .Params.tags }}
           <a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}" class="tag">#{{ . }}</a>

@@ -5,7 +5,8 @@
 </section>
 
 <section class="posts-grid">
-    {{ range where .Site.RegularPages "Type" "posts" }}
+    {{ $posts := where .Site.RegularPages "Section" "posts" }}
+    {{ range $posts.ByDate.Reverse }}
     <article class="post-card" data-post-id="{{ .File.UniqueID }}"> 
         
         <div class="post-content">

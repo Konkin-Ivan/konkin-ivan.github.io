@@ -26,7 +26,7 @@
     
                 <div class="nav-links">
                   <a href="/about">О сайте</a>
-                  <a href="/tags">Теги</a>
+                  <a href="/tags">Теги</a> 
                 </div>
                 <div class="theme-switcher">
                     <button class="theme-btn" onclick="setTheme('catppuccin')">☀️ Latte</button>
@@ -60,10 +60,22 @@
         </main>
 
         <footer>
-            <p>© 2025 Мой крутой блог на Hugo • Powered by Konkin</p>
+            <p>© 2025 Мой крутой блог на Hugo • Powered by Konkin <a href="/index.xml" title="RSS">📡 RSS</a></p>
         </footer>
     </div>
 
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Vim",
+        "description": "",
+          "author": {
+          "@type": "Person",
+          "name": "Иван"
+        }
+      }
+    </script>
     <script>
         function setTheme(theme) {
             document.documentElement.setAttribute('data-theme', theme);
@@ -73,6 +85,28 @@
         
         const savedTheme = localStorage.getItem('theme') || 'dracula';
         setTheme(savedTheme);
+    </script>
+    <div id="reading-progress"></div>
+
+    <script>
+    
+    const progressBar = document.getElementById('reading-progress');
+
+    function updateProgressBar() {
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight - windowHeight;
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    
+      const progress = (scrollTop / documentHeight) * 100;
+      progressBar.style.width = progress + '%';
+    }
+
+    
+    if (document.querySelector('.post')) {
+      progressBar.style.display = 'block';
+      window.addEventListener('scroll', updateProgressBar);
+      window.addEventListener('resize', updateProgressBar);
+    }
     </script>
 </body>
 </html>

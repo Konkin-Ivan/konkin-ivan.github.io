@@ -3,7 +3,7 @@
   --bg: #eff1f5;
   --text: #4c4f69;
   --accent: #1e66f5;
-  --card: #ffffff;
+  --card: #212631;
   --border: #ccd0da;
   --meta: #6c6f85;
 }
@@ -20,16 +20,26 @@
 
 /* Общие стили */
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
+}
+
+img {
+    width: 100%;
+}
+
+a {
+  color: dodgerblue;
+}
+
+a:hover {
+  color: #darkgray;
 }
 
 body {
   background: var(--bg);
   color: var(--text);
   font-family: 'JetBrains Mono', monospace;
-  line-height: 1.6;
+  line-height: 2.0;
   transition: all 0.3s ease;
   min-height: 100vh;
 }

@@ -1,19 +1,307 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Clojure on Мой крутой блог на Hugo</title>
+    <title>Мой крутой блог на Hugo</title>
     <link>http://localhost:1313/tags/clojure/</link>
-    <description>Recent content in Clojure on Мой крутой блог на Hugo</description>
+    <description>Описание моего блога</description>
     <generator>Hugo</generator>
     <language>ru-ru</language>
-    <lastBuildDate>Wed, 06 Aug 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/clojure/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+    <lastBuildDate>Thu, 25 Sep 2025 21:58:56 +0300</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/clojure/" rel="self" type="application/rss+xml" />
+    
     <item>
       <title>Код как живой организм: от говнокода к архитектуре</title>
       <link>http://localhost:1313/posts/shitcode/</link>
       <pubDate>Wed, 06 Aug 2025 00:00:00 +0000</pubDate>
+      <author></author>
       <guid>http://localhost:1313/posts/shitcode/</guid>
-      <description>&lt;h1 id=&#34;код-как-живой-организм-от-говнокода-к-архитектуре&#34;&gt;Код как живой организм: от говнокода к архитектуре&lt;/h1&gt;&#xA;&lt;h3 id=&#34;как-страх-плохого-кода-мешает-развиваться&#34;&gt;&lt;strong&gt;Как страх «плохого кода» мешает развиваться&lt;/strong&gt;&lt;/h3&gt;&#xA;&lt;p&gt;Когда я только начинал программировать, мне казалось, что хороший код должен выглядеть идеально с первой строчки:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Чистые функции,&lt;/li&gt;&#xA;&lt;li&gt;Правильные паттерны,&lt;/li&gt;&#xA;&lt;li&gt;Идеальная архитектура&amp;hellip;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;Я боялся браться за задачи, потому что думал:&lt;br&gt;&#xA;&lt;em&gt;«А вдруг сделаю не по SOLID? А если нарушу DRY? А если опытные разработчики увидят мой код и назовут его говнокодом?»&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;Результат? &lt;strong&gt;Паралич&lt;/strong&gt;. Вместо кода — пустой файл, бесконечные раздумья и ноль результата.&lt;/p&gt;</description>
+      <description>Когда я только начинал программировать, мне казалось, что хороший код должен выглядеть идеально с первой строчки:</description>
+      <content type="html">&lt;h1 id=&#34;код-как-живой-организм-от-говнокода-к-архитектуре&#34;&gt;Код как живой организм: от говнокода к архитектуре&lt;/h1&gt;
+&lt;h3 id=&#34;как-страх-плохого-кода-мешает-развиваться&#34;&gt;&lt;strong&gt;Как страх «плохого кода» мешает развиваться&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Когда я только начинал программировать, мне казалось, что хороший код должен выглядеть идеально с первой строчки:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Чистые функции,&lt;/li&gt;
+&lt;li&gt;Правильные паттерны,&lt;/li&gt;
+&lt;li&gt;Идеальная архитектура&amp;hellip;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Я боялся браться за задачи, потому что думал:&lt;br&gt;
+&lt;em&gt;«А вдруг сделаю не по SOLID? А если нарушу DRY? А если опытные разработчики увидят мой код и назовут его говнокодом?»&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Результат? &lt;strong&gt;Паралич&lt;/strong&gt;. Вместо кода — пустой файл, бесконечные раздумья и ноль результата.&lt;/p&gt;
+&lt;p&gt;Пока не осознал простую вещь:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Код — как живой организм. Он рождается слабым, обрастает мускулами и только потом становится сильным.&lt;/strong&gt;&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;И это нормально.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;почему-первый-код--это-почти-всегда-говнокод-и-это-не-плохо&#34;&gt;&lt;strong&gt;Почему первый код — это почти всегда «говнокод» (и это не плохо)&lt;/strong&gt;&lt;/h3&gt;
+&lt;h4 id=&#34;working-solution--perfect-architecture&#34;&gt;&lt;strong&gt;Working solution &amp;gt; Perfect architecture&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Твоя задача — не написать шедевр, а &lt;strong&gt;решить проблему&lt;/strong&gt;.&lt;/p&gt;
+&lt;h4 id=&#34;пример-функция-на-clojure&#34;&gt;&lt;strong&gt;Пример: функция на Clojure&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Допустим, нам нужно отфильтровать список чисел, оставив только чётные.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Первый вариант (наивный, «говнокод»):&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;filter-even [numbers]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#66d9ef&#34;&gt;loop &lt;/span&gt;[nums numbers result []]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#66d9ef&#34;&gt;if &lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;empty?&lt;/span&gt; nums)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      result
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      (&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[num (first nums)]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        (&lt;span style=&#34;color:#66d9ef&#34;&gt;if &lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;even?&lt;/span&gt; num)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          (&lt;span style=&#34;color:#a6e22e&#34;&gt;recur&lt;/span&gt; (rest nums) (conj result num))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          (&lt;span style=&#34;color:#a6e22e&#34;&gt;recur&lt;/span&gt; (rest nums) result)))))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;em&gt;Что не так?&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Громоздкий &lt;code&gt;loop/recur&lt;/code&gt;, хотя в Clojure есть &lt;code&gt;filter&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Избыточность, ручное управление состоянием.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Но &lt;strong&gt;это работает!&lt;/strong&gt; И это главное.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;3-эволюция-кода-как-хаос-превращается-в-порядок&#34;&gt;&lt;strong&gt;3. Эволюция кода: как хаос превращается в порядок&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Теперь, когда есть работающее решение, можно его улучшать.&lt;/p&gt;
+&lt;h4 id=&#34;рефакторинг-1-используем&#34;&gt;&lt;strong&gt;Рефакторинг #1: используем &lt;code&gt;filter&lt;/code&gt;&lt;/strong&gt;&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;filter-even [numbers]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (filter even? numbers))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Уже лучше! Но что, если нужно ещё и удвоить чётные числа?&lt;/p&gt;
+&lt;h4 id=&#34;рефакторинг-2-добавляем&#34;&gt;&lt;strong&gt;Рефакторинг #2: добавляем &lt;code&gt;map&lt;/code&gt;&lt;/strong&gt;&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;process-numbers [numbers]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#a6e22e&#34;&gt;-&amp;gt;&amp;gt;&lt;/span&gt; numbers
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       (filter even?)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       (map &lt;span style=&#34;color:#f92672&#34;&gt;#&lt;/span&gt;(* % &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;))))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Теперь код:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Лаконичный,&lt;/li&gt;
+&lt;li&gt;Читаемый,&lt;/li&gt;
+&lt;li&gt;Расширяемый.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Что изменилось?&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Мы &lt;strong&gt;не планировали&lt;/strong&gt; эту архитектуру заранее.&lt;/li&gt;
+&lt;li&gt;Она &lt;strong&gt;появилась естественно&lt;/strong&gt;, когда потребовалось добавить новую логику.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;4-почему-паттерны-и-solid--это-результат-а-не-старт&#34;&gt;&lt;strong&gt;4. Почему паттерны и SOLID — это результат, а не старт&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Многие думают, что нужно &lt;strong&gt;сначала выучить все принципы&lt;/strong&gt;, а потом писать код.&lt;/p&gt;
+&lt;p&gt;Но на практике:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Ты пишешь &lt;strong&gt;как получается&lt;/strong&gt;,&lt;/li&gt;
+&lt;li&gt;Сталкиваешься с проблемами,&lt;/li&gt;
+&lt;li&gt;И только потом &lt;strong&gt;осознаёшь&lt;/strong&gt;, что твой код — это, например, &lt;em&gt;Стратегия&lt;/em&gt; или &lt;em&gt;Фабрика&lt;/em&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;пример-случайный-паттерн&#34;&gt;&lt;strong&gt;Пример: «случайный» паттерн&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Допустим, у нас есть:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;save-data [data storage-type]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#a6e22e&#34;&gt;cond&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (= storage-type &lt;span style=&#34;color:#e6db74&#34;&gt;:db&lt;/span&gt;)  (&lt;span style=&#34;color:#a6e22e&#34;&gt;save-to-db&lt;/span&gt; data)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (= storage-type &lt;span style=&#34;color:#e6db74&#34;&gt;:file&lt;/span&gt;) (&lt;span style=&#34;color:#a6e22e&#34;&gt;save-to-file&lt;/span&gt; data)))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;какие-проблемы-возникают&#34;&gt;&lt;strong&gt;Какие проблемы возникают?&lt;/strong&gt;&lt;/h3&gt;
+&lt;h4 id=&#34;1-трудно-масштабировать&#34;&gt;&lt;strong&gt;1. Трудно масштабировать&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Допустим, появился новый тип хранилища — &lt;code&gt;:s3&lt;/code&gt;. Теперь нужно:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Лезть в исходную функцию.&lt;/li&gt;
+&lt;li&gt;Добавлять новую ветку &lt;code&gt;cond&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Рисковать сломать существующую логику.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Проблема&lt;/strong&gt;: Нарушение &lt;strong&gt;Open-Closed Principle&lt;/strong&gt; (код открыт для изменений, но закрыт для модификаций).&lt;/p&gt;
+&lt;h4 id=&#34;2-жёсткая-связанность&#34;&gt;&lt;strong&gt;2. Жёсткая связанность&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Функция &lt;code&gt;save-data&lt;/code&gt; явно зависит от:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Конкретных ключей (&lt;code&gt;:db&lt;/code&gt;, &lt;code&gt;:file&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;Конкретных функций (&lt;code&gt;save-to-db&lt;/code&gt;, &lt;code&gt;save-to-file&lt;/code&gt;).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Что если&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Ключи поменяются?&lt;/li&gt;
+&lt;li&gt;Нужно будет добавить валидацию &lt;code&gt;data&lt;/code&gt; перед сохранением?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;сложно-тестировать&#34;&gt;&lt;strong&gt;Сложно тестировать&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Чтобы протестировать &lt;code&gt;save-data&lt;/code&gt;, нужно:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Мокать &lt;code&gt;save-to-db&lt;/code&gt; и &lt;code&gt;save-to-file&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Контролировать все ветки &lt;code&gt;cond&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Позже мы понимаем, что это &lt;strong&gt;Strategy&lt;/strong&gt; — и выносим логику в отдельные функции:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defmulti &lt;/span&gt;save-data (&lt;span style=&#34;color:#66d9ef&#34;&gt;fn &lt;/span&gt;[data storage-type] storage-type))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defmethod &lt;/span&gt;save-data &lt;span style=&#34;color:#e6db74&#34;&gt;:db&lt;/span&gt; [data _] (&lt;span style=&#34;color:#a6e22e&#34;&gt;save-to-db&lt;/span&gt; data))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defmethod &lt;/span&gt;save-data &lt;span style=&#34;color:#e6db74&#34;&gt;:file&lt;/span&gt; [data _] (&lt;span style=&#34;color:#a6e22e&#34;&gt;save-to-file&lt;/span&gt; data))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;как-прийти-к-этому-решению-на-практике&#34;&gt;&lt;strong&gt;Как прийти к этому решению на практике?&lt;/strong&gt;&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Сначала&lt;/strong&gt; пишем «лобовой» код через &lt;code&gt;cond&lt;/code&gt;/&lt;code&gt;case&lt;/code&gt; (это нормально!).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Замечаем&lt;/strong&gt;, что веток становится слишком много.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Рефакторим&lt;/strong&gt;, когда:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;Появляется новый тип хранилища.&lt;/li&gt;
+&lt;li&gt;Начинаются проблемы с тестами.&lt;/li&gt;
+&lt;li&gt;Код становится неподдерживаемым.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Задача&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Есть список пользователей, и нужно:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Отфильтровать только активных (&lt;code&gt;:active? true&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;Оставить их имена.&lt;/li&gt;
+&lt;li&gt;Отсортировать по алфавиту.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;1-первая-мысль-сделаю-через-циклы-потому-что-это-очевидно&#34;&gt;&lt;strong&gt;1. Первая мысль: «Сделаю через циклы!» (потому что это «очевидно»)&lt;/strong&gt;&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;get-active-usernames [users]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[active-users (&lt;span style=&#34;color:#66d9ef&#34;&gt;loop &lt;/span&gt;[users users result []]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                       (&lt;span style=&#34;color:#66d9ef&#34;&gt;if &lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;empty?&lt;/span&gt; users)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                         result
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                         (&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[user (first users)]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                           (&lt;span style=&#34;color:#66d9ef&#34;&gt;if &lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;:active?&lt;/span&gt; user)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                             (&lt;span style=&#34;color:#a6e22e&#34;&gt;recur&lt;/span&gt; (rest users) (conj result user))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                             (&lt;span style=&#34;color:#a6e22e&#34;&gt;recur&lt;/span&gt; (rest users) result)))))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        usernames    (&lt;span style=&#34;color:#66d9ef&#34;&gt;loop &lt;/span&gt;[users active-users result []]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                       (&lt;span style=&#34;color:#66d9ef&#34;&gt;if &lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;empty?&lt;/span&gt; users)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                         result
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                         (&lt;span style=&#34;color:#a6e22e&#34;&gt;recur&lt;/span&gt; (rest users) (conj result (&lt;span style=&#34;color:#e6db74&#34;&gt;:name&lt;/span&gt; (first users))))))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        sorted-names (sort usernames)]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    sorted-names))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Почему так происходит?&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Мозг сразу тянется к &lt;strong&gt;императивному подходу&lt;/strong&gt; («перебрать, проверить, собрать»).&lt;/li&gt;
+&lt;li&gt;Страх перед «неизвестными» функциями (&lt;code&gt;filter&lt;/code&gt;, &lt;code&gt;map&lt;/code&gt;, &lt;code&gt;comp&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;Кажется, что «так надёжнее» (хотя код превращается в лапшу).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;2-момент-осознания-а-ведь-это-можно-упростить&#34;&gt;&lt;strong&gt;2. Момент осознания: «А ведь это можно упростить…»&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;После того как код работает, появляется мысль:&lt;br&gt;
+&lt;em&gt;«Наверное, есть способ лучше»&lt;/em&gt; → гуглим/спрашиваем/экспериментируем.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Рефакторинг: шаг за шагом&lt;/strong&gt;&lt;/p&gt;
+&lt;h4 id=&#34;шаг-1-замена-ручного-фильтра-на&#34;&gt;&lt;strong&gt;Шаг 1. Замена ручного фильтра на &lt;code&gt;filter&lt;/code&gt;&lt;/strong&gt;&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;get-active-usernames [users]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[active-users (filter &lt;span style=&#34;color:#e6db74&#34;&gt;:active?&lt;/span&gt; users)  &lt;span style=&#34;color:#75715e&#34;&gt;; &amp;lt;- магия keyword как предиката!&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        usernames    (map &lt;span style=&#34;color:#e6db74&#34;&gt;:name&lt;/span&gt; active-users)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        sorted-names (sort usernames)]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    sorted-names))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;шаг-2-убираем-промежуточные-переменные&#34;&gt;&lt;strong&gt;Шаг 2. Убираем промежуточные переменные&lt;/strong&gt;&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;get-active-usernames [users]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (sort (map &lt;span style=&#34;color:#e6db74&#34;&gt;:name&lt;/span&gt; (filter &lt;span style=&#34;color:#e6db74&#34;&gt;:active?&lt;/span&gt; users))))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;шаг-3-тред-ласт-макрос-&#34;&gt;&lt;strong&gt;Шаг 3. Тред-ласт макрос (&lt;code&gt;-&amp;gt;&amp;gt;&lt;/code&gt;) для читаемости&lt;/strong&gt;&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;get-active-usernames [users]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#a6e22e&#34;&gt;-&amp;gt;&amp;gt;&lt;/span&gt; users
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       (filter &lt;span style=&#34;color:#e6db74&#34;&gt;:active?&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       (map &lt;span style=&#34;color:#e6db74&#34;&gt;:name&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       (&lt;span style=&#34;color:#a6e22e&#34;&gt;sort&lt;/span&gt;)))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id=&#34;психологический-подтекст&#34;&gt;&lt;strong&gt;Психологический подтекст&lt;/strong&gt;&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Страх «незнания»&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;Сначала кажется, что &lt;code&gt;loop/recur&lt;/code&gt; — это «безопасно», потому что понятно.&lt;/li&gt;
+&lt;li&gt;Функции высшего порядка (&lt;code&gt;filter&lt;/code&gt;, &lt;code&gt;map&lt;/code&gt;) требуют &lt;strong&gt;доверия&lt;/strong&gt; к языку.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;&lt;strong&gt;Эффект «Я это сделал!»&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;После рабочего, но громоздкого кода, приходит &lt;strong&gt;облегчение&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Теперь можно &lt;strong&gt;сфокусироваться на улучшениях&lt;/strong&gt; (а не на панике).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;5&#34;&gt;
+&lt;li&gt;&lt;strong&gt;Архитектура через рефакторинг&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;Изначально ты не задумываешься о «чистоте» — просто решал задачу.&lt;/li&gt;
+&lt;li&gt;Но после рефакторинга код &lt;strong&gt;сам стал похож на паттерн&lt;/strong&gt; (например, &lt;em&gt;Pipeline&lt;/em&gt;).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;индустрия-программирования-создаёт-токсичный-перфекционизм&#34;&gt;&lt;strong&gt;Индустрия программирования создаёт токсичный перфекционизм&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;Курсы, собеседования, статьи&lt;/strong&gt; — все твердят:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;«SOLID, паттерны, чистый код!»&lt;/li&gt;
+&lt;li&gt;«Если не знаешь DRY/KISS/YAGNI — ты не разработчик!»&lt;/li&gt;
+&lt;li&gt;«Архитектура должна быть идеальной с первого коммита».&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Результат?&lt;/strong&gt;&lt;br&gt;
+Новички (и даже мидлы) впадают в &lt;strong&gt;паралич анализа&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;«Вдруг я сделаю не по стандартам?»&lt;/li&gt;
+&lt;li&gt;«А что если мой код назовут говнокодом?»&lt;/li&gt;
+&lt;li&gt;«Я не понимаю, как применить Factory Method здесь… Может, не браться за задачу?»&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Но правда в том, что:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Лучшие практики — это выводы, а не входные данные.&lt;/strong&gt;&lt;br&gt;
+Их нельзя «выучить». Их можно только &lt;strong&gt;прочувствовать через боль&lt;/strong&gt;.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;почему-быстрый-говнокод--это-не-стыдно-а-необходимо&#34;&gt;&lt;strong&gt;Почему «быстрый говнокод» — это не стыдно, а необходимо&lt;/strong&gt;&lt;/h3&gt;
+&lt;h4 id=&#34;пример-из-жизни&#34;&gt;&lt;strong&gt;Пример из жизни&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Представь, что ты учишься играть на гитаре:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Теория:&lt;/strong&gt; «Вот 100 аккордов, вот 20 гамм, играй как Хендрикс».&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Реальность:&lt;/strong&gt; Сначала ты бренчишь &lt;em&gt;«Кузнечика»&lt;/em&gt; на трёх аккордах — и это нормально.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;То же с кодом. &lt;strong&gt;Алгоритм эффективного обучения:&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Накидал прототип&lt;/strong&gt; (пусть криво, но работает).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Понял задачу&lt;/strong&gt; (ага, вот где подводные камни).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Улучшил&lt;/strong&gt; (рефакторинг, паттерны, оптимизация).&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;почему-clojur-разработчикам-тут-повезло&#34;&gt;&lt;strong&gt;Почему Clojur-разработчикам тут повезло&lt;/strong&gt;&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;ФП + иммутабельность&lt;/strong&gt; = меньше последствий от хаотичного прототипирования.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;REPL&lt;/strong&gt; = моментальная проверка гипотез без «перезапуска проекта».&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Парадигма «данные &amp;gt; функции»&lt;/strong&gt; = легко пересобирать логику.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;3-как-бороться-со-страхом-неидеального-кода&#34;&gt;&lt;strong&gt;3. Как бороться со страхом «неидеального кода»&lt;/strong&gt;&lt;/h3&gt;
+&lt;h4 id=&#34;принять-первый-код-почти-всегда-плох&#34;&gt;&lt;strong&gt;Принять: первый код почти всегда плох&lt;/strong&gt;&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Linus Torvalds&lt;/strong&gt; не написал Git «с нуля идеальным».&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Rich Hickey&lt;/strong&gt; до Clojure делал десятки прототипов.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Твой код — &lt;strong&gt;черновик&lt;/strong&gt;, а не высеченный в мраморе памятник.&lt;/p&gt;
+&lt;h4 id=&#34;отделяй-эксперимент-от-продакшна&#34;&gt;&lt;strong&gt;Отделяй «эксперимент» от «продакшна»&lt;/strong&gt;&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Создайте ветку &lt;code&gt;shitcode-prototype&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Пиши в ней &lt;strong&gt;как угодно&lt;/strong&gt;, чтобы проверить гипотезу.&lt;/li&gt;
+&lt;li&gt;Если идея сработала — &lt;strong&gt;тогда&lt;/strong&gt; рефакторь.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;спрашивай-не-как-сделать-идеально-а-как-сделать-сейчас&#34;&gt;&lt;strong&gt;Спрашивай не «Как сделать идеально?», а «Как сделать сейчас?»&lt;/strong&gt;&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Плохо:&lt;/strong&gt; «Я не знаю, как применить Command Pattern здесь…»&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Хорошо:&lt;/strong&gt; «Сначала сделаю через &lt;code&gt;cond&lt;/code&gt;, потом посмотрю, что можно улучшить».&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;4-что-говорят-практики&#34;&gt;&lt;strong&gt;4. Что говорят практики&lt;/strong&gt;&lt;/h3&gt;
+&lt;h4 id=&#34;кен-бек-автор-tdd&#34;&gt;&lt;strong&gt;Кен Бек (автор TDD):&lt;/strong&gt;&lt;/h4&gt;
+&lt;blockquote&gt;
+&lt;p&gt;«Сначала сделайте так, чтобы оно работало. Затем сделайте правильно. И только потом — быстро».&lt;/p&gt;&lt;/blockquote&gt;
+&lt;h4 id=&#34;роберт-мартин-clean-code&#34;&gt;&lt;strong&gt;Роберт Мартин (Clean Code):&lt;/strong&gt;&lt;/h4&gt;
+&lt;blockquote&gt;
+&lt;p&gt;«Единственный способ написать чистый код — сначала написать грязный, а потом почистить его».&lt;/p&gt;&lt;/blockquote&gt;
+&lt;h4 id=&#34;clojure-разработчик-в-дикой-природе&#34;&gt;&lt;strong&gt;Clojure-разработчик в дикой природе:&lt;/strong&gt;&lt;/h4&gt;
+&lt;blockquote&gt;
+&lt;p&gt;«80% моего кода начинаются как &lt;code&gt;(-&amp;gt;&amp;gt; data (map ...) (filter ...) (грубая агрегация))&lt;/code&gt;.&lt;br&gt;
+А потом я удаляю половину и получаю хорошее решение».&lt;/p&gt;&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;вывод-принцип-сначала-практика-потом-теория&#34;&gt;&lt;strong&gt;Вывод: принцип «Сначала практика, потом теория»&lt;/strong&gt;&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Курсы/книги&lt;/strong&gt; учат «как должно быть», но не «как дойти до этого».&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Твой опыт&lt;/strong&gt; важнее чем мнение «экспертов».&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Clojure&lt;/strong&gt; — идеальный язык, чтобы &lt;strong&gt;быстро ваять прототипы&lt;/strong&gt; и &lt;strong&gt;виртуозно рефакторить&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;P.S.:&lt;/strong&gt; Попробуй сегодня:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Намеренно напиши &lt;strong&gt;максимально «плохой» код&lt;/strong&gt; для задачи.&lt;/li&gt;
+&lt;li&gt;Заставь его работать.&lt;/li&gt;
+&lt;li&gt;Затем &lt;strong&gt;улучши&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Почувствуй разницу!&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;Вывод: кайфуй от процесса, а не гонись за идеалом&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Не бойся писать плохой код&lt;/strong&gt; — это этап, а не приговор.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Архитектура рождается в процессе&lt;/strong&gt; — а не в вакууме.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Паттерны — результат опыта&lt;/strong&gt; — а не его условие.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Первый вариант кода — это не «плохо», это &lt;strong&gt;исследование&lt;/strong&gt;.&lt;br&gt;
+Мы не пишем архитектуру — мы её &lt;strong&gt;открываем&lt;/strong&gt; в процессе.&lt;br&gt;
+Сначала — работающий код. Потом — красивый. И только затем — «идеальный» (если он вообще нужен).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Главное — начать.&lt;/strong&gt;&lt;/p&gt;
+</content>
     </item>
+    
   </channel>
 </rss>

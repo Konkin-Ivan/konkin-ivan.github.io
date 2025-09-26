@@ -1,0 +1,24 @@
+clojure:
+  url: "/tags/clojure/"
+  title: "Статьи по Clojure"
+  priority: 1
+
+linux:
+  url: "/tags/linux/" 
+  title: "Работа с Linux"
+  priority: 1
+
+vim:
+  url: "/posts/vim-tutorial/"
+  title: "Настройка Vim"
+  priority: 2
+
+docker:
+  url: "/tags/docker/"
+  title: "Docker и контейнеризация"
+  priority: 1
+
+алготрейдинг:
+  url: "/categories/algotrading/"
+  title: "Алготрейдинг"
+  priority: 1

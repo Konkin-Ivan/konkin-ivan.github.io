@@ -357,7 +357,6 @@ pre::-webkit-scrollbar-thumb:hover {
 
 .breadcrumbs {
     font-size: 0.9rem;
-    margin-bottom: 2rem;
     padding: 0.5rem 0;
     color: var(--meta);
     display: block;

@@ -1,7 +1,7 @@
 {{ define "main" }}
 <article class="post" data-post-id="{{ .File.UniqueID }}">
     <header> 
-        <h1>{{ .Title }}</h1>
+        {{ partial "breadcrumbs.html" . }}
         <time>{{ .Date.Format "2006.01.02" }}</time>
         <div class="post-tags">
           {{ range .Params.tags }}
@@ -11,8 +11,103 @@
     </header>
     
     <div class="content">
-    <script>
+        
+        <!-- Блок содержания -->
+        {{ if and (.Params.toc) (.TableOfContents) }}
+        <nav class="table-of-contents">
+            <h2>📑 Содержание</h2>
+            {{ .TableOfContents }}
+        </nav>
+        {{ end }}
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          document.querySelectorAll('pre').forEach(function(pre) {
+            const button = document.createElement('button');
+            button.textContent = '📋';
+            button.className = 'copy-btn';
+            button.onclick = function() {
+            navigator.clipboard.writeText(pre.textContent);
+            button.textContent = '✅';
+            setTimeout(() => button.textContent = '📋', 2000);
+          };
+            pre.style.position = 'relative';
+            button.style.position = 'absolute';
+            button.style.top = '10px';
+            button.style.right = '10px';
+            pre.appendChild(button);
+          });
+        });
+        </script>
+        {{ .Content }}
+        
+        <div class="post-stats">
+            <span class="views">👁‍🗨 0</span>
+            <span class="likes">💛 0</span>
+        </div>
+    </div>
+</article>
+
+<style>
+.table-of-contents {
+    background: var(--post-card);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 2rem 0;
+    border-left: 4px solid var(--accent);
+}
+
+.table-of-contents h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.2em;
+    color: #f8f8f2;
+}
+
+.table-of-contents ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.table-of-contents li {
+    margin: 0.5rem 0;
+    line-height: 1.4;
+}
+
+.table-of-contents a {
+    text-decoration: none;
+    color: var(--meta);
+    transition: color 0.2s ease;
+    display: block;
+    padding: 0.2rem 0;
+}
+
+.table-of-contents a:hover {
+    color: #ff79c6;
+}
+
+.table-of-contents ul ul {
+    padding-left: 1rem;
+    margin: 0.25rem 0;
+    border-left: 1px solid var(--meta);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .table-of-contents {
+        padding: 1rem;
+        margin: 1.5rem 0;
+    }
+    
+    .table-of-contents ul ul {
+        padding-left: 0.5rem;
+    }
+}
+</style>
+
+<script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Копирование кода
     document.querySelectorAll('pre').forEach(function(pre) {
         const button = document.createElement('button');
         button.textContent = '📋';
@@ -28,12 +123,21 @@ document.addEventListener('DOMContentLoaded', function() {
         button.style.right = '10px';
         pre.appendChild(button);
     });
+    
+    // Плавная прокрутка для якорных ссылок
+    document.querySelectorAll('.table-of-contents a[href^="#"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
 });
 </script>
-        {{ partial "breadcrumbs.html" . }}
-        {{ .Content }}
-        <span class="views">👁‍🗨 0</span>
-        <span class="likes">💛 0</span>
-    </div>
-</article>
 {{ end }}

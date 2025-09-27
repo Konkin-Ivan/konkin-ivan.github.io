@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dracula">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Разработка индикатора ATR | Mr.Proger</title>
+    
+    <meta name="description" content="В этой статье я хочу рассказать о разработке индикатора Average True Range (ATR) — индикатора, который заставил меня пересмотреть границы между &#34;простыми&#34; и &#34;сложными&#34; индикаторами в моей библиотеке Taljure.">
+    
+    
+    <meta property="og:title" content="Разработка индикатора ATR">
+    <meta property="og:description" content="В этой статье я хочу рассказать о разработке индикатора Average True Range (ATR) — индикатора, который заставил меня пересмотреть границы между &#34;простыми&#34; и &#34;сложными&#34; индикаторами в моей библиотеке Taljure.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="http://localhost:1313/posts/taljure-atr/">
+    <meta property="og:image" content="http://localhost:1313/images/posts/taljure/taljure-atr.png">
+    <meta property="og:image:alt" content="Разработка индикатора ATR">
+    <meta property="og:site_name" content="Mr.Proger">
+    
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Разработка индикатора ATR">
+    <meta name="twitter:description" content="В этой статье я хочу рассказать о разработке индикатора Average True Range (ATR) — индикатора, который заставил меня пересмотреть границы между &#34;простыми&#34; и &#34;сложными&#34; индикаторами в моей библиотеке Taljure.">
+    <meta name="twitter:image" content="http://localhost:1313/images/posts/taljure/taljure-atr.png">
+    <meta name="twitter:image:alt" content="Разработка индикатора ATR">
+
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="http://localhost:1313/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav class="nav">
+                <a href="http://localhost:1313/"><strong>Mr.Proger</strong></a>
+    
+                <button class="nav-toggle" aria-expanded="false" aria-label="Меню">☰</button>
+                <div class="nav-links" id="navLinks">
+                  <a href="/about">О сайте</a>
+                  <a href="/tags">Теги</a>
+                  <a href="/index.xml" title="RSS">📡 RSS</a>
+                </div>
+                <div class="theme-switcher">
+                    <button class="theme-btn" onclick="setTheme('catppuccin')">☀️</button>
+                    <button class="theme-btn" onclick="setTheme('dracula')">🌙</button>
+                </div>
+            </nav>
+        </header>
+
+        <main>
+            
+<article class="post" data-post-id="8990225c0d67df957df7f560a077e35e">
+    <header> 
+        <nav class="breadcrumbs">
+    <a href="http://localhost:1313/">🏠 Главная</a>
+    
+    
+        
+        <span class="sep">→</span>
+        <span class="current">Разработка индикатора ATR</span>
+    
+    
+</nav>
+
+        <time>2025.08.28</time>
+        <div class="post-tags">
+          
+          <a href="/tags/clojure" class="tag">#clojure</a>
+          
+          <a href="/tags/%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B0_taljure" class="tag">#библиотека_taljure</a>
+          
+        </div>
+    </header>
+    
+    <div class="content">
+        
+        
+        
+        <nav class="table-of-contents">
+            <h2>📑 Содержание</h2>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#разработка-индикатора-atr-пограничный-случай-между-простым-и-сложным"><strong>Разработка индикатора ATR: Пограничный случай между простым и сложным</strong></a>
+      <ul>
+        <li><a href="#почему-atr--особенный-индикатор"><strong>Почему ATR — особенный индикатор?</strong></a></li>
+        <li><a href="#архитектурные-решения"><strong>Архитектурные решения</strong></a></li>
+        <li><a href="#почему-я-поместил-atr-в"><strong>Почему я поместил ATR в “simple”?</strong></a></li>
+        <li><a href="#подводные-камни-реализации"><strong>Подводные камни реализации</strong></a></li>
+        <li><a href="#тестирование"><strong>Тестирование</strong></a></li>
+        <li><a href="#ключевые-особенности"><strong>Ключевые особенности</strong></a></li>
+        <li><a href="#почему-atr-все-же-отправился-в-simple"><strong>Почему ATR все же отправился в simple</strong></a></li>
+        <li><a href="#заключение-гибкая-классификация-вместо-жестких-правил"><strong>Заключение: Гибкая классификация вместо жестких правил</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </nav>
+        
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          document.querySelectorAll('pre').forEach(function(pre) {
+            const button = document.createElement('button');
+            button.textContent = '📋';
+            button.className = 'copy-btn';
+            button.onclick = function() {
+            navigator.clipboard.writeText(pre.textContent);
+            button.textContent = '✅';
+            setTimeout(() => button.textContent = '📋', 2000);
+          };
+            pre.style.position = 'relative';
+            button.style.position = 'absolute';
+            button.style.top = '10px';
+            button.style.right = '10px';
+            pre.appendChild(button);
+          });
+        });
+        </script>
+        <h1 id="разработка-индикатора-atr">Разработка индикатора ATR</h1>
+<h2 id="разработка-индикатора-atr-пограничный-случай-между-простым-и-сложным"><strong>Разработка индикатора ATR: Пограничный случай между простым и сложным</strong></h2>
+<p><img src="/images/posts/taljure/taljure-atr.png" alt="Разработка индикатора ATR"></p>
+<p>В этой статье я хочу рассказать о разработке индикатора Average True Range (ATR) — индикатора, который заставил меня пересмотреть границы между &ldquo;простыми&rdquo; и &ldquo;сложными&rdquo; индикаторами в моей библиотеке Taljure.</p>
+<h3 id="почему-atr--особенный-индикатор"><strong>Почему ATR — особенный индикатор?</strong></h3>
+<p>ATR измеряет волатильность рынка, но его реализация содержит несколько интересных особенностей:</p>
+<ol>
+<li><strong>Требует структурных данных</strong> (бары с high, low, close)</li>
+<li><strong>Имеет рекуррентную формулу</strong> как EMA</li>
+<li><strong>Использует вспомогательную функцию</strong> (True Range)</li>
+<li><strong>Имеет специальный случай</strong> для period=1</li>
+</ol>
+<h3 id="архитектурные-решения"><strong>Архитектурные решения</strong></h3>
+<h4 id="1-вспомогательная-функция-calculate-tr"><strong>1. Вспомогательная функция calculate-tr</strong></h4>
+<p>Первое важное решение — вынесение расчета True Range в отдельную функцию:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span>(<span style="color:#66d9ef">defn- </span>calculate-tr
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Вычисляет истинный диапазон (True Range) для одного бара&#34;</span>
+</span></span><span style="display:flex;"><span>  [prev-close bar]
+</span></span><span style="display:flex;"><span>  (<span style="color:#66d9ef">let </span>[h (<span style="color:#e6db74">:high</span> bar)
+</span></span><span style="display:flex;"><span>        l (<span style="color:#e6db74">:low</span> bar)
+</span></span><span style="display:flex;"><span>        c (<span style="color:#e6db74">:close</span> bar)
+</span></span><span style="display:flex;"><span>        prev-close (or prev-close c) <span style="color:#75715e">; Умное использование or для первого бара</span>
+</span></span><span style="display:flex;"><span>        tr1 (- h l)
+</span></span><span style="display:flex;"><span>        tr2 (<span style="color:#a6e22e">Math/abs</span> (- h prev-close))
+</span></span><span style="display:flex;"><span>        tr3 (<span style="color:#a6e22e">Math/abs</span> (- l prev-close))]
+</span></span><span style="display:flex;"><span>    (max tr1 tr2 tr3)))
+</span></span></code></pre></div><p><strong>Почему это важно:</strong></p>
+<ul>
+<li><strong>Изоляция сложности</strong> — основная функция <code>atr</code> остается чистой</li>
+<li><strong>Тестируемость</strong> — <code>calculate-tr</code> можно тестировать отдельно</li>
+<li><strong>Повторное использование</strong> — True Range может пригодиться elsewhere</li>
+</ul>
+<h4 id="2-обработка-специального-случая-period1"><strong>2. Обработка специального случая period=1</strong></h4>
+<p>Для period=1 ATR превращается в простой диапазон:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span>(= <span style="color:#ae81ff">1</span> period) (<span style="color:#a6e22e">-&gt;&gt;</span> bars
+</span></span><span style="display:flex;"><span>                 (map <span style="color:#f92672">#</span>(- (<span style="color:#e6db74">:high</span> %) (<span style="color:#e6db74">:low</span> %)))
+</span></span><span style="display:flex;"><span>                 (map <span style="color:#f92672">#</span>(<span style="color:#a6e22e">Math/abs</span> (double %)))
+</span></span><span style="display:flex;"><span>                 last)
+</span></span></code></pre></div><p><strong>Инсайт:</strong> Специальные случаи часто упрощают вычисления и улучшают производительность.</p>
+<h4 id="3-рекуррентная-формула-atr"><strong>3. Рекуррентная формула ATR</strong></h4>
+<p>Основная формула использует рекуррентное вычисление как EMA:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span>(reduce (<span style="color:#66d9ef">fn </span>[prev tr]
+</span></span><span style="display:flex;"><span>         (double 
+</span></span><span style="display:flex;"><span>           (/ (+ (* prev (dec period)) tr) 
+</span></span><span style="display:flex;"><span>           period)))
+</span></span><span style="display:flex;"><span>       initial-atr
+</span></span><span style="display:flex;"><span>       remaining-trs)
+</span></span></code></pre></div><p><strong>Красота:</strong> Та же элегантность, что и в EMA, но с другой математикой.</p>
+<h3 id="почему-я-поместил-atr-в"><strong>Почему я поместил ATR в &ldquo;simple&rdquo;?</strong></h3>
+<p>Это был сознательный и неочевидный выбор. Вот мои доводы:</p>
+<h4 id="аргументы-за-размещение-в-simple"><strong>Аргументы ЗА размещение в simple:</strong></h4>
+<ol>
+<li><strong>Математическая простота</strong> — в основе лежит макс(3 значения)</li>
+<li><strong>Отсутствие сложных зависимостей</strong> — не зависит от других индикаторов</li>
+<li><strong>Широкая распространенность</strong> — базовый индикатор волатильности</li>
+<li><strong>Прозрачность алгоритма</strong> — логику легко понять и проверить</li>
+</ol>
+<h4 id="аргументы-против"><strong>Аргументы ПРОТИВ:</strong></h4>
+<ol>
+<li><strong>Требует структурных данных</strong> — в отличие от простых числовых последовательностей</li>
+<li><strong>Имеет рекуррентную природу</strong> — как &ldquo;advanced&rdquo; индикаторы</li>
+<li><strong>Нужна вспомогательная функция</strong> — усложняет архитектуру</li>
+</ol>
+<h4 id="компромиссное-решение"><strong>Компромиссное решение:</strong></h4>
+<p>Разместил ATR в <code>simple</code>, но:</p>
+<ul>
+<li>Сделал <code>calculate-tr</code> private-функцией</li>
+<li>Добавил тестирование</li>
+<li>Подробно документировал особенности</li>
+</ul>
+<h3 id="подводные-камни-реализации"><strong>Подводные камни реализации</strong></h3>
+<h4 id="1-проблема-обработка-первого-бара"><strong>1. Проблема: Обработка первого бара</strong></h4>
+<p>Как рассчитать TR для первого бара, если нет предыдущего close?</p>
+<p><strong>Решение:</strong> Умное использование <code>or</code>:</p>
+<p>prev-close (or prev-close c) ; Используем текущий close если предыдущего нет</p>
+<h4 id="2-проблема-производительность-на-больших-данных"><strong>2. Проблема: Производительность на больших данных</strong></h4>
+<p>Рекуррентный <code>reduce</code> может быть не оптимальным для очень больших временных рядов.</p>
+<p><strong>Решение:</strong> Я оставил читаемость, но отметил возможность оптимизации:</p>
+<p>;; Для оптимизации можно использовать transient и persistent!
+;; но оставил reduce для читаемости</p>
+<h4 id="3-проблема-валидация-структуры-баров"><strong>3. Проблема: Валидация структуры баров</strong></h4>
+<p>Что если бар не содержит нужных ключей?</p>
+<p><strong>Решение:</strong> Добавил проверки в тестах, но в продакшене нужно больше валидации:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#75715e">;; В идеале добавить:</span>
+</span></span><span style="display:flex;"><span>(when (or (not (every? <span style="color:#f92672">#</span>(contains? % <span style="color:#e6db74">:high</span>) bars))
+</span></span><span style="display:flex;"><span>          (not (every? <span style="color:#f92672">#</span>(contains? % <span style="color:#e6db74">:low</span>) bars))
+</span></span><span style="display:flex;"><span>          (not (every? <span style="color:#f92672">#</span>(contains? % <span style="color:#e6db74">:close</span>) bars)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">throw</span> (<span style="color:#a6e22e">Exception.</span> <span style="color:#e6db74">&#34;Некорректная структура баров&#34;</span>)))
+</span></span></code></pre></div><h3 id="тестирование"><strong>Тестирование</strong></h3>
+<p>Тесты для ATR особенно важны из-за сложной логики:</p>
+<h4 id="тест-граничных-случаев"><strong>Тест граничных случаев</strong></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span>(<span style="color:#a6e22e">testing</span> <span style="color:#e6db74">&#34;Период 1 возвращает абсолютную разницу между максимумом и минимумом&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#66d9ef">let </span>[bars [{<span style="color:#e6db74">:high</span> <span style="color:#ae81ff">100.0</span> <span style="color:#e6db74">:low</span> <span style="color:#ae81ff">90.0</span> <span style="color:#e6db74">:close</span> <span style="color:#ae81ff">95.0</span>}]]
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">is</span> (= <span style="color:#ae81ff">10.0</span> (<span style="color:#a6e22e">atr</span> bars <span style="color:#ae81ff">1</span>)))))
+</span></span></code></pre></div><h4 id="тест-недостаточных-данных"><strong>Тест недостаточных данных</strong></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span>(<span style="color:#a6e22e">testing</span> <span style="color:#e6db74">&#34;Недостаточное количество баров вызывает исключение&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#66d9ef">let </span>[bars [{<span style="color:#e6db74">:high</span> <span style="color:#ae81ff">100.0</span> <span style="color:#e6db74">:low</span> <span style="color:#ae81ff">90.0</span> <span style="color:#e6db74">:close</span> <span style="color:#ae81ff">95.0</span>}]]
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">is</span> (<span style="color:#a6e22e">thrown?</span> IllegalArgumentException (<span style="color:#a6e22e">atr</span> bars <span style="color:#ae81ff">2</span>)))))
+</span></span></code></pre></div><h4 id="тест-корректности-расчета"><strong>Тест корректности расчета</strong></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span>(<span style="color:#a6e22e">testing</span> <span style="color:#e6db74">&#34;Правильный расчет ATR&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#66d9ef">let </span>[bars [{<span style="color:#e6db74">:high</span> <span style="color:#ae81ff">50.0</span> <span style="color:#e6db74">:low</span> <span style="color:#ae81ff">40.0</span> <span style="color:#e6db74">:close</span> <span style="color:#ae81ff">45.0</span>}
+</span></span><span style="display:flex;"><span>              {<span style="color:#e6db74">:high</span> <span style="color:#ae81ff">55.0</span> <span style="color:#e6db74">:low</span> <span style="color:#ae81ff">45.0</span> <span style="color:#e6db74">:close</span> <span style="color:#ae81ff">50.0</span>}]]
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">is</span> (<span style="color:#a6e22e">number?</span> (<span style="color:#a6e22e">atr</span> bars <span style="color:#ae81ff">2</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">is</span> (pos? (<span style="color:#a6e22e">atr</span> bars <span style="color:#ae81ff">2</span>)))))
+</span></span></code></pre></div><h3 id="ключевые-особенности"><strong>Ключевые особенности</strong></h3>
+<ol>
+<li><strong>Границы между &ldquo;simple&rdquo; и &ldquo;advanced&rdquo; размыты</strong> — классификация субъективна</li>
+<li><strong>Вспомогательные функции</strong> — мощный инструмент для управления сложностью</li>
+<li><strong>Специальные случаи</strong> часто упрощают реализацию</li>
+<li><strong>Структурные данные</strong> требуют особого подхода к валидации</li>
+<li><strong>Рекуррентные формулы</strong> универсальны для многих индикаторов</li>
+</ol>
+<h3 id="почему-atr-все-же-отправился-в-simple"><strong>Почему ATR все же отправился в simple</strong></h3>
+<p>В итоге я решил, что ATR уйдет в simple потому что:</p>
+<ol>
+<li><strong>Концептуальная простота</strong> — измерение диапазона цен</li>
+<li><strong>Отсутствие композиции</strong> — не строится на других индикаторах</li>
+<li><strong>Прозрачность алгоритма</strong> — можно понять без глубокой математики</li>
+</ol>
+<h3 id="заключение-гибкая-классификация-вместо-жестких-правил"><strong>Заключение: Гибкая классификация вместо жестких правил</strong></h3>
+<p>Разработка ATR научила меня, что классификация индикаторов — это не жесткая система, а гибкий инструмент.</p>
+<p><strong>Что определяет &ldquo;простоту&rdquo;:</strong></p>
+<ul>
+<li>✅ Концептуальная понятность</li>
+<li>✅ Отсутствие сложных зависимостей</li>
+<li>✅ Простота реализации</li>
+<li>✅ Широта применения</li>
+</ul>
+<p>ATR проходит по всем этим критериям, несмотря на некоторые технические сложности.</p>
+<p><strong>Финал:</strong> ATR остался в <code>simple</code>, но с пометкой о его &ldquo;продвинутых&rdquo; особенностях в документации.</p>
+<p>Исходный код доступен на <a href="https://gitflic.ru/project/konkin/taljure">GitFlic</a>.</p>
+<p><strong>А как бы вы классифицировали ATR? Simple или advanced?</strong></p>
+
+        
+        <div class="post-stats">
+            <span class="views">👁‍🗨 0</span>
+            <span class="likes">💛 0</span>
+        </div>
+    </div>
+</article>
+
+<style>
+.table-of-contents {
+    background: var(--post-card);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 2rem 0;
+    border-left: 4px solid var(--accent);
+}
+
+.table-of-contents h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.2em;
+    color: #f8f8f2;
+}
+
+.table-of-contents ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.table-of-contents li {
+    margin: 0.5rem 0;
+    line-height: 1.4;
+}
+
+.table-of-contents a {
+    text-decoration: none;
+    color: var(--meta);
+    transition: color 0.2s ease;
+    display: block;
+    padding: 0.2rem 0;
+}
+
+.table-of-contents a:hover {
+    color: #ff79c6;
+}
+
+.table-of-contents ul ul {
+    padding-left: 1rem;
+    margin: 0.25rem 0;
+    border-left: 1px solid var(--meta);
+}
+
+ 
+@media (max-width: 768px) {
+    .table-of-contents {
+        padding: 1rem;
+        margin: 1.5rem 0;
+    }
+    
+    .table-of-contents ul ul {
+        padding-left: 0.5rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    document.querySelectorAll('pre').forEach(function(pre) {
+        const button = document.createElement('button');
+        button.textContent = '📋';
+        button.className = 'copy-btn';
+        button.onclick = function() {
+            navigator.clipboard.writeText(pre.textContent);
+            button.textContent = '✅';
+            setTimeout(() => button.textContent = '📋', 2000);
+        };
+        pre.style.position = 'relative';
+        button.style.position = 'absolute';
+        button.style.top = '10px';
+        button.style.right = '10px';
+        pre.appendChild(button);
+    });
+    
+    
+    document.querySelectorAll('.table-of-contents a[href^="#"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+});
+</script>
+
+        </main>
+
+        <footer>
+            <p>© 2025 Mr.Proger • Powered by Konkin</p>
+        </footer>
+    </div>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Разработка индикатора ATR",
+        "description": "В этой статье я хочу рассказать о разработке индикатора Average True Range (ATR) — индикатора, который заставил меня пересмотреть границы между \u0022простыми\u0022 и \u0022сложными\u0022 индикаторами в моей библиотеке Taljure.",
+          "author": {
+          "@type": "Person",
+          "name": "Иван"
+        }
+      }
+    </script>
+    <script>
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        }
+        
+        
+        const savedTheme = localStorage.getItem('theme') || 'dracula';
+        setTheme(savedTheme);
+    </script>
+    <div id="reading-progress"></div>
+
+    <script>
+    
+    const progressBar = document.getElementById('reading-progress');
+
+    function updateProgressBar() {
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight - windowHeight;
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    
+      const progress = (scrollTop / documentHeight) * 100;
+      progressBar.style.width = progress + '%';
+    }
+
+    
+    if (document.querySelector('.post')) {
+      progressBar.style.display = 'block';
+      window.addEventListener('scroll', updateProgressBar);
+      window.addEventListener('resize', updateProgressBar);
+    }
+    </script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="http://localhost:1313/js/analytics.js"></script>
+    <script src="http://localhost:1313/js/toogle_menu.js"></script> 
+</body>
+</html>

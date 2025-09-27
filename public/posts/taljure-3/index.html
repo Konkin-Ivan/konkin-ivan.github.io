@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dracula">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Библиотека для трейдинга: архитектура 2 | Mr.Proger</title>
+    
+    <meta name="description" content="В сегодняшней статье я хочу раскрыть логику одного из ключевых архитектурных решений в библиотеке Taljure — **разделения индикаторов по уровню сложности** на модули `simple`, `advanced` и будущие `complex`.">
+    
+    
+    <meta property="og:title" content="Библиотека для трейдинга: архитектура 2">
+    <meta property="og:description" content="В сегодняшней статье я хочу раскрыть логику одного из ключевых архитектурных решений в библиотеке Taljure — **разделения индикаторов по уровню сложности** на модули `simple`, `advanced` и будущие `complex`.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="http://localhost:1313/posts/taljure-3/">
+    <meta property="og:image" content="http://localhost:1313/images/posts/taljure/taljure-3.png">
+    <meta property="og:image:alt" content="Архитектура taljure 2">
+    <meta property="og:site_name" content="Mr.Proger">
+    
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Библиотека для трейдинга: архитектура 2">
+    <meta name="twitter:description" content="В сегодняшней статье я хочу раскрыть логику одного из ключевых архитектурных решений в библиотеке Taljure — **разделения индикаторов по уровню сложности** на модули `simple`, `advanced` и будущие `complex`.">
+    <meta name="twitter:image" content="http://localhost:1313/images/posts/taljure/taljure-3.png">
+    <meta name="twitter:image:alt" content="Архитектура taljure 2">
+
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="http://localhost:1313/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav class="nav">
+                <a href="http://localhost:1313/"><strong>Mr.Proger</strong></a>
+    
+                <button class="nav-toggle" aria-expanded="false" aria-label="Меню">☰</button>
+                <div class="nav-links" id="navLinks">
+                  <a href="/about">О сайте</a>
+                  <a href="/tags">Теги</a>
+                  <a href="/index.xml" title="RSS">📡 RSS</a>
+                </div>
+                <div class="theme-switcher">
+                    <button class="theme-btn" onclick="setTheme('catppuccin')">☀️</button>
+                    <button class="theme-btn" onclick="setTheme('dracula')">🌙</button>
+                </div>
+            </nav>
+        </header>
+
+        <main>
+            
+<article class="post" data-post-id="09ae66c9840e5abbde4651b0b7cb69d4">
+    <header> 
+        <nav class="breadcrumbs">
+    <a href="http://localhost:1313/">🏠 Главная</a>
+    
+    
+        
+        <span class="sep">→</span>
+        <span class="current">Библиотека для трейдинга: архитектура 2</span>
+    
+    
+</nav>
+
+        <time>2025.08.24</time>
+        <div class="post-tags">
+          
+          <a href="/tags/clojure" class="tag">#clojure</a>
+          
+          <a href="/tags/%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B0_taljure" class="tag">#библиотека_taljure</a>
+          
+        </div>
+    </header>
+    
+    <div class="content">
+        
+        
+        
+        <nav class="table-of-contents">
+            <h2>📑 Содержание</h2>
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#архитектура-библиотеки-почему-индикаторы-делятся-на-simple-advanced-и-complex"><strong>Архитектура библиотеки: Почему индикаторы делятся на simple, advanced и complex</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </nav>
+        
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          document.querySelectorAll('pre').forEach(function(pre) {
+            const button = document.createElement('button');
+            button.textContent = '📋';
+            button.className = 'copy-btn';
+            button.onclick = function() {
+            navigator.clipboard.writeText(pre.textContent);
+            button.textContent = '✅';
+            setTimeout(() => button.textContent = '📋', 2000);
+          };
+            pre.style.position = 'relative';
+            button.style.position = 'absolute';
+            button.style.top = '10px';
+            button.style.right = '10px';
+            pre.appendChild(button);
+          });
+        });
+        </script>
+        <h1 id="библиотека-для-трейдинга-архитектура-2">Библиотека для трейдинга: архитектура 2</h1>
+<h3 id="архитектура-библиотеки-почему-индикаторы-делятся-на-simple-advanced-и-complex"><strong>Архитектура библиотеки: Почему индикаторы делятся на simple, advanced и complex</strong></h3>
+<p><img src="/images/posts/taljure/taljure-3.png" alt="Архитектура taljure 2"></p>
+<p>В сегодняшней статье я хочу раскрыть логику одного из ключевых архитектурных решений в библиотеке Taljure — <strong>разделения индикаторов по уровню сложности</strong> на модули <code>simple</code>, <code>advanced</code> и будущие <code>complex</code>.</p>
+<h4 id="текущая-структура"><strong>Текущая структура</strong></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span>(<span style="color:#66d9ef">ns </span>taljure.core
+</span></span><span style="display:flex;"><span>  (<span style="color:#e6db74">:require</span>
+</span></span><span style="display:flex;"><span>   [taljure.indicators.simple <span style="color:#e6db74">:as</span> simple]))
+</span></span><span style="display:flex;"><span>   
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">def </span>sma simple/sma)     <span style="color:#75715e">; Простое скользящее среднее</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">def </span>ema simple/ema)     <span style="color:#75715e">; Экспоненциальное скользящее среднее  </span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">def </span>atr simple/atr)     <span style="color:#75715e">; Average True Range</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">def </span>rsi simple/rsi)     <span style="color:#75715e">; Relative Strength Index</span>
+</span></span></code></pre></div><h4 id="почему-не-просто-свалка-в-одном-модуле"><strong>Почему не просто свалка в одном модуле?</strong></h4>
+<p><strong>1. Ментальное разделение ответственности</strong></p>
+<p><code>simple</code> — это индикаторы, которые:</p>
+<ul>
+<li>Имеют простую математическую формулу</li>
+<li>Вычисляются за один проход по данным</li>
+<li>Не требуют сложного контекста или состояния</li>
+<li>Идеальны для изучения основ алготрейдинга</li>
+</ul>
+<p><strong>Пример SMA:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#75715e">; По сути, это скользящее окно и среднее арифметическое</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>sma [data period]
+</span></span><span style="display:flex;"><span>  (map <span style="color:#f92672">#</span>(when (&gt;= (count %) period)
+</span></span><span style="display:flex;"><span>          (/ (reduce + (take period %)) period))
+</span></span><span style="display:flex;"><span>       (<span style="color:#a6e22e">partition</span> period <span style="color:#ae81ff">1</span> data)))
+</span></span></code></pre></div><p><strong>2. Путь обучения и onboarding</strong></p>
+<p>Новичок в алготрейдинге может:</p>
+<ol>
+<li>Изучить индикаторы из <code>simple</code> → понять базовые концепции</li>
+<li>Перейти к <code>advanced</code> → разобраться в более сложной математике</li>
+<li>Освоить <code>complex</code> → понять составные индикаторы и стратегии</li>
+</ol>
+<p>Это соответствует дидактическому принципу «от простого к сложному».</p>
+<p><strong>3. Технические характеристики и производительность</strong></p>
+<p><strong>Simple индикаторы:</strong></p>
+<ul>
+<li>Легковесные вычисления</li>
+<li>Минимальная память</li>
+<li>Подходят для real-time вычислений</li>
+</ul>
+<p><strong>Advanced индикаторы</strong> (например, MACD, Bollinger Bands):</p>
+<ul>
+<li>Многоуровневые вычисления (индикаторы от индикаторов)</li>
+<li>Требуют больше ресурсов</li>
+<li>Могут нуждаться в кешировании</li>
+</ul>
+<p><strong>Complex индикаторы</strong> (например, машина состояний для стратегий):</p>
+<ul>
+<li>Требуют контекста исполнения</li>
+<li>Могут иметь внутреннее состояние</li>
+<li>Сложные зависимости между данными</li>
+</ul>
+<h4 id="как-будет-развиваться-архитектура"><strong>Как будет развиваться архитектура</strong></h4>
+<p><strong>Сегодня:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>src/taljure/indicators/
+</span></span><span style="display:flex;"><span>└── simple.clj    <span style="color:#75715e"># SMA, EMA, RSI, ATR...</span>
+</span></span></code></pre></div><p><strong>Завтра:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>src/taljure/indicators/
+</span></span><span style="display:flex;"><span>├── simple.clj      <span style="color:#75715e"># Базовые: SMA, EMA, RSI, ATR</span>
+</span></span><span style="display:flex;"><span>├── advanced.clj    <span style="color:#75715e"># MACD, Bollinger Bands, Ichimoku...</span>
+</span></span><span style="display:flex;"><span>└── complex.clj     <span style="color:#75715e"># Составные индикаторы, машины состояний</span>
+</span></span></code></pre></div><p><strong>Пример advanced индикатора:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>; MACD <span style="color:#f92672">=</span> разница между EMA<span style="color:#f92672">(</span>12<span style="color:#f92672">)</span> и EMA<span style="color:#f92672">(</span>26<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>; Signal <span style="color:#f92672">=</span> EMA<span style="color:#f92672">(</span>9<span style="color:#f92672">)</span> от MACD
+</span></span><span style="display:flex;"><span>; Гистограмма <span style="color:#f92672">=</span> MACD - Signal
+</span></span><span style="display:flex;"><span>; Уже требует композиции нескольких индикаторов!
+</span></span></code></pre></div><p><strong>4. Гибкость подключения зависимостей</strong></p>
+<p>Разделение позволяет:</p>
+<ul>
+<li>Подключать только нужные модули</li>
+<li>Избегать ненужных зависимостей</li>
+<li>Оптимизировать bundle size для разных use cases</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#75715e">; Если пользователю нужны только простые индикаторы</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#e6db74">:require</span> [taljure.indicators.simple <span style="color:#e6db74">:as</span> indicators])
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">; Если нужны все возможности  </span>
+</span></span><span style="display:flex;"><span>(<span style="color:#e6db74">:require</span> [taljure.indicators.simple <span style="color:#e6db74">:as</span> simple]
+</span></span><span style="display:flex;"><span>          [taljure.indicators.advanced <span style="color:#e6db74">:as</span> advanced]
+</span></span><span style="display:flex;"><span>          [taljure.indicators.complex <span style="color:#e6db74">:as</span> complex])
+</span></span></code></pre></div><p><strong>5. Тестирование и сопровождение</strong></p>
+<ul>
+<li><strong>Простая логика</strong> → простые тесты</li>
+<li><strong>Сложная логика</strong> → комплексные тестовые сценарии</li>
+<li>Разделение упрощает поиск и исправление ошибок</li>
+</ul>
+<p><strong>Тест для simple индикатора:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span>(<span style="color:#a6e22e">deftest</span> sma-test
+</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">is</span> (= [nil nil <span style="color:#ae81ff">2.0</span> <span style="color:#ae81ff">3.0</span> <span style="color:#ae81ff">4.0</span>] 
+</span></span><span style="display:flex;"><span>         (<span style="color:#a6e22e">sma</span> [<span style="color:#ae81ff">1</span> <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">3</span> <span style="color:#ae81ff">4</span> <span style="color:#ae81ff">5</span>] <span style="color:#ae81ff">3</span>))))
+</span></span></code></pre></div><p><strong>Тест для advanced индикатора</strong> уже потребует setup с готовыми данными и может проверять несколько аспектов поведения.</p>
+<h4 id="почему-это-лучше-альтернатив"><strong>Почему это лучше альтернатив?</strong></h4>
+<p><strong>Альтернатива 1:</strong> По одному модулю на индикатор</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>indicators/
+</span></span><span style="display:flex;"><span>├── sma.clj
+</span></span><span style="display:flex;"><span>├── ema.clj
+</span></span><span style="display:flex;"><span>├── rsi.clj
+</span></span><span style="display:flex;"><span>└── ...
+</span></span></code></pre></div><p>→ Слишком дробно, сложно управлять</p>
+<p><strong>Альтернатива 2:</strong> Все в одном модуле <code>indicators.clj</code><br>
+→ 2000+ строк кода, сложно ориентироваться</p>
+<p><strong>Альтернатива 3:</strong> Группировка по назначению (trend, volatility, volume)<br>
+→ Субъективно, многие индикаторы многозадачны</p>
+<p><strong>Мое решение:</strong> Группировка по <strong>сложности реализации</strong> — объективный и технически обоснованный критерий.</p>
+<h4 id="заключение-архитектура-как-отражение-доменной-области"><strong>Заключение: Архитектура как отражение доменной области</strong></h4>
+<p>Разделение на simple/advanced/complex — это не просто технический прием. Это:</p>
+<ol>
+<li><strong>Отражение реальности</strong> — в трейдинге действительно есть простые и сложные индикаторы</li>
+<li><strong>Организационный принцип</strong> — помогает структурировать код и мысли</li>
+<li><strong>Масштабируемость</strong> — позволяет библиотеке расти органически</li>
+<li><strong>Эргономика</strong> — пользователи быстро находят нужный уровень сложности</li>
+</ol>
+<p>В следующей статье реализуем первый индикатор SMA и посмотрим, как эта архитектура работает на практике.</p>
+<p><strong>Как вы организуете сложные доменные области в своих проектах? Сталкивались ли с подобными архитектурными дилеммами?</strong></p>
+
+        
+        <div class="post-stats">
+            <span class="views">👁‍🗨 0</span>
+            <span class="likes">💛 0</span>
+        </div>
+    </div>
+</article>
+
+<style>
+.table-of-contents {
+    background: var(--post-card);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 2rem 0;
+    border-left: 4px solid var(--accent);
+}
+
+.table-of-contents h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.2em;
+    color: #f8f8f2;
+}
+
+.table-of-contents ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.table-of-contents li {
+    margin: 0.5rem 0;
+    line-height: 1.4;
+}
+
+.table-of-contents a {
+    text-decoration: none;
+    color: var(--meta);
+    transition: color 0.2s ease;
+    display: block;
+    padding: 0.2rem 0;
+}
+
+.table-of-contents a:hover {
+    color: #ff79c6;
+}
+
+.table-of-contents ul ul {
+    padding-left: 1rem;
+    margin: 0.25rem 0;
+    border-left: 1px solid var(--meta);
+}
+
+ 
+@media (max-width: 768px) {
+    .table-of-contents {
+        padding: 1rem;
+        margin: 1.5rem 0;
+    }
+    
+    .table-of-contents ul ul {
+        padding-left: 0.5rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    document.querySelectorAll('pre').forEach(function(pre) {
+        const button = document.createElement('button');
+        button.textContent = '📋';
+        button.className = 'copy-btn';
+        button.onclick = function() {
+            navigator.clipboard.writeText(pre.textContent);
+            button.textContent = '✅';
+            setTimeout(() => button.textContent = '📋', 2000);
+        };
+        pre.style.position = 'relative';
+        button.style.position = 'absolute';
+        button.style.top = '10px';
+        button.style.right = '10px';
+        pre.appendChild(button);
+    });
+    
+    
+    document.querySelectorAll('.table-of-contents a[href^="#"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+});
+</script>
+
+        </main>
+
+        <footer>
+            <p>© 2025 Mr.Proger • Powered by Konkin</p>
+        </footer>
+    </div>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Библиотека для трейдинга: архитектура 2",
+        "description": "В сегодняшней статье я хочу раскрыть логику одного из ключевых архитектурных решений в библиотеке Taljure — **разделения индикаторов по уровню сложности** на модули \u0060simple\u0060, \u0060advanced\u0060 и будущие \u0060complex\u0060.",
+          "author": {
+          "@type": "Person",
+          "name": "Иван"
+        }
+      }
+    </script>
+    <script>
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        }
+        
+        
+        const savedTheme = localStorage.getItem('theme') || 'dracula';
+        setTheme(savedTheme);
+    </script>
+    <div id="reading-progress"></div>
+
+    <script>
+    
+    const progressBar = document.getElementById('reading-progress');
+
+    function updateProgressBar() {
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight - windowHeight;
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    
+      const progress = (scrollTop / documentHeight) * 100;
+      progressBar.style.width = progress + '%';
+    }
+
+    
+    if (document.querySelector('.post')) {
+      progressBar.style.display = 'block';
+      window.addEventListener('scroll', updateProgressBar);
+      window.addEventListener('resize', updateProgressBar);
+    }
+    </script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="http://localhost:1313/js/analytics.js"></script>
+    <script src="http://localhost:1313/js/toogle_menu.js"></script> 
+</body>
+</html>

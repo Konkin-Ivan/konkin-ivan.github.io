@@ -49,33 +49,6 @@
             
 <article class="post" data-post-id="6083a88ee3411b0d17ce02d738f69d47">
     <header> 
-        <h1>О сайте</h1>
-        <time>2025.07.06</time>
-        <div class="post-tags">
-          
-        </div>
-    </header>
-    
-    <div class="content">
-    <script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('pre').forEach(function(pre) {
-        const button = document.createElement('button');
-        button.textContent = '📋';
-        button.className = 'copy-btn';
-        button.onclick = function() {
-            navigator.clipboard.writeText(pre.textContent);
-            button.textContent = '✅';
-            setTimeout(() => button.textContent = '📋', 2000);
-        };
-        pre.style.position = 'relative';
-        button.style.position = 'absolute';
-        button.style.top = '10px';
-        button.style.right = '10px';
-        pre.appendChild(button);
-    });
-});
-</script>
         <nav class="breadcrumbs">
     <a href="http://localhost:1313/">🏠 Главная</a>
     
@@ -86,6 +59,35 @@ document.addEventListener('DOMContentLoaded', function() {
     
 </nav>
 
+        <time>2025.07.06</time>
+        <div class="post-tags">
+          
+        </div>
+    </header>
+    
+    <div class="content">
+        
+        
+        
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          document.querySelectorAll('pre').forEach(function(pre) {
+            const button = document.createElement('button');
+            button.textContent = '📋';
+            button.className = 'copy-btn';
+            button.onclick = function() {
+            navigator.clipboard.writeText(pre.textContent);
+            button.textContent = '✅';
+            setTimeout(() => button.textContent = '📋', 2000);
+          };
+            pre.style.position = 'relative';
+            button.style.position = 'absolute';
+            button.style.top = '10px';
+            button.style.right = '10px';
+            pre.appendChild(button);
+          });
+        });
+        </script>
         <p><strong>Привет!</strong> Это блог практикующего разработчика, который <strong>фанатеет от Clojure</strong> и функционального программирования. Здесь нет сухой теории из учебников - только <strong>прикладные знания</strong>, хитрости и личный опыт.</p>
 <p>Я пишу о:</p>
 <ul>
@@ -112,10 +114,107 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <p><strong>Код — в продакшене, скобки — в сердце.</strong></p>
 
-        <span class="views">👁‍🗨 0</span>
-        <span class="likes">💛 0</span>
+        
+        <div class="post-stats">
+            <span class="views">👁‍🗨 0</span>
+            <span class="likes">💛 0</span>
+        </div>
     </div>
 </article>
+
+<style>
+.table-of-contents {
+    background: var(--post-card);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 2rem 0;
+    border-left: 4px solid var(--accent);
+}
+
+.table-of-contents h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.2em;
+    color: #f8f8f2;
+}
+
+.table-of-contents ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.table-of-contents li {
+    margin: 0.5rem 0;
+    line-height: 1.4;
+}
+
+.table-of-contents a {
+    text-decoration: none;
+    color: var(--meta);
+    transition: color 0.2s ease;
+    display: block;
+    padding: 0.2rem 0;
+}
+
+.table-of-contents a:hover {
+    color: #ff79c6;
+}
+
+.table-of-contents ul ul {
+    padding-left: 1rem;
+    margin: 0.25rem 0;
+    border-left: 1px solid var(--meta);
+}
+
+ 
+@media (max-width: 768px) {
+    .table-of-contents {
+        padding: 1rem;
+        margin: 1.5rem 0;
+    }
+    
+    .table-of-contents ul ul {
+        padding-left: 0.5rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    document.querySelectorAll('pre').forEach(function(pre) {
+        const button = document.createElement('button');
+        button.textContent = '📋';
+        button.className = 'copy-btn';
+        button.onclick = function() {
+            navigator.clipboard.writeText(pre.textContent);
+            button.textContent = '✅';
+            setTimeout(() => button.textContent = '📋', 2000);
+        };
+        pre.style.position = 'relative';
+        button.style.position = 'absolute';
+        button.style.top = '10px';
+        button.style.right = '10px';
+        pre.appendChild(button);
+    });
+    
+    
+    document.querySelectorAll('.table-of-contents a[href^="#"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+});
+</script>
 
         </main>
 

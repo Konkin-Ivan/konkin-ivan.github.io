@@ -49,37 +49,6 @@
             
 <article class="post" data-post-id="ff8e75b5b68b43eceafad85c05dd5d3e">
     <header> 
-        <h1>Код как живой организм: от говнокода к архитектуре</h1>
-        <time>2025.08.06</time>
-        <div class="post-tags">
-          
-          <a href="/tags/clojure" class="tag">#clojure</a>
-          
-          <a href="/tags/vim" class="tag">#vim</a>
-          
-        </div>
-    </header>
-    
-    <div class="content">
-    <script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('pre').forEach(function(pre) {
-        const button = document.createElement('button');
-        button.textContent = '📋';
-        button.className = 'copy-btn';
-        button.onclick = function() {
-            navigator.clipboard.writeText(pre.textContent);
-            button.textContent = '✅';
-            setTimeout(() => button.textContent = '📋', 2000);
-        };
-        pre.style.position = 'relative';
-        button.style.position = 'absolute';
-        button.style.top = '10px';
-        button.style.right = '10px';
-        pre.appendChild(button);
-    });
-});
-</script>
         <nav class="breadcrumbs">
     <a href="http://localhost:1313/">🏠 Главная</a>
     
@@ -91,6 +60,63 @@ document.addEventListener('DOMContentLoaded', function() {
     
 </nav>
 
+        <time>2025.08.06</time>
+        <div class="post-tags">
+          
+          <a href="/tags/clojure" class="tag">#clojure</a>
+          
+        </div>
+    </header>
+    
+    <div class="content">
+        
+        
+        
+        <nav class="table-of-contents">
+            <h2>📑 Содержание</h2>
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#как-страх-плохого-кода-мешает-развиваться"><strong>Как страх «плохого кода» мешает развиваться</strong></a></li>
+        <li><a href="#почему-первый-код--это-почти-всегда-говнокод-и-это-не-плохо"><strong>Почему первый код — это почти всегда «говнокод» (и это не плохо)</strong></a></li>
+        <li><a href="#3-эволюция-кода-как-хаос-превращается-в-порядок"><strong>3. Эволюция кода: как хаос превращается в порядок</strong></a></li>
+        <li><a href="#4-почему-паттерны-и-solid--это-результат-а-не-старт"><strong>4. Почему паттерны и SOLID — это результат, а не старт</strong></a></li>
+        <li><a href="#какие-проблемы-возникают"><strong>Какие проблемы возникают?</strong></a></li>
+        <li><a href="#как-прийти-к-этому-решению-на-практике"><strong>Как прийти к этому решению на практике?</strong></a></li>
+        <li><a href="#1-первая-мысль-сделаю-через-циклы-потому-что-это-очевидно"><strong>1. Первая мысль: «Сделаю через циклы!» (потому что это «очевидно»)</strong></a></li>
+        <li><a href="#2-момент-осознания-а-ведь-это-можно-упростить"><strong>2. Момент осознания: «А ведь это можно упростить…»</strong></a></li>
+        <li><a href="#психологический-подтекст"><strong>Психологический подтекст</strong></a></li>
+        <li><a href="#индустрия-программирования-создаёт-токсичный-перфекционизм"><strong>Индустрия программирования создаёт токсичный перфекционизм</strong></a></li>
+        <li><a href="#почему-быстрый-говнокод--это-не-стыдно-а-необходимо"><strong>Почему «быстрый говнокод» — это не стыдно, а необходимо</strong></a></li>
+        <li><a href="#3-как-бороться-со-страхом-неидеального-кода"><strong>3. Как бороться со страхом «неидеального кода»</strong></a></li>
+        <li><a href="#4-что-говорят-практики"><strong>4. Что говорят практики</strong></a></li>
+        <li><a href="#вывод-принцип-сначала-практика-потом-теория"><strong>Вывод: принцип «Сначала практика, потом теория»</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </nav>
+        
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          document.querySelectorAll('pre').forEach(function(pre) {
+            const button = document.createElement('button');
+            button.textContent = '📋';
+            button.className = 'copy-btn';
+            button.onclick = function() {
+            navigator.clipboard.writeText(pre.textContent);
+            button.textContent = '✅';
+            setTimeout(() => button.textContent = '📋', 2000);
+          };
+            pre.style.position = 'relative';
+            button.style.position = 'absolute';
+            button.style.top = '10px';
+            button.style.right = '10px';
+            pre.appendChild(button);
+          });
+        });
+        </script>
         <h1 id="код-как-живой-организм-от-говнокода-к-архитектуре">Код как живой организм: от говнокода к архитектуре</h1>
 <h3 id="как-страх-плохого-кода-мешает-развиваться"><strong>Как страх «плохого кода» мешает развиваться</strong></h3>
 <p>Когда я только начинал программировать, мне казалось, что хороший код должен выглядеть идеально с первой строчки:</p>
@@ -373,10 +399,107 @@ document.addEventListener('DOMContentLoaded', function() {
 Сначала — работающий код. Потом — красивый. И только затем — «идеальный» (если он вообще нужен).</p>
 <p><strong>Главное — начать.</strong></p>
 
-        <span class="views">👁‍🗨 0</span>
-        <span class="likes">💛 0</span>
+        
+        <div class="post-stats">
+            <span class="views">👁‍🗨 0</span>
+            <span class="likes">💛 0</span>
+        </div>
     </div>
 </article>
+
+<style>
+.table-of-contents {
+    background: var(--post-card);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 2rem 0;
+    border-left: 4px solid var(--accent);
+}
+
+.table-of-contents h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.2em;
+    color: #f8f8f2;
+}
+
+.table-of-contents ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.table-of-contents li {
+    margin: 0.5rem 0;
+    line-height: 1.4;
+}
+
+.table-of-contents a {
+    text-decoration: none;
+    color: var(--meta);
+    transition: color 0.2s ease;
+    display: block;
+    padding: 0.2rem 0;
+}
+
+.table-of-contents a:hover {
+    color: #ff79c6;
+}
+
+.table-of-contents ul ul {
+    padding-left: 1rem;
+    margin: 0.25rem 0;
+    border-left: 1px solid var(--meta);
+}
+
+ 
+@media (max-width: 768px) {
+    .table-of-contents {
+        padding: 1rem;
+        margin: 1.5rem 0;
+    }
+    
+    .table-of-contents ul ul {
+        padding-left: 0.5rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    document.querySelectorAll('pre').forEach(function(pre) {
+        const button = document.createElement('button');
+        button.textContent = '📋';
+        button.className = 'copy-btn';
+        button.onclick = function() {
+            navigator.clipboard.writeText(pre.textContent);
+            button.textContent = '✅';
+            setTimeout(() => button.textContent = '📋', 2000);
+        };
+        pre.style.position = 'relative';
+        button.style.position = 'absolute';
+        button.style.top = '10px';
+        button.style.right = '10px';
+        pre.appendChild(button);
+    });
+    
+    
+    document.querySelectorAll('.table-of-contents a[href^="#"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+});
+</script>
 
         </main>
 

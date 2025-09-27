@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dracula">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Библиотека для трейдинга: cоздаем проект | Mr.Proger</title>
+    
+    <meta name="description" content="Разберем самый первый и важный этап — настройку рабочего окружения с помощью Docker. Это гарантирует, что у всех разработчиков, независимо от ОС, будет идентичная среда для работы с проектом.">
+    
+    
+    <meta property="og:title" content="Библиотека для трейдинга: cоздаем проект">
+    <meta property="og:description" content="Разберем самый первый и важный этап — настройку рабочего окружения с помощью Docker. Это гарантирует, что у всех разработчиков, независимо от ОС, будет идентичная среда для работы с проектом.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="http://localhost:1313/posts/taljure-1/">
+    <meta property="og:image" content="http://localhost:1313/images/posts/taljure/taljure-1.png">
+    <meta property="og:image:alt" content="Создание проекта taljure">
+    <meta property="og:site_name" content="Mr.Proger">
+    
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Библиотека для трейдинга: cоздаем проект">
+    <meta name="twitter:description" content="Разберем самый первый и важный этап — настройку рабочего окружения с помощью Docker. Это гарантирует, что у всех разработчиков, независимо от ОС, будет идентичная среда для работы с проектом.">
+    <meta name="twitter:image" content="http://localhost:1313/images/posts/taljure/taljure-1.png">
+    <meta name="twitter:image:alt" content="Создание проекта taljure">
+
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="http://localhost:1313/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav class="nav">
+                <a href="http://localhost:1313/"><strong>Mr.Proger</strong></a>
+    
+                <button class="nav-toggle" aria-expanded="false" aria-label="Меню">☰</button>
+                <div class="nav-links" id="navLinks">
+                  <a href="/about">О сайте</a>
+                  <a href="/tags">Теги</a>
+                  <a href="/index.xml" title="RSS">📡 RSS</a>
+                </div>
+                <div class="theme-switcher">
+                    <button class="theme-btn" onclick="setTheme('catppuccin')">☀️</button>
+                    <button class="theme-btn" onclick="setTheme('dracula')">🌙</button>
+                </div>
+            </nav>
+        </header>
+
+        <main>
+            
+<article class="post" data-post-id="c7e55289f3cd1bcb6341cfb9c5fe96b0">
+    <header> 
+        <nav class="breadcrumbs">
+    <a href="http://localhost:1313/">🏠 Главная</a>
+    
+    
+        
+        <span class="sep">→</span>
+        <span class="current">Библиотека для трейдинга: cоздаем проект</span>
+    
+    
+</nav>
+
+        <time>2025.08.22</time>
+        <div class="post-tags">
+          
+          <a href="/tags/clojure" class="tag">#clojure</a>
+          
+          <a href="/tags/%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B0_taljure" class="tag">#библиотека_taljure</a>
+          
+        </div>
+    </header>
+    
+    <div class="content">
+        
+        
+        
+        <nav class="table-of-contents">
+            <h2>📑 Содержание</h2>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#создаем-проект-на-clojure-настраиваем-docker-окружение-для-библиотеки-алготрейдинга">Создаем проект на Clojure: Настраиваем Docker-окружение для библиотеки алготрейдинга</a>
+      <ul>
+        <li></li>
+        <li><a href="#теперь-соберем-и-запустим-наш-проект">Теперь соберем и запустим наш проект.</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </nav>
+        
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          document.querySelectorAll('pre').forEach(function(pre) {
+            const button = document.createElement('button');
+            button.textContent = '📋';
+            button.className = 'copy-btn';
+            button.onclick = function() {
+            navigator.clipboard.writeText(pre.textContent);
+            button.textContent = '✅';
+            setTimeout(() => button.textContent = '📋', 2000);
+          };
+            pre.style.position = 'relative';
+            button.style.position = 'absolute';
+            button.style.top = '10px';
+            button.style.right = '10px';
+            pre.appendChild(button);
+          });
+        });
+        </script>
+        <h1 id="библиотека-для-трейдинга-cоздаем-проект">Библиотека для трейдинга: cоздаем проект</h1>
+<h2 id="создаем-проект-на-clojure-настраиваем-docker-окружение-для-библиотеки-алготрейдинга">Создаем проект на Clojure: Настраиваем Docker-окружение для библиотеки алготрейдинга</h2>
+<p><img src="/images/posts/taljure/taljure-1.png" alt="Создание проекта taljure"></p>
+<p>В предыдущем посте я анонсировал создание open-source библиотеки для алготрейдинга на Clojure. Сегодня разберем самый первый и важный этап — настройку рабочего окружения с помощью Docker. Это гарантирует, что у всех разработчиков, независимо от ОС, будет идентичная среда для работы с проектом.</p>
+<p>В моей ОС не установлен Clojure, Clojure-LSP, JDK и прочие нужные программы и утилиты, для разработки, поэтому все нужное буду запускать в докер-контейнере.</p>
+<h4 id="структура-проекта"><strong>Структура проекта</strong></h4>
+<p>Для начала создадим базовую структуру каталогов. Она может меняться по мере развития проекта, но стартовая выглядит так:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>.
+</span></span><span style="display:flex;"><span>├── deps.edn
+</span></span><span style="display:flex;"><span>├── _docker
+</span></span><span style="display:flex;"><span>│   └── app
+</span></span><span style="display:flex;"><span>│       └── Dockerfile
+</span></span><span style="display:flex;"><span>├── docker-compose.yml
+</span></span><span style="display:flex;"><span>├── Makefile
+</span></span><span style="display:flex;"><span>├── README.md
+</span></span><span style="display:flex;"><span>├── src
+</span></span><span style="display:flex;"><span>│   └── taljure
+</span></span><span style="display:flex;"><span>│       ├── core.clj
+</span></span><span style="display:flex;"><span>│       └── indicators
+</span></span><span style="display:flex;"><span>│           └── simple.clj
+</span></span><span style="display:flex;"><span>└── test
+</span></span><span style="display:flex;"><span>    └── taljure
+</span></span><span style="display:flex;"><span>        └── indicators
+</span></span><span style="display:flex;"><span>            └── simple
+</span></span><span style="display:flex;"><span>                ├── atr_test.clj
+</span></span><span style="display:flex;"><span>                ├── ema_test.clj
+</span></span><span style="display:flex;"><span>                ├── rsi_test.clj
+</span></span><span style="display:flex;"><span>                ├── sma_test.clj
+</span></span><span style="display:flex;"><span>                ├── stochastic_test.clj
+</span></span><span style="display:flex;"><span>                └── vwap_test.clj
+</span></span><span style="display:flex;"><span>                
+</span></span></code></pre></div><p>Ключевые моменты:</p>
+<ul>
+<li><strong><code>_docker/app/Dockerfile</code></strong> — инструкция для сборки нашего контейнера.</li>
+<li><strong><code>docker-compose.yml</code></strong> — для управления сервисами (пока что одним — <code>app</code>).</li>
+<li><strong><code>src/</code></strong> — исходный код библиотеки с модулями для индикаторов.</li>
+<li><strong><code>test/</code></strong> — тесты, сразу заложенные под будущие индикаторы.</li>
+</ul>
+<h4 id="dockerfile-основа-нашего-окружения"><strong>Dockerfile: основа нашего окружения</strong></h4>
+<p>Начнем с Dockerfile. Нам нужен образ с последней версией Clojure и базовыми утилитами.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#75715e"># _docker/app/Dockerfile</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Используем официальный образ Clojure</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">FROM</span> <span style="color:#e6db74">clojure:latest</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Устанавливаем необходимые пакеты</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> apt-get update <span style="color:#f92672">&amp;&amp;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    apt-get install -y <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>        curl <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>        git <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>        wget <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>        rlwrap <span style="color:#f92672">&amp;&amp;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    apt-get clean <span style="color:#f92672">&amp;&amp;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    rm -rf /var/lib/apt/lists/*<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Создаём пользователя с тем же UID/GID, что и на хосте</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">ARG</span> USER_ID<span style="color:#f92672">=</span><span style="color:#ae81ff">1000</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">ARG</span> GROUP_ID<span style="color:#f92672">=</span><span style="color:#ae81ff">1000</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">RUN</span> groupadd -g <span style="color:#e6db74">${</span>GROUP_ID<span style="color:#e6db74">}</span> clojure-user <span style="color:#f92672">&amp;&amp;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    useradd -u <span style="color:#e6db74">${</span>USER_ID<span style="color:#e6db74">}</span> -g clojure-user -m clojure-user<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Устанавливаем рабочую директорию</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">WORKDIR</span> <span style="color:#e6db74">/usr/src/taljure</span>/<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Меняем владельца рабочей директории</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> chown -R clojure-user:clojure-user /usr/src/taljure<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Переключаемся на созданного пользователя</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">USER</span> <span style="color:#e6db74">clojure-user</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Открываем порт для REPL</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">EXPOSE</span> <span style="color:#e6db74">4444</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Запускаем nREPL-сервер при старте контейнера</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">CMD</span> [<span style="color:#e6db74">&#34;clojure&#34;</span>, <span style="color:#e6db74">&#34;-Sdeps&#34;</span>, <span style="color:#e6db74">&#34;{:deps {nrepl/nrepl {:mvn/version \&#34;1.0.0\&#34;}}}&#34;</span>, <span style="color:#e6db74">&#34;-M&#34;</span>, <span style="color:#e6db74">&#34;-m&#34;</span>, <span style="color:#e6db74">&#34;nrepl.cmdline&#34;</span>, <span style="color:#e6db74">&#34;--port&#34;</span>, <span style="color:#e6db74">&#34;4444&#34;</span>, <span style="color:#e6db74">&#34;--bind&#34;</span>, <span style="color:#e6db74">&#34;0.0.0.0&#34;</span>]<span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><p><strong>Что здесь важно:</strong></p>
+<ol>
+<li>Создаем пользователя <code>clojure-user</code> с вашими ID из хостовой системы, чтобы избежать проблем с правами на монтируемые файлы.</li>
+<li>Устанавливаем <code>rlwrap</code> для удобной работы с REPL в контейнере.</li>
+<li>По умолчанию контейнер запускает nREPL-сервер на порту 4444.</li>
+</ol>
+<h4 id="docker-compose-управляем-сервисами"><strong>Docker Compose: управляем сервисами</strong></h4>
+<p>Файл <code>docker-compose.yml</code> упрощает запуск и управление контейнером.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># docker-compose.yml</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">services</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">app</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">build</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">context</span>: <span style="color:#ae81ff">.</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">dockerfile</span>: <span style="color:#ae81ff">_docker/app/Dockerfile</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">container_name</span>: <span style="color:#e6db74">&#34;${PROJECT_NAME}_app&#34;</span> <span style="color:#75715e"># Имя контейнера</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">volumes</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">./:/usr/src/taljure/</span> <span style="color:#75715e"># Монтирование текущей директории</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">4444</span>:<span style="color:#ae81ff">4444</span> <span style="color:#75715e"># Проброс порта REPL</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">environment</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">NREPL_HOST=0.0.0.0</span> <span style="color:#75715e"># Разрешить подключение к REPL извне</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">NREPL_PORT=4444</span> <span style="color:#75715e"># Порт для REPL</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">LANG=C.UTF-8</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">networks</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">clojure-net</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">networks</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">clojure-net</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">driver</span>: <span style="color:#ae81ff">bridge</span>
+</span></span><span style="display:flex;"><span>    
+</span></span></code></pre></div><h4 id="конфигурация-в-env">Конфигурация в .env</h4>
+<p>Файл <code>.env</code> :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>DOMAIN<span style="color:#f92672">=</span>local.local
+</span></span><span style="display:flex;"><span>PROJECT_NAME<span style="color:#f92672">=</span>taljure
+</span></span></code></pre></div><p>Makefile:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>up:
+</span></span><span style="display:flex;"><span>	docker-compose up -d
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>stop:
+</span></span><span style="display:flex;"><span>	docker-compose stop
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>build:
+</span></span><span style="display:flex;"><span>	docker-compose up -d --build
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>restart:
+</span></span><span style="display:flex;"><span>	make stop <span style="color:#f92672">&amp;&amp;</span> make up
+</span></span></code></pre></div><p><strong>Пояснения:</strong></p>
+<ul>
+<li><code>volumes</code> монтирует текущую директорию проекта в контейнер, позволяя работать с кодом в реальном времени.</li>
+<li><code>ports</code> пробрасывает порт 4444 для подключения к nREPL из IDE на вашей машине.</li>
+<li>Переменная <code>PROJECT_NAME</code> задается через <code>.env</code> файл или прямо в командной строке.</li>
+</ul>
+<h4 id="проверка-работоспособности-hello-world"><strong>Проверка работоспособности: Hello World!</strong></h4>
+<p>Создадим простой namespace <code>taljure.core</code> для проверки.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#75715e">;; src/taljure/core.clj</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">ns </span>taljure.core)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>-main
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Точка входа в приложение. Пока что просто Hello World.&#34;</span>
+</span></span><span style="display:flex;"><span>  [<span style="color:#f92672">&amp;</span> args]
+</span></span><span style="display:flex;"><span>  (println <span style="color:#e6db74">&#34;Hello, World! 🚀&#34;</span>))
+</span></span></code></pre></div><h3 id="теперь-соберем-и-запустим-наш-проект">Теперь соберем и запустим наш проект.</h3>
+<p><strong>Собираем и запускаем контейнер:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>make up
+</span></span></code></pre></div><p><strong>Запускаем наше приложение внутри контейнера:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>make run
+</span></span></code></pre></div><p>Если все настроено корректно, в логах видим:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>Hello, World! 🚀
+</span></span></code></pre></div><p><strong>Проверяем REPL:</strong><br>
+Подключитесь к nREPL на <code>localhost:4444</code> из вашей IDE (Calva, CIDER и др.). Если подключение прошло успешно — окружение готово к разработке!</p>
+<h4 id="что-дальше"><strong>Что дальше?</strong></h4>
+<p>Мы успешно создали изолированное и воспроизводимое окружение для разработки на Clojure. В следующей статье:</p>
+<ul>
+<li>Разберем <code>deps.edn</code> и подключим основные зависимости.</li>
+<li>Напишем первые тесты и реализацию простейшего индикатора (SMA).</li>
+<li>Настроим CI для автоматического прогона тестов.</li>
+</ul>
+<p>Исходный код базового приложения будет доступен на <a href="https://gitflic.ru/project/konkin/slj_base_docker_cli">GitFlic</a> (можно участвовать).</p>
+<p>Если у вас есть вопросы или предложения по настройке окружения — добро пожаловать в комментарии!</p>
+
+        
+        <div class="post-stats">
+            <span class="views">👁‍🗨 0</span>
+            <span class="likes">💛 0</span>
+        </div>
+    </div>
+</article>
+
+<style>
+.table-of-contents {
+    background: var(--post-card);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 2rem 0;
+    border-left: 4px solid var(--accent);
+}
+
+.table-of-contents h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.2em;
+    color: #f8f8f2;
+}
+
+.table-of-contents ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.table-of-contents li {
+    margin: 0.5rem 0;
+    line-height: 1.4;
+}
+
+.table-of-contents a {
+    text-decoration: none;
+    color: var(--meta);
+    transition: color 0.2s ease;
+    display: block;
+    padding: 0.2rem 0;
+}
+
+.table-of-contents a:hover {
+    color: #ff79c6;
+}
+
+.table-of-contents ul ul {
+    padding-left: 1rem;
+    margin: 0.25rem 0;
+    border-left: 1px solid var(--meta);
+}
+
+ 
+@media (max-width: 768px) {
+    .table-of-contents {
+        padding: 1rem;
+        margin: 1.5rem 0;
+    }
+    
+    .table-of-contents ul ul {
+        padding-left: 0.5rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    document.querySelectorAll('pre').forEach(function(pre) {
+        const button = document.createElement('button');
+        button.textContent = '📋';
+        button.className = 'copy-btn';
+        button.onclick = function() {
+            navigator.clipboard.writeText(pre.textContent);
+            button.textContent = '✅';
+            setTimeout(() => button.textContent = '📋', 2000);
+        };
+        pre.style.position = 'relative';
+        button.style.position = 'absolute';
+        button.style.top = '10px';
+        button.style.right = '10px';
+        pre.appendChild(button);
+    });
+    
+    
+    document.querySelectorAll('.table-of-contents a[href^="#"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+});
+</script>
+
+        </main>
+
+        <footer>
+            <p>© 2025 Mr.Proger • Powered by Konkin</p>
+        </footer>
+    </div>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Библиотека для трейдинга: cоздаем проект",
+        "description": "Разберем самый первый и важный этап — настройку рабочего окружения с помощью Docker. Это гарантирует, что у всех разработчиков, независимо от ОС, будет идентичная среда для работы с проектом.",
+          "author": {
+          "@type": "Person",
+          "name": "Иван"
+        }
+      }
+    </script>
+    <script>
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        }
+        
+        
+        const savedTheme = localStorage.getItem('theme') || 'dracula';
+        setTheme(savedTheme);
+    </script>
+    <div id="reading-progress"></div>
+
+    <script>
+    
+    const progressBar = document.getElementById('reading-progress');
+
+    function updateProgressBar() {
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight - windowHeight;
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    
+      const progress = (scrollTop / documentHeight) * 100;
+      progressBar.style.width = progress + '%';
+    }
+
+    
+    if (document.querySelector('.post')) {
+      progressBar.style.display = 'block';
+      window.addEventListener('scroll', updateProgressBar);
+      window.addEventListener('resize', updateProgressBar);
+    }
+    </script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="http://localhost:1313/js/analytics.js"></script>
+    <script src="http://localhost:1313/js/toogle_menu.js"></script> 
+</body>
+</html>

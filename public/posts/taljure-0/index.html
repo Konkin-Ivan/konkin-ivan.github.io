@@ -49,39 +49,6 @@
             
 <article class="post" data-post-id="a2a9fe712e2eba024108f60a34c011d9">
     <header> 
-        <h1>Библиотека для трейдинга: начало</h1>
-        <time>2025.08.21</time>
-        <div class="post-tags">
-          
-          <a href="/tags/clojure" class="tag">#clojure</a>
-          
-          <a href="/tags/vim" class="tag">#vim</a>
-          
-          <a href="/tags/%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B0_taljure" class="tag">#библиотека_taljure</a>
-          
-        </div>
-    </header>
-    
-    <div class="content">
-    <script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('pre').forEach(function(pre) {
-        const button = document.createElement('button');
-        button.textContent = '📋';
-        button.className = 'copy-btn';
-        button.onclick = function() {
-            navigator.clipboard.writeText(pre.textContent);
-            button.textContent = '✅';
-            setTimeout(() => button.textContent = '📋', 2000);
-        };
-        pre.style.position = 'relative';
-        button.style.position = 'absolute';
-        button.style.top = '10px';
-        button.style.right = '10px';
-        pre.appendChild(button);
-    });
-});
-</script>
         <nav class="breadcrumbs">
     <a href="http://localhost:1313/">🏠 Главная</a>
     
@@ -93,6 +60,54 @@ document.addEventListener('DOMContentLoaded', function() {
     
 </nav>
 
+        <time>2025.08.21</time>
+        <div class="post-tags">
+          
+          <a href="/tags/clojure" class="tag">#clojure</a>
+          
+          <a href="/tags/%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B0_taljure" class="tag">#библиотека_taljure</a>
+          
+        </div>
+    </header>
+    
+    <div class="content">
+        
+        
+        
+        <nav class="table-of-contents">
+            <h2>📑 Содержание</h2>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#запуск-open-source-проекта-clojure-библиотека-для-алготрейдинга-с-нуля">Запуск Open-Source проекта: Clojure библиотека для алготрейдинга с нуля</a>
+      <ul>
+        <li><a href="#зачем-это-нужно">Зачем это нужно?</a></li>
+        <li><a href="#технический-стек-и-философия">Технический стек и философия</a></li>
+        <li><a href="#о-чем-будем-говорить-в-следующих-статьях">О чем будем говорить в следующих статьях</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </nav>
+        
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          document.querySelectorAll('pre').forEach(function(pre) {
+            const button = document.createElement('button');
+            button.textContent = '📋';
+            button.className = 'copy-btn';
+            button.onclick = function() {
+            navigator.clipboard.writeText(pre.textContent);
+            button.textContent = '✅';
+            setTimeout(() => button.textContent = '📋', 2000);
+          };
+            pre.style.position = 'relative';
+            button.style.position = 'absolute';
+            button.style.top = '10px';
+            button.style.right = '10px';
+            pre.appendChild(button);
+          });
+        });
+        </script>
         <h1 id="библиотека-для-трейдинга-начало">Библиотека для трейдинга: начало</h1>
 <h2 id="запуск-open-source-проекта-clojure-библиотека-для-алготрейдинга-с-нуля">Запуск Open-Source проекта: Clojure библиотека для алготрейдинга с нуля</h2>
 <p><img src="/images/posts/taljure/taljure-0.png" alt="Запуск open-source taljure"></p>
@@ -135,10 +150,107 @@ document.addEventListener('DOMContentLoaded', function() {
 <p>Исходный код будет доступен на <a href="https://gitflic.ru/project/konkin/taljure">GitFlic</a> (можно участвовать).</p>
 <p>Что вы думаете о такой идее? Какие индикаторы или функционал вам было бы интересно увидеть в первую очередь? Делитесь мыслями в комментариях!</p>
 
-        <span class="views">👁‍🗨 0</span>
-        <span class="likes">💛 0</span>
+        
+        <div class="post-stats">
+            <span class="views">👁‍🗨 0</span>
+            <span class="likes">💛 0</span>
+        </div>
     </div>
 </article>
+
+<style>
+.table-of-contents {
+    background: var(--post-card);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 2rem 0;
+    border-left: 4px solid var(--accent);
+}
+
+.table-of-contents h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.2em;
+    color: #f8f8f2;
+}
+
+.table-of-contents ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.table-of-contents li {
+    margin: 0.5rem 0;
+    line-height: 1.4;
+}
+
+.table-of-contents a {
+    text-decoration: none;
+    color: var(--meta);
+    transition: color 0.2s ease;
+    display: block;
+    padding: 0.2rem 0;
+}
+
+.table-of-contents a:hover {
+    color: #ff79c6;
+}
+
+.table-of-contents ul ul {
+    padding-left: 1rem;
+    margin: 0.25rem 0;
+    border-left: 1px solid var(--meta);
+}
+
+ 
+@media (max-width: 768px) {
+    .table-of-contents {
+        padding: 1rem;
+        margin: 1.5rem 0;
+    }
+    
+    .table-of-contents ul ul {
+        padding-left: 0.5rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    document.querySelectorAll('pre').forEach(function(pre) {
+        const button = document.createElement('button');
+        button.textContent = '📋';
+        button.className = 'copy-btn';
+        button.onclick = function() {
+            navigator.clipboard.writeText(pre.textContent);
+            button.textContent = '✅';
+            setTimeout(() => button.textContent = '📋', 2000);
+        };
+        pre.style.position = 'relative';
+        button.style.position = 'absolute';
+        button.style.top = '10px';
+        button.style.right = '10px';
+        pre.appendChild(button);
+    });
+    
+    
+    document.querySelectorAll('.table-of-contents a[href^="#"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+});
+</script>
 
         </main>
 

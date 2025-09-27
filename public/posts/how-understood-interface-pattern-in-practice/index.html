@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dracula">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Как я на практике понял паттерн «Интерфейс» | Mr.Proger</title>
+    
+    <meta name="description" content="Когда писал своего первого торгового робота, меня захлестнуло море однотипного кода. Каждая новая стратегия выглядела как злой близнец предыдущей: та же структура, но с немного изменённой душой.">
+    
+    
+    <meta property="og:title" content="Как я на практике понял паттерн «Интерфейс»">
+    <meta property="og:description" content="Когда писал своего первого торгового робота, меня захлестнуло море однотипного кода. Каждая новая стратегия выглядела как злой близнец предыдущей: та же структура, но с немного изменённой душой.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="http://localhost:1313/posts/how-understood-interface-pattern-in-practice/">
+    <meta property="og:image" content="http://localhost:1313/images/posts/interface-pattern/interface-pattern.png">
+    <meta property="og:image:alt" content="Обложка паттерн - интерфейс">
+    <meta property="og:site_name" content="Mr.Proger">
+    
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Как я на практике понял паттерн «Интерфейс»">
+    <meta name="twitter:description" content="Когда писал своего первого торгового робота, меня захлестнуло море однотипного кода. Каждая новая стратегия выглядела как злой близнец предыдущей: та же структура, но с немного изменённой душой.">
+    <meta name="twitter:image" content="http://localhost:1313/images/posts/interface-pattern/interface-pattern.png">
+    <meta name="twitter:image:alt" content="Обложка паттерн - интерфейс">
+
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="http://localhost:1313/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav class="nav">
+                <a href="http://localhost:1313/"><strong>Mr.Proger</strong></a>
+    
+                <button class="nav-toggle" aria-expanded="false" aria-label="Меню">☰</button>
+                <div class="nav-links" id="navLinks">
+                  <a href="/about">О сайте</a>
+                  <a href="/tags">Теги</a>
+                  <a href="/index.xml" title="RSS">📡 RSS</a>
+                </div>
+                <div class="theme-switcher">
+                    <button class="theme-btn" onclick="setTheme('catppuccin')">☀️</button>
+                    <button class="theme-btn" onclick="setTheme('dracula')">🌙</button>
+                </div>
+            </nav>
+        </header>
+
+        <main>
+            
+<article class="post" data-post-id="bf66e803a68c63e06af3fc43670f8302">
+    <header> 
+        <nav class="breadcrumbs">
+    <a href="http://localhost:1313/">🏠 Главная</a>
+    
+    
+        
+        <span class="sep">→</span>
+        <span class="current">Как я на практике понял паттерн «Интерфейс»</span>
+    
+    
+</nav>
+
+        <time>2025.08.24</time>
+        <div class="post-tags">
+          
+          <a href="/tags/clojure" class="tag">#clojure</a>
+          
+        </div>
+    </header>
+    
+    <div class="content">
+        
+        
+        
+        <nav class="table-of-contents">
+            <h2>📑 Содержание</h2>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#как-я-на-практике-понял-паттерн-интерфейс-не-читая-о-нём-тонны-теории">Как я на практике понял паттерн «Интерфейс», не читая о нём тонны теории</a>
+      <ul>
+        <li><a href="#озарение-от-хаоса-к-порядку-через-боль">Озарение: от хаоса к порядку через боль</a></li>
+        <li><a href="#почему-снизу-вверх-работает-лучше">Почему «снизу вверх» работает лучше</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </nav>
+        
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          document.querySelectorAll('pre').forEach(function(pre) {
+            const button = document.createElement('button');
+            button.textContent = '📋';
+            button.className = 'copy-btn';
+            button.onclick = function() {
+            navigator.clipboard.writeText(pre.textContent);
+            button.textContent = '✅';
+            setTimeout(() => button.textContent = '📋', 2000);
+          };
+            pre.style.position = 'relative';
+            button.style.position = 'absolute';
+            button.style.top = '10px';
+            button.style.right = '10px';
+            pre.appendChild(button);
+          });
+        });
+        </script>
+        <h1 id="как-я-на-практике-понял-паттерн-интерфейс">Как я на практике понял паттерн «Интерфейс»</h1>
+<h2 id="как-я-на-практике-понял-паттерн-интерфейс-не-читая-о-нём-тонны-теории">Как я на практике понял паттерн «Интерфейс», не читая о нём тонны теории</h2>
+<p><img src="/images/posts/interface-pattern/interface-pattern.png" alt="Обложка паттерн - интерфейс"></p>
+<p>Когда писал своего первого торгового робота, меня захлестнуло море однотипного кода. Каждая новая стратегия выглядела как злой близнец предыдущей: та же структура, но с немного изменённой душой.</p>
+<p>Вот классический портрет моей функции <code>generate-signal</code> в те дни:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>generate-signal-stupid-rsi []
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">;; получение свечи</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">;; получение цены закрытия</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">;; логика индикаторов (RSI)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">;; вызов функции создания сигнала</span>
+</span></span><span style="display:flex;"><span>  signal)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>generate-signal-clever-ma []
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">;; получение свечи</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">;; получение цены закрытия</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">;; логика индикаторов (Moving Average)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">;; вызов функции создания сигнала</span>
+</span></span><span style="display:flex;"><span>  signal)
+</span></span></code></pre></div><p>Я занимался самым примитивным копипастом, а затем методично переименовывал функции и переписывал блок с логикой. Это было скучно, некрасиво и чревато ошибками. Любое изменение в общем механизме (например, в способе получения свечи) требовало правок в <em>каждой</em> такой функции. Мой мозг кричал: «Должно быть лучше!».</p>
+<h3 id="озарение-от-хаоса-к-порядку-через-боль">Озарение: от хаоса к порядку через боль</h3>
+<p>В какой-то момент чаша терпения переполнилась и захотелось сделать одну-единственную, универсальную функцию <code>generate-signal</code>, которая могла бы работать с <em>любой</em> стратегией.</p>
+<p>Решение оказалось на удивление простым. Взглянул на все свои стратегии и задался вопросом: <strong>«Что у них общего?»</strong>. Несмотря на разную логику, все они в конечном счёте выдавали некий результат — сигнал на покупку или продажу. Формализовал этот результат и договорился с самим собой, что каждая стратегия будет возвращать данные в строго определённом формате, например, хэш-карту с ключами <code>:signal</code>, <code>:price</code> и <code>:confidence</code>.</p>
+<p>И тогда родилась универсальная функция-обработчик:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>universal-signal-generator [strategy-fn]
+</span></span><span style="display:flex;"><span>  (<span style="color:#66d9ef">let </span>[result (<span style="color:#a6e22e">strategy-fn</span>)] <span style="color:#75715e">; Получаем данные от стратегии</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">; Теперь мы знаем ТОЧНЫЙ формат result!</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#66d9ef">if </span>(<span style="color:#e6db74">:buy?</span> result)
+</span></span><span style="display:flex;"><span>      (<span style="color:#a6e22e">place-order</span> (<span style="color:#e6db74">:price</span> result))
+</span></span><span style="display:flex;"><span>      (<span style="color:#a6e22e">do-nothing</span>))))
+</span></span></code></pre></div><p>А сами стратегии превратились в чистые, независимые функции, которые только занимаются вычислениями и возвращают данные в ожидаемом формате.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>rsi-strategy []
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">;; вся сложная логика здесь</span>
+</span></span><span style="display:flex;"><span>  {<span style="color:#e6db74">:signal</span> <span style="color:#e6db74">:buy</span>, <span style="color:#e6db74">:price</span> <span style="color:#ae81ff">100.50</span>, <span style="color:#e6db74">:confidence</span> <span style="color:#ae81ff">0.85</span>}) <span style="color:#75715e">; &lt;- Вот этот формат и есть контракт</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>ma-strategy []
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">;; вся сложная логика здесь</span>
+</span></span><span style="display:flex;"><span>  {<span style="color:#e6db74">:signal</span> <span style="color:#e6db74">:sell</span>, <span style="color:#e6db74">:price</span> <span style="color:#ae81ff">99.20</span>, <span style="color:#e6db74">:confidence</span> <span style="color:#ae81ff">0.72</span>})
+</span></span></code></pre></div><p>И тут меня осенило. То, что я только что сделал, и есть тот самый, загадочный <strong>паттерн «Интерфейс»</strong> (или его функциональный аналог — протокол), о котором я столько читал и смотрел видео, но никак не мог понять на практике.</p>
+<p>Не придумывая абстрактное правило и не подгоняя под него код. Решение <strong>выявилось из своего собственного, „плохого“ кода</strong>, через боль повторения и неудобство.</p>
+<h3 id="почему-снизу-вверх-работает-лучше">Почему «снизу вверх» работает лучше</h3>
+<p>С ужасом представил, как бы страдал, подходя к задаче «правильно» с точки зрения учебников: сначала сел бы, продумал идеальный интерфейс, объявил его, а потом начал бы под него строить все стратегии. Я бы потратил кучу времени на абстракции, которые, возможно, мне и не пригодились бы. Был бы скован страхом сделать «не по канону». У меня уже была <a href="/shitcode">статья</a> про то как страх «плохого кода» мешает развиваться.</p>
+<p>Мой же путь — это <strong>тактическое программирование</strong> и последующий рефакторинг:</p>
+<ol>
+<li><strong>Сделать как попало.</strong> Быстро решить задачу первым работающим способом.</li>
+<li><strong>Почувствовать боль.</strong> Столкнуться с последствиями (копипаст, сложность изменений).</li>
+<li><strong>Выявить паттерн.</strong> Проанализировать, что общее во всех «плохих» решениях.</li>
+<li><strong>Абстрагировать.</strong> Выделить общую логику в универсальный механизм (интерфейс).</li>
+</ol>
+<p>Мой мозг так и работает: чтобы по-настоящему понять суть паттерна или принципа, мне нужно <strong>докопаться до него самому</strong>, пройдя через неоптимальные решения. Это не просто «говнокодить», это — исследовательский итеративный процесс. Грязный код — это сырьё, из которого выкристаллизовывается чистая архитектура.</p>
+<p><strong>Но самое интересное началось потом.</strong> Когда у меня появился этот универсальный <code>universal-signal-generator</code>, я не остановился и осознал, что создал не просто функцию, а <strong>точку расширения системы</strong>.</p>
+<p>Внезапно добавление новой стратегии стало делом пяти минут. Любой новый алгоритм, от скользящих средних до машинного обучения, можно было &ldquo;завернуть&rdquo; в функцию, возвращающую данные в ожидаемом формате, и просто &ldquo;скормить&rdquo; моему обработчику. Система стала открытой для расширения, но закрытой для изменений — а это уже краеугольный камень хорошей архитектуры.</p>
+<p>Ирония в том, что в функциональных языках, таких как Clojure, этот паттерн выглядит еще элегантнее. Тебе не нужны явные <code>interface</code> и <code>implements</code> из ООП. Интерфейс здесь — это <strong>&ldquo;протокол&rdquo;</strong> в терминах Clojure или просто <strong>ожидаемая структура данных</strong> (например, тот самый map с ключами <code>:signal</code> и <code>:price</code>). Это &ldquo;утиная типизация&rdquo; в лучшем ее проявлении: если функция возвращает map с нужными ключами — система примет ее с распростертыми объятиями. Это делает архитектуру невероятно гибкой и декомпонованной.</p>
+<p>Так что если вы, как и я, не до конца понимаете, зачем нужны все эти интерфейсы, абстракции и паттерны, — попробуйте мой способ. Сначала сделайте «как получится», позвольте себе это. А затем прислушайтесь к своему коду, и он сам подскажет, где нужен порядок. <strong>Не бойтесь сперва нарисовать картину красками, чтобы потом увидеть, какие именно линии нужно будет обвести черным контуром.</strong></p>
+<p>Возможно, этот путь — от тактического хаоса к стратегическому порядку — окажется для вас таким же прозрением, как и для меня. Вы не просто заучите паттерны, а <strong>проживете</strong> их необходимость, и это знание останется с вами навсегда.</p>
+
+        
+        <div class="post-stats">
+            <span class="views">👁‍🗨 0</span>
+            <span class="likes">💛 0</span>
+        </div>
+    </div>
+</article>
+
+<style>
+.table-of-contents {
+    background: var(--post-card);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 2rem 0;
+    border-left: 4px solid var(--accent);
+}
+
+.table-of-contents h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.2em;
+    color: #f8f8f2;
+}
+
+.table-of-contents ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.table-of-contents li {
+    margin: 0.5rem 0;
+    line-height: 1.4;
+}
+
+.table-of-contents a {
+    text-decoration: none;
+    color: var(--meta);
+    transition: color 0.2s ease;
+    display: block;
+    padding: 0.2rem 0;
+}
+
+.table-of-contents a:hover {
+    color: #ff79c6;
+}
+
+.table-of-contents ul ul {
+    padding-left: 1rem;
+    margin: 0.25rem 0;
+    border-left: 1px solid var(--meta);
+}
+
+ 
+@media (max-width: 768px) {
+    .table-of-contents {
+        padding: 1rem;
+        margin: 1.5rem 0;
+    }
+    
+    .table-of-contents ul ul {
+        padding-left: 0.5rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    document.querySelectorAll('pre').forEach(function(pre) {
+        const button = document.createElement('button');
+        button.textContent = '📋';
+        button.className = 'copy-btn';
+        button.onclick = function() {
+            navigator.clipboard.writeText(pre.textContent);
+            button.textContent = '✅';
+            setTimeout(() => button.textContent = '📋', 2000);
+        };
+        pre.style.position = 'relative';
+        button.style.position = 'absolute';
+        button.style.top = '10px';
+        button.style.right = '10px';
+        pre.appendChild(button);
+    });
+    
+    
+    document.querySelectorAll('.table-of-contents a[href^="#"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+});
+</script>
+
+        </main>
+
+        <footer>
+            <p>© 2025 Mr.Proger • Powered by Konkin</p>
+        </footer>
+    </div>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Как я на практике понял паттерн «Интерфейс»",
+        "description": "Когда писал своего первого торгового робота, меня захлестнуло море однотипного кода. Каждая новая стратегия выглядела как злой близнец предыдущей: та же структура, но с немного изменённой душой.",
+          "author": {
+          "@type": "Person",
+          "name": "Иван"
+        }
+      }
+    </script>
+    <script>
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        }
+        
+        
+        const savedTheme = localStorage.getItem('theme') || 'dracula';
+        setTheme(savedTheme);
+    </script>
+    <div id="reading-progress"></div>
+
+    <script>
+    
+    const progressBar = document.getElementById('reading-progress');
+
+    function updateProgressBar() {
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight - windowHeight;
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    
+      const progress = (scrollTop / documentHeight) * 100;
+      progressBar.style.width = progress + '%';
+    }
+
+    
+    if (document.querySelector('.post')) {
+      progressBar.style.display = 'block';
+      window.addEventListener('scroll', updateProgressBar);
+      window.addEventListener('resize', updateProgressBar);
+    }
+    </script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="http://localhost:1313/js/analytics.js"></script>
+    <script src="http://localhost:1313/js/toogle_menu.js"></script> 
+</body>
+</html>

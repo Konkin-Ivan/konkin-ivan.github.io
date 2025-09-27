@@ -49,35 +49,6 @@
             
 <article class="post" data-post-id="5fc05021dc7be2e46404ecbbc717a5f3">
     <header> 
-        <h1>РедОС: Идеальная система</h1>
-        <time>2025.07.10</time>
-        <div class="post-tags">
-          
-          <a href="/tags/linux" class="tag">#linux</a>
-          
-        </div>
-    </header>
-    
-    <div class="content">
-    <script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('pre').forEach(function(pre) {
-        const button = document.createElement('button');
-        button.textContent = '📋';
-        button.className = 'copy-btn';
-        button.onclick = function() {
-            navigator.clipboard.writeText(pre.textContent);
-            button.textContent = '✅';
-            setTimeout(() => button.textContent = '📋', 2000);
-        };
-        pre.style.position = 'relative';
-        button.style.position = 'absolute';
-        button.style.top = '10px';
-        button.style.right = '10px';
-        pre.appendChild(button);
-    });
-});
-</script>
         <nav class="breadcrumbs">
     <a href="http://localhost:1313/">🏠 Главная</a>
     
@@ -89,6 +60,71 @@ document.addEventListener('DOMContentLoaded', function() {
     
 </nav>
 
+        <time>2025.07.10</time>
+        <div class="post-tags">
+          
+          <a href="/tags/linux" class="tag">#linux</a>
+          
+        </div>
+    </header>
+    
+    <div class="content">
+        
+        
+        
+        <nav class="table-of-contents">
+            <h2>📑 Содержание</h2>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#установка-и-первое-впечатление"><strong>Установка и первое впечатление</strong></a>
+      <ul>
+        <li></li>
+        <li><a href="#термический-рай"><strong>Термический рай</strong></a></li>
+        <li><a href="#кодинг-в-редос-стоит-зайти-в-терминал--и-добро-пожаловать-в-ад-зависимостей"><strong>Кодинг в РедОС: «Стоит зайти в терминал — и добро пожаловать в ад зависимостей»</strong></a></li>
+        <li><a href="#где-мой-hyprland-или-хотя-бы-swayfx"><strong>«Где мой Hyprland? Или хотя бы SwayFX?»</strong></a></li>
+        <li><a href="#сборка-из-исходников-ребус-из-зависимостей"><strong>Сборка из исходников: «Ребус из зависимостей»</strong></a></li>
+        <li><a href="#в-других-дистрах-это-есть-по-умолчанию"><strong>«В других дистрах это есть по умолчанию!»</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#редос-для-кодинга"><strong>РедОС для кодинга</strong></a>
+      <ul>
+        <li><a href="#спасительный-sway-минимально-рабочий-вариант"><strong>Спасительный Sway (минимально рабочий вариант)</strong></a></li>
+        <li><a href="#базовый-sway"><strong>Базовый Sway</strong></a></li>
+        <li><a href="#панель-waybar">Панель waybar</a></li>
+        <li><a href="#wofi">wofi</a></li>
+        <li><a href="#мои-конфиги-и-инструкции"><strong>Мои конфиги и инструкции</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#кому-подойдёт-редос-а-кому--категорически-нет"><strong>Кому подойдёт РедОС, а кому — категорически нет?</strong></a>
+      <ul>
+        <li><a href="#-идеальная-аудитория"><strong>✅ Идеальная аудитория:</strong></a></li>
+        <li><a href="#-бегите-если-вы"><strong>❌ Бегите, если вы:</strong></a></li>
+        <li><a href="#финал-стоит-ли-пробовать"><strong>Финал: стоит ли пробовать?</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </nav>
+        
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          document.querySelectorAll('pre').forEach(function(pre) {
+            const button = document.createElement('button');
+            button.textContent = '📋';
+            button.className = 'copy-btn';
+            button.onclick = function() {
+            navigator.clipboard.writeText(pre.textContent);
+            button.textContent = '✅';
+            setTimeout(() => button.textContent = '📋', 2000);
+          };
+            pre.style.position = 'relative';
+            button.style.position = 'absolute';
+            button.style.top = '10px';
+            button.style.right = '10px';
+            pre.appendChild(button);
+          });
+        });
+        </script>
         <h1 id="редос-идеальная-система-но-не-для-кодинга">РедОС: Идеальная система, но не для кодинга?</h1>
 <p>Мой путь в Linux начался с Debian — строгого, надёжного, но порой слишком консервативного. Потом был Arch (и теперь есть) с его бесконечной гибкостью. Были и другие дистрибутивы: Fedora, AltLinux, openSUSE, даже Gentoo (но это уже другая история).</p>
 <p>И вот — <strong>РедОС</strong>. Российский дистрибутив, о котором многие говорят, но мало кто реально использует. Мне стало интересно: что это за зверь такой? Маркетинговый пузырь или действительно рабочая альтернатива?</p>
@@ -672,10 +708,107 @@ document.addEventListener('DOMContentLoaded', function() {
 Если жить не можете без <strong>кастома и свежих пакетов</strong> — даже не тратьте время.</p>
 <p>P.S. Все мои костыли и конфиги тут: [<a href="https://gitflic.ru/user/konkin">gitflic.ru</a>] — может, вам повезёт больше чем мне!</p>
 
-        <span class="views">👁‍🗨 0</span>
-        <span class="likes">💛 0</span>
+        
+        <div class="post-stats">
+            <span class="views">👁‍🗨 0</span>
+            <span class="likes">💛 0</span>
+        </div>
     </div>
 </article>
+
+<style>
+.table-of-contents {
+    background: var(--post-card);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 2rem 0;
+    border-left: 4px solid var(--accent);
+}
+
+.table-of-contents h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.2em;
+    color: #f8f8f2;
+}
+
+.table-of-contents ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.table-of-contents li {
+    margin: 0.5rem 0;
+    line-height: 1.4;
+}
+
+.table-of-contents a {
+    text-decoration: none;
+    color: var(--meta);
+    transition: color 0.2s ease;
+    display: block;
+    padding: 0.2rem 0;
+}
+
+.table-of-contents a:hover {
+    color: #ff79c6;
+}
+
+.table-of-contents ul ul {
+    padding-left: 1rem;
+    margin: 0.25rem 0;
+    border-left: 1px solid var(--meta);
+}
+
+ 
+@media (max-width: 768px) {
+    .table-of-contents {
+        padding: 1rem;
+        margin: 1.5rem 0;
+    }
+    
+    .table-of-contents ul ul {
+        padding-left: 0.5rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    document.querySelectorAll('pre').forEach(function(pre) {
+        const button = document.createElement('button');
+        button.textContent = '📋';
+        button.className = 'copy-btn';
+        button.onclick = function() {
+            navigator.clipboard.writeText(pre.textContent);
+            button.textContent = '✅';
+            setTimeout(() => button.textContent = '📋', 2000);
+        };
+        pre.style.position = 'relative';
+        button.style.position = 'absolute';
+        button.style.top = '10px';
+        button.style.right = '10px';
+        pre.appendChild(button);
+    });
+    
+    
+    document.querySelectorAll('.table-of-contents a[href^="#"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+});
+</script>
 
         </main>
 

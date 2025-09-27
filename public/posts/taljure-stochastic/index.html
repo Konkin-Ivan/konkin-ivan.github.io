@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dracula">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Разработка стохастического осциллятора | Mr.Proger</title>
+    
+    <meta name="description" content="В этой статье я хочу рассказать о реализации одного из самых популярных и визуально понятных индикаторов — стохастического осциллятора. Этот индикатор прекрасно демонстрирует силу функционального программирования для финансовых вычислений.">
+    
+    
+    <meta property="og:title" content="Разработка стохастического осциллятора">
+    <meta property="og:description" content="В этой статье я хочу рассказать о реализации одного из самых популярных и визуально понятных индикаторов — стохастического осциллятора. Этот индикатор прекрасно демонстрирует силу функционального программирования для финансовых вычислений.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="http://localhost:1313/posts/taljure-stochastic/">
+    <meta property="og:image" content="http://localhost:1313/images/posts/taljure/taljure-stoh.png">
+    <meta property="og:image:alt" content="Разработка индикатора Stoh">
+    <meta property="og:site_name" content="Mr.Proger">
+    
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Разработка стохастического осциллятора">
+    <meta name="twitter:description" content="В этой статье я хочу рассказать о реализации одного из самых популярных и визуально понятных индикаторов — стохастического осциллятора. Этот индикатор прекрасно демонстрирует силу функционального программирования для финансовых вычислений.">
+    <meta name="twitter:image" content="http://localhost:1313/images/posts/taljure/taljure-stoh.png">
+    <meta name="twitter:image:alt" content="Разработка индикатора Stoh">
+
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="http://localhost:1313/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav class="nav">
+                <a href="http://localhost:1313/"><strong>Mr.Proger</strong></a>
+    
+                <button class="nav-toggle" aria-expanded="false" aria-label="Меню">☰</button>
+                <div class="nav-links" id="navLinks">
+                  <a href="/about">О сайте</a>
+                  <a href="/tags">Теги</a>
+                  <a href="/index.xml" title="RSS">📡 RSS</a>
+                </div>
+                <div class="theme-switcher">
+                    <button class="theme-btn" onclick="setTheme('catppuccin')">☀️</button>
+                    <button class="theme-btn" onclick="setTheme('dracula')">🌙</button>
+                </div>
+            </nav>
+        </header>
+
+        <main>
+            
+<article class="post" data-post-id="9fc86e9469785628af036d2eb019f7b4">
+    <header> 
+        <nav class="breadcrumbs">
+    <a href="http://localhost:1313/">🏠 Главная</a>
+    
+    
+        
+        <span class="sep">→</span>
+        <span class="current">Разработка стохастического осциллятора</span>
+    
+    
+</nav>
+
+        <time>2025.08.29</time>
+        <div class="post-tags">
+          
+          <a href="/tags/clojure" class="tag">#clojure</a>
+          
+          <a href="/tags/%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B0_taljure" class="tag">#библиотека_taljure</a>
+          
+        </div>
+    </header>
+    
+    <div class="content">
+        
+        
+        
+        <nav class="table-of-contents">
+            <h2>📑 Содержание</h2>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#разработка-стохастического-осциллятора-функциональный-подход-к-измерению-импульса"><strong>Разработка стохастического осциллятора: Функциональный подход к измерению импульса</strong></a>
+      <ul>
+        <li><a href="#что-делает-стохастик-особенным"><strong>Что делает стохастик особенным?</strong></a></li>
+        <li><a href="#архитектурные-решения"><strong>Архитектурные решения</strong></a></li>
+        <li><a href="#математическая-элегантность"><strong>Математическая элегантность</strong></a></li>
+        <li><a href="#подводные-камни-реализации"><strong>Подводные камни реализации</strong></a></li>
+        <li><a href="#тестирование-от-простого-к-сложному"><strong>Тестирование: От простого к сложному</strong></a></li>
+        <li><a href="#ключевые-моменты"><strong>Ключевые моменты</strong></a></li>
+        <li><a href="#почему-стохастик-belongs-в-simple"><strong>Почему стохастик belongs в simple</strong></a></li>
+        <li><a href="#оптимизации-для-будущего"><strong>Оптимизации для будущего</strong></a></li>
+        <li><a href="#заключение-элегантность-в-простоте"><strong>Заключение: Элегантность в простоте</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </nav>
+        
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          document.querySelectorAll('pre').forEach(function(pre) {
+            const button = document.createElement('button');
+            button.textContent = '📋';
+            button.className = 'copy-btn';
+            button.onclick = function() {
+            navigator.clipboard.writeText(pre.textContent);
+            button.textContent = '✅';
+            setTimeout(() => button.textContent = '📋', 2000);
+          };
+            pre.style.position = 'relative';
+            button.style.position = 'absolute';
+            button.style.top = '10px';
+            button.style.right = '10px';
+            pre.appendChild(button);
+          });
+        });
+        </script>
+        <h1 id="разработка-стохастического-осциллятора">Разработка стохастического осциллятора</h1>
+<h2 id="разработка-стохастического-осциллятора-функциональный-подход-к-измерению-импульса"><strong>Разработка стохастического осциллятора: Функциональный подход к измерению импульса</strong></h2>
+<p><img src="/images/posts/taljure/taljure-stoh.png" alt="Разработка индикатора Stoh"></p>
+<p>В этой статье я хочу рассказать о реализации одного из самых популярных и визуально понятных индикаторов — стохастического осциллятора. Этот индикатор прекрасно демонстрирует силу функционального программирования для финансовых вычислений.</p>
+<h3 id="что-делает-стохастик-особенным"><strong>Что делает стохастик особенным?</strong></h3>
+<p>Стохастический осциллятор — это не просто индикатор, это целая философия:</p>
+<ul>
+<li><strong>Измеряет импульс</strong> — положение цены относительно диапазона</li>
+<li><strong>Работает в диапазоне 0-100</strong> — идеально для определения перекупленности/перепроданности</li>
+<li><strong>Имеет две линии</strong> — %K (быстрая) и %D (медленная)</li>
+<li><strong>Визуально интуитивный</strong> — легко интерпретировать на графике</li>
+</ul>
+<h3 id="архитектурные-решения"><strong>Архитектурные решения</strong></h3>
+<h4 id="1-многоарность-для-гибкости"><strong>1. Многоарность для гибкости</strong></h4>
+<p>Реализовал две версии функции:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#75715e">;; Версия с периодами по умолчанию</span>
+</span></span><span style="display:flex;"><span>([highs lows closes] (<span style="color:#a6e22e">stochastic</span> highs lows closes <span style="color:#ae81ff">14</span> <span style="color:#ae81ff">3</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">;; Версия с кастомными периодами</span>
+</span></span><span style="display:flex;"><span>([highs lows closes k-period d-period]
+</span></span><span style="display:flex;"><span> <span style="color:#75715e">;; основная логика</span>
+</span></span><span style="display:flex;"><span>)
+</span></span></code></pre></div><p><strong>Преимущество:</strong> Пользователи могут использовать стандартные настройки или кастомизировать под свои стратегии.</p>
+<h4 id="2-локальные-функции-для-ясности"><strong>2. Локальные функции для ясности</strong></h4>
+<p>Вместо монолитной функции я использовал локальные функции:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#66d9ef">let </span>[<span style="color:#75715e">; Функция для вычисления %K на позиции i</span>
+</span></span><span style="display:flex;"><span>     calculate-k (<span style="color:#66d9ef">fn </span>[i] ...)
+</span></span><span style="display:flex;"><span>     
+</span></span><span style="display:flex;"><span>     <span style="color:#75715e">; Функция для вычисления %D (SMA от %K)</span>
+</span></span><span style="display:flex;"><span>     calculate-d (<span style="color:#66d9ef">fn </span>[i] ...)]
+</span></span></code></pre></div><p><strong>Почему это важно:</strong></p>
+<ul>
+<li><strong>Изоляция ответственности</strong> — каждая функция делает одну вещь</li>
+<li><strong>Упрощение тестирования</strong> — можно тестировать логику по частям</li>
+<li><strong>Улучшение читаемости</strong> — ясное разделение логики</li>
+</ul>
+<h4 id="3-обработка-edge-cases"><strong>3. Обработка edge cases</strong></h4>
+<p>Я предусмотрел специальные случаи:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#75715e">; Защита от деления на ноль</span>
+</span></span><span style="display:flex;"><span>(when (and window-high window-low (not= window-high window-low))
+</span></span><span style="display:flex;"><span>  (* <span style="color:#ae81ff">100</span> (/ (- close window-low) (- window-high window-low)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">; Фильтрация nil-значений для %D</span>
+</span></span><span style="display:flex;"><span>k-window (filter some? (subvec k-values start end))
+</span></span></code></pre></div><h3 id="математическая-элегантность"><strong>Математическая элегантность</strong></h3>
+<p>Формула %K поражает простотой и эффективностью:</p>
+<p>%K = 100 * (close - lowest_low) / (highest_high - lowest_low)</p>
+<p>А %D — это просто сглаживание %K:</p>
+<p>%D = SMA(%K, period)</p>
+<h3 id="подводные-камни-реализации"><strong>Подводные камни реализации</strong></h3>
+<h4 id="1-проблема-производительность-с-большими-данными"><strong>1. Проблема: Производительность с большими данными</strong></h4>
+<p>Использование <code>apply max</code> и <code>apply min</code> на каждом шаге может быть медленным:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span>window-high (apply max (subvec highs start end))
+</span></span><span style="display:flex;"><span>window-low (apply min (subvec lows start end))
+</span></span></code></pre></div><p><strong>Решение:</strong> Для оптимизации можно использовать скользящее окно с обновляемыми экстремумами, но я выбрал читаемость над производительностью для первой версии.</p>
+<h4 id="2-проблема-обработка-идентичных-значений"><strong>2. Проблема: Обработка идентичных значений</strong></h4>
+<p>Если high = low в окне, возникает деление на ноль:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#75715e">; Тест подтверждает обработку этого случая</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">let </span>[highs   [<span style="color:#ae81ff">100</span> <span style="color:#ae81ff">100</span> <span style="color:#ae81ff">100</span>]
+</span></span><span style="display:flex;"><span>      lows    [<span style="color:#ae81ff">100</span> <span style="color:#ae81ff">100</span> <span style="color:#ae81ff">100</span>]
+</span></span><span style="display:flex;"><span>      closes  [<span style="color:#ae81ff">100</span> <span style="color:#ae81ff">100</span> <span style="color:#ae81ff">100</span>]
+</span></span><span style="display:flex;"><span>      result  (<span style="color:#a6e22e">stochastic</span> highs lows closes)]
+</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">is</span> (every? nil? (map <span style="color:#e6db74">:k</span> result))) <span style="color:#75715e">; Все значения %K = nil</span>
+</span></span></code></pre></div><h4 id="3-проблема-синхронизация-данных"><strong>3. Проблема: Синхронизация данных</strong></h4>
+<p>Три вектора должны быть одинаковой длины и правильно синхронизированы:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#75715e">; Неявное предположение:</span>
+</span></span><span style="display:flex;"><span>(= (count highs) (count lows) (count closes))
+</span></span></code></pre></div><p>В продакшн-версии нужно добавить явную проверку.</p>
+<h3 id="тестирование-от-простого-к-сложному"><strong>Тестирование: От простого к сложному</strong></h3>
+<p>Тесты охватывают все аспекты работы индикатора:</p>
+<h4 id="базовый-функционал"><strong>Базовый функционал</strong></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span>(<span style="color:#a6e22e">testing</span> <span style="color:#e6db74">&#34;Basic stochastic oscillator calculation&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#66d9ef">let </span>[highs   [<span style="color:#ae81ff">100</span> <span style="color:#ae81ff">110</span> <span style="color:#ae81ff">105</span> <span style="color:#ae81ff">120</span> <span style="color:#ae81ff">115</span>]
+</span></span><span style="display:flex;"><span>        lows    [<span style="color:#ae81ff">90</span>  <span style="color:#ae81ff">95</span>  <span style="color:#ae81ff">90</span>  <span style="color:#ae81ff">100</span> <span style="color:#ae81ff">105</span>]
+</span></span><span style="display:flex;"><span>        closes  [<span style="color:#ae81ff">95</span>  <span style="color:#ae81ff">100</span> <span style="color:#ae81ff">98</span>  <span style="color:#ae81ff">110</span> <span style="color:#ae81ff">108</span>]
+</span></span><span style="display:flex;"><span>        result  (<span style="color:#a6e22e">stochastic</span> highs lows closes)]
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">is</span> (= (count result) <span style="color:#ae81ff">5</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">is</span> (every? <span style="color:#f92672">#</span>(contains? % <span style="color:#e6db74">:k</span>) result))
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">is</span> (every? <span style="color:#f92672">#</span>(contains? % <span style="color:#e6db74">:d</span>) result))))
+</span></span></code></pre></div><h4 id="граничные-случаи"><strong>Граничные случаи</strong></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span>(<span style="color:#a6e22e">testing</span> <span style="color:#e6db74">&#34;Vectors with identical values&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#66d9ef">let </span>[highs   [<span style="color:#ae81ff">100</span> <span style="color:#ae81ff">100</span> <span style="color:#ae81ff">100</span>]
+</span></span><span style="display:flex;"><span>        lows    [<span style="color:#ae81ff">100</span> <span style="color:#ae81ff">100</span> <span style="color:#ae81ff">100</span>]
+</span></span><span style="display:flex;"><span>        closes  [<span style="color:#ae81ff">100</span> <span style="color:#ae81ff">100</span> <span style="color:#ae81ff">100</span>]
+</span></span><span style="display:flex;"><span>        result  (<span style="color:#a6e22e">stochastic</span> highs lows closes)]
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">is</span> (every? nil? (map <span style="color:#e6db74">:k</span> result)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">is</span> (every? nil? (map <span style="color:#e6db74">:d</span> result)))))
+</span></span></code></pre></div><h4 id="производительность"><strong>Производительность</strong></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span>(<span style="color:#a6e22e">testing</span> <span style="color:#e6db74">&#34;Performance with large dataset&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#66d9ef">let </span>[large-highs  (<span style="color:#a6e22e">vec</span> (<span style="color:#a6e22e">repeatedly</span> <span style="color:#ae81ff">1000</span> <span style="color:#f92672">#</span>(rand-int <span style="color:#ae81ff">200</span>)))
+</span></span><span style="display:flex;"><span>        large-lows   (<span style="color:#a6e22e">vec</span> (<span style="color:#a6e22e">repeatedly</span> <span style="color:#ae81ff">1000</span> <span style="color:#f92672">#</span>(rand-int <span style="color:#ae81ff">100</span>)))
+</span></span><span style="display:flex;"><span>        large-closes (<span style="color:#a6e22e">vec</span> (<span style="color:#a6e22e">repeatedly</span> <span style="color:#ae81ff">1000</span> <span style="color:#f92672">#</span>(rand-int <span style="color:#ae81ff">150</span>)))
+</span></span><span style="display:flex;"><span>        result       (<span style="color:#a6e22e">stochastic</span> large-highs large-lows large-closes)]
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">is</span> (= (count result) <span style="color:#ae81ff">1000</span>))))
+</span></span></code></pre></div><h3 id="ключевые-моменты"><strong>Ключевые моменты</strong></h3>
+<ol>
+<li><strong>Композиция функций</strong> — стохастик строится из простых блоков</li>
+<li><strong>Обработка edge cases</strong> — критически важна для надежности</li>
+<li><strong>Гибкость через многоарность</strong> — баланс между удобством и настраиваемостью</li>
+<li><strong>Локальные функции</strong> — мощный инструмент для организации сложной логики</li>
+<li><strong>Визуальная природа</strong> — некоторые индикаторы лучше воспринимаются графически</li>
+</ol>
+<h3 id="почему-стохастик-belongs-в-simple"><strong>Почему стохастик belongs в simple</strong></h3>
+<p>Несмотря на относительную сложность, стохастик относится к simple потому что:</p>
+<ol>
+<li><strong>Концептуальная простота</strong> — положение цены в диапазоне</li>
+<li><strong>Прозрачность формулы</strong> — легко понять и проверить</li>
+<li><strong>Отсутствие рекуррентности</strong> — в отличие от EMA/ATR</li>
+<li><strong>Широкая применимость</strong> — используется трейдерами всех уровней</li>
+</ol>
+<h3 id="оптимизации-для-будущего"><strong>Оптимизации для будущего</strong></h3>
+<p>Для production-use можно добавить:</p>
+<ol>
+<li><strong>Скользящие экстремумы</strong> — для O(1) расчета на шаг вместо O(n)</li>
+<li><strong>Проверки синхронизации</strong> — явные проверки длины векторов</li>
+<li><strong>Кеширование результатов</strong> — для повторных вычислений</li>
+<li><strong>Batch processing</strong> — оптимизация для больших исторических данных</li>
+</ol>
+<h3 id="заключение-элегантность-в-простоте"><strong>Заключение: Элегантность в простоте</strong></h3>
+<p>Стохастический осциллятор показал мне, что сложные trading-идеи могут иметь простые и элегантные реализации.</p>
+<p><strong>Что делает эту реализацию successful:</strong></p>
+<ul>
+<li>✅ Чистая функциональная архитектура</li>
+<li>✅ Comprehensive обработка edge cases</li>
+<li>✅ Гибкий API с разными арностями</li>
+<li>✅ Ясное разделение ответственности</li>
+<li>✅ Баланс между точностью и производительностью</li>
+</ul>
+<p><strong>Финальный вердикт:</strong> Стохастик остался в <code>simple</code> как пример того, как сложная концепция может иметь простую и elegant реализацию.</p>
+<p>Исходный код доступен на <a href="https://gitflic.ru/project/konkin/taljure">GitFlic</a>.</p>
+<p><strong>А какой ваш любимый осциллятор и почему?</strong></p>
+
+        
+        <div class="post-stats">
+            <span class="views">👁‍🗨 0</span>
+            <span class="likes">💛 0</span>
+        </div>
+    </div>
+</article>
+
+<style>
+.table-of-contents {
+    background: var(--post-card);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 2rem 0;
+    border-left: 4px solid var(--accent);
+}
+
+.table-of-contents h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.2em;
+    color: #f8f8f2;
+}
+
+.table-of-contents ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.table-of-contents li {
+    margin: 0.5rem 0;
+    line-height: 1.4;
+}
+
+.table-of-contents a {
+    text-decoration: none;
+    color: var(--meta);
+    transition: color 0.2s ease;
+    display: block;
+    padding: 0.2rem 0;
+}
+
+.table-of-contents a:hover {
+    color: #ff79c6;
+}
+
+.table-of-contents ul ul {
+    padding-left: 1rem;
+    margin: 0.25rem 0;
+    border-left: 1px solid var(--meta);
+}
+
+ 
+@media (max-width: 768px) {
+    .table-of-contents {
+        padding: 1rem;
+        margin: 1.5rem 0;
+    }
+    
+    .table-of-contents ul ul {
+        padding-left: 0.5rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    document.querySelectorAll('pre').forEach(function(pre) {
+        const button = document.createElement('button');
+        button.textContent = '📋';
+        button.className = 'copy-btn';
+        button.onclick = function() {
+            navigator.clipboard.writeText(pre.textContent);
+            button.textContent = '✅';
+            setTimeout(() => button.textContent = '📋', 2000);
+        };
+        pre.style.position = 'relative';
+        button.style.position = 'absolute';
+        button.style.top = '10px';
+        button.style.right = '10px';
+        pre.appendChild(button);
+    });
+    
+    
+    document.querySelectorAll('.table-of-contents a[href^="#"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+});
+</script>
+
+        </main>
+
+        <footer>
+            <p>© 2025 Mr.Proger • Powered by Konkin</p>
+        </footer>
+    </div>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Разработка стохастического осциллятора",
+        "description": "В этой статье я хочу рассказать о реализации одного из самых популярных и визуально понятных индикаторов — стохастического осциллятора. Этот индикатор прекрасно демонстрирует силу функционального программирования для финансовых вычислений.",
+          "author": {
+          "@type": "Person",
+          "name": "Иван"
+        }
+      }
+    </script>
+    <script>
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        }
+        
+        
+        const savedTheme = localStorage.getItem('theme') || 'dracula';
+        setTheme(savedTheme);
+    </script>
+    <div id="reading-progress"></div>
+
+    <script>
+    
+    const progressBar = document.getElementById('reading-progress');
+
+    function updateProgressBar() {
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight - windowHeight;
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    
+      const progress = (scrollTop / documentHeight) * 100;
+      progressBar.style.width = progress + '%';
+    }
+
+    
+    if (document.querySelector('.post')) {
+      progressBar.style.display = 'block';
+      window.addEventListener('scroll', updateProgressBar);
+      window.addEventListener('resize', updateProgressBar);
+    }
+    </script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="http://localhost:1313/js/analytics.js"></script>
+    <script src="http://localhost:1313/js/toogle_menu.js"></script> 
+</body>
+</html>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Mr.Proger</title><link>https://konkin-ivan.github.io/</link><description>Описание моего блога</description><generator>Hugo</generator><language>ru-ru</language><lastBuildDate>Sat, 27 Sep 2025 08:14:19 +0000</lastBuildDate><atom:link href="https://konkin-ivan.github.io/" rel="self" type="application/rss+xml"/><item><title>Posts</title><link>https://konkin-ivan.github.io/posts/</link><pubDate>Thu, 21 Aug 2025 00:00:00 +0000</pubDate><author/><guid>https://konkin-ivan.github.io/posts/</guid><description/><content type="html"/></item><item><title>О сайте</title><link>https://konkin-ivan.github.io/about/</link><pubDate>Sun, 06 Jul 2025 00:00:00 +0000</pubDate><author/><guid>https://konkin-ivan.github.io/about/</guid><description/><content type="html">&lt;p>&lt;strong>Привет!&lt;/strong> Это блог практикующего разработчика, который &lt;strong>фанатеет от Clojure&lt;/strong> и функционального программирования. Здесь нет сухой теории из учебников - только &lt;strong>прикладные знания&lt;/strong>, хитрости и личный опыт.&lt;/p>
+&lt;p>Я пишу о:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Clojure&lt;/strong> — как писать лаконичный и мощный код, избегая подводных камней.&lt;/li>
+&lt;li>&lt;strong>Инструментах&lt;/strong> — настройка IDE, REPL-driven development, скрипты для продуктивности.&lt;/li>
+&lt;li>&lt;strong>Библиотеках и фреймворках&lt;/strong> — что реально полезно, а что лишь хайп.&lt;/li>
+&lt;li>&lt;strong>Функциональных подходах&lt;/strong> — без фанатизма, с примерами «как это применить завтра».&lt;/li>
+&lt;li>&lt;strong>Войнах в продакшене&lt;/strong> — как Clojure ведёт себя в бою, а не в песочнице.&lt;/li>
+&lt;/ul>
+&lt;p>Этот блог — &lt;strong>не академический курс&lt;/strong>, а &lt;strong>разговор начистоту&lt;/strong>: без воды, с шутками, мемами и иногда матом (если код не работает).&lt;/p>
+&lt;p>Присоединяйтесь, если хотите:&lt;br>
+✅ &lt;strong>Разбираться в Clojure&lt;/strong> без скучных мануалов.&lt;br>
+✅ &lt;strong>Настраивать среду&lt;/strong> как профессионал.&lt;br>
+✅ &lt;strong>Понимать ФП&lt;/strong> на реальных кейсах, а не на абстрактных примерах.&lt;/p>
+&lt;div class="user-badge">
+&lt;div class="user-badge__avatar">
+&lt;img src="https://konkin-ivan.github.io/images/logo.png" alt="Аватар Иван Конкин">
+&lt;/div>
+&lt;div class="user-badge__info">
+&lt;div class="user-badge__name">Иван Конкин&lt;/div>
+&lt;a href="https://t.me/konkin86" class="user-badge__link">@konkin86&lt;/a>
+&lt;/div>
+&lt;/div>
+&lt;p>&lt;strong>Код — в продакшене, скобки — в сердце.&lt;/strong>&lt;/p></content></item><item><title>Теги</title><link>https://konkin-ivan.github.io/tags/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><author/><guid>https://konkin-ivan.github.io/tags/</guid><description/><content type="html">&lt;h1 id="все-теги-блога">Все теги блога&lt;/h1></content></item></channel></rss>

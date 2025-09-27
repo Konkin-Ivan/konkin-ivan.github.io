@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Linux on Мой крутой блог на Hugo</title>
+    <link>http://localhost:1313/categories/linux/</link>
+    <description>Recent content in Linux on Мой крутой блог на Hugo</description>
+    <generator>Hugo</generator>
+    <language>ru-ru</language>
+    <lastBuildDate>Thu, 25 Sep 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/categories/linux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>РедОС: Идеальная система</title>
+      <link>http://localhost:1313/posts/red-os-codding/</link>
+      <pubDate>Thu, 25 Sep 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/red-os-codding/</guid>
+      <description>&lt;h1 id=&#34;редос-идеальная-система-но-не-для-кодинга&#34;&gt;РедОС: Идеальная система, но не для кодинга?&lt;/h1&gt;&#xA;&lt;p&gt;Мой путь в Linux начался с Debian — строгого, надёжного, но порой слишком консервативного. Потом был Arch (и теперь есть) с его бесконечной гибкостью. Были и другие дистрибутивы: Fedora, AltLinux, openSUSE, даже Gentoo (но это уже другая история).&lt;/p&gt;&#xA;&lt;p&gt;И вот — &lt;strong&gt;РедОС&lt;/strong&gt;. Российский дистрибутив, о котором многие говорят, но мало кто реально использует. Мне стало интересно: что это за зверь такой? Маркетинговый пузырь или действительно рабочая альтернатива?&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

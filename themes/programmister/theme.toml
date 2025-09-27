@@ -1,6 +1,6 @@
 baseURL = "https://konkin-ivan.github.io/"
-title = "Блог Ивана"
-theme = "mytheme"
+title = "Mr.Proger"
+theme = "programmister"
 
 [languages.ru]
     weight = 1

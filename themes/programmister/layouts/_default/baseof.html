@@ -7,14 +7,22 @@
     <!-- Мета-описание -->
     <meta name="description" content="{{ if .Description }}{{ .Description }}{{ else }}{{ .Site.Params.description }}{{ end }}">
     
-    <!-- Другие метатеги -->
+    <!-- Open Graph метатеги -->
     <meta property="og:title" content="{{ .Title }}">
     <meta property="og:description" content="{{ if .Description }}{{ .Description }}{{ else }}{{ .Site.Params.description }}{{ end }}">
-    <meta property="og:type" content="website">
+    <meta property="og:type" content="article">
     <meta property="og:url" content="{{ .Permalink }}">
-    <meta property="og:image" content="{{ .Site.BaseURL }}images/og-image.jpg">
+    <meta property="og:image" content="{{ if .Params.image }}{{ .Params.image | absURL }}{{ else }}{{ .Site.BaseURL }}images/og-image.jpg{{ end }}">
+    {{ if .Params.image_alt }}<meta property="og:image:alt" content="{{ .Params.image_alt }}">{{ end }}
     <meta property="og:site_name" content="{{ .Site.Title }}">
+    
+    <!-- Twitter Card метатеги -->
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ .Title }}">
+    <meta name="twitter:description" content="{{ if .Description }}{{ .Description }}{{ else }}{{ .Site.Params.description }}{{ end }}">
+    <meta name="twitter:image" content="{{ if .Params.image }}{{ .Params.image | absURL }}{{ else }}{{ .Site.BaseURL }}images/og-image.jpg{{ end }}">
+    {{ if .Params.image_alt }}<meta name="twitter:image:alt" content="{{ .Params.image_alt }}">{{ end }}
+
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ "css/style.css" | absURL }}">
 </head>

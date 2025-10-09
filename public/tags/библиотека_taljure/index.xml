@@ -9,8 +9,290 @@
     
     
     
-    <lastBuildDate>Sat, 27 Sep 2025 18:14:15 +0300</lastBuildDate>
+    <lastBuildDate>Thu, 09 Oct 2025 19:45:28 +0300</lastBuildDate>
     <atom:link href="http://localhost:1313/tags/%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B0_taljure/" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Разработка индикатора VWAP</title>
+      <link>http://localhost:1313/posts/taljure-vwap/</link>
+      <pubDate>Sat, 30 Aug 2025 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://localhost:1313/posts/taljure-vwap/</guid>
+      <description>В этой статье я хочу рассказать о реализации индикатора VWAP (Volume Weighted Average Price) — индикатора, который выглядит простым на поверхности, но раскрывает глубинные сложности работы с реальными финансовыми данными.</description>
+      <content type="html">&lt;h1 id=&#34;разработка-индикатора-vwap&#34;&gt;Разработка индикатора VWAP&lt;/h1&gt;
+&lt;h3 id=&#34;разработка-индикатора-vwap-когда-простота-встречает-сложность-данных&#34;&gt;&lt;strong&gt;Разработка индикатора VWAP: Когда простота встречает сложность данных&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/posts/taljure/taljure-vwap.png&#34; alt=&#34;Разработка индикатора VWAP&#34;&gt;&lt;/p&gt;
+&lt;p&gt;В этой статье я хочу рассказать о реализации индикатора VWAP (Volume Weighted Average Price) — индикатора, который выглядит простым на поверхности, но раскрывает глубинные сложности работы с реальными финансовыми данными.&lt;/p&gt;
+&lt;h3 id=&#34;что-делает-vwap-особенным&#34;&gt;&lt;strong&gt;Что делает VWAP особенным?&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;VWAP — это не просто средняя цена. Это:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Взвешенная по объему&lt;/strong&gt; — большие сделки влияют сильнее&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Стандарт для институциональных трейдеров&lt;/strong&gt; — эталон исполнения ордеров&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Тактический инструмент&lt;/strong&gt; — помогает оценить fair value актива&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Сложный в данных&lt;/strong&gt; — требует полной структуры свечи&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;архитектурные-решения&#34;&gt;&lt;strong&gt;Архитектурные решения&lt;/strong&gt;&lt;/h3&gt;
+&lt;h4 id=&#34;1-разделение-на-вспомогательные-функции&#34;&gt;&lt;strong&gt;1. Разделение на вспомогательные функции&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Первое ключевое решение — вынесение расчета типичной цены:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn- &lt;/span&gt;typical-price
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Вычисляет типичную цену для свечи (high + low + close) / 3&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  [{&lt;span style=&#34;color:#e6db74&#34;&gt;:keys&lt;/span&gt; [high low close] &lt;span style=&#34;color:#e6db74&#34;&gt;:as&lt;/span&gt; candle}]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (when (and candle high low close)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (/ (+ high low close) &lt;span style=&#34;color:#ae81ff&#34;&gt;3.0&lt;/span&gt;)))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Почему это важно:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Принцип единственной ответственности&lt;/strong&gt; — каждая функция делает одну thing&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Повторное использование&lt;/strong&gt; — типичная цена может пригодиться elsewhere&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Упрощение тестирования&lt;/strong&gt; — можно тестировать отдельно&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;2-защитное-программирование-как-философия&#34;&gt;&lt;strong&gt;2. Защитное программирование как философия&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;VWAP работает с реальными данными, которые часто неидеальны:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[valid-window (filter &lt;span style=&#34;color:#f92672&#34;&gt;#&lt;/span&gt;(and % (&lt;span style=&#34;color:#e6db74&#34;&gt;:volume&lt;/span&gt; %) (&lt;span style=&#34;color:#a6e22e&#34;&gt;typical-price&lt;/span&gt; %)) window)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Трехуровневая проверка:&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;%&lt;/code&gt; — элемент существует (не nil)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;(:volume %)&lt;/code&gt; — есть объем&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;(typical-price %)&lt;/code&gt; — можно вычислить типичную цену&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;3-обработка-всех-edge-cases&#34;&gt;&lt;strong&gt;3. Обработка всех edge cases&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Предусмотрел все возможные сценарии:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;if &lt;/span&gt;(or (zero? total-vol) (&lt;span style=&#34;color:#a6e22e&#34;&gt;empty?&lt;/span&gt; valid-window)) 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (/ total-pv total-vol))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Граничные случаи:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Пустое окно → 0&lt;/li&gt;
+&lt;li&gt;Нулевой объем → 0&lt;/li&gt;
+&lt;li&gt;Некорректные данные → фильтрация → 0 если ничего не осталось&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;математическая-элегантность&#34;&gt;&lt;strong&gt;Математическая элегантность&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Формула VWAP обманчиво проста:&lt;/p&gt;
+&lt;p&gt;VWAP = Σ(ТипичнаяЦена × Объем) / Σ(Объем)&lt;/p&gt;
+&lt;p&gt;Но за этой простотой скрывается глубина:&lt;/p&gt;
+&lt;h4 id=&#34;почему-типичная-цена&#34;&gt;&lt;strong&gt;Почему типичная цена?&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;&lt;code&gt;(high + low + close) / 3&lt;/code&gt; лучше представляет &amp;ldquo;справедливую цену&amp;rdquo; бара чем просто close.&lt;/p&gt;
+&lt;h4 id=&#34;взвешивание-по-объему&#34;&gt;&lt;strong&gt;Взвешивание по объему&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Большие объемы имеют большее влияние — это ближе к реальной торговле.&lt;/p&gt;
+&lt;h3 id=&#34;подводные-камни-реализации&#34;&gt;&lt;strong&gt;Подводные камни реализации&lt;/strong&gt;&lt;/h3&gt;
+&lt;h4 id=&#34;1-проблема-качество-данных&#34;&gt;&lt;strong&gt;1. Проблема: Качество данных&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Реальные данные часто:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Содержат nil значения&lt;/li&gt;
+&lt;li&gt;Имеют пропущенные поля&lt;/li&gt;
+&lt;li&gt;Содержат нулевые объемы&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Решение:&lt;/strong&gt; Многоуровневая фильтрация и graceful degradation:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;valid-window (filter &lt;span style=&#34;color:#f92672&#34;&gt;#&lt;/span&gt;(and % (&lt;span style=&#34;color:#e6db74&#34;&gt;:volume&lt;/span&gt; %) (&lt;span style=&#34;color:#a6e22e&#34;&gt;typical-price&lt;/span&gt; %)) window)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;2-проблема-численная-стабильность&#34;&gt;&lt;strong&gt;2. Проблема: Численная стабильность&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;При больших объемах и ценах может возникнуть переполнение.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Решение:&lt;/strong&gt; В Clojure с BigDecimals по умолчанию это менее критично, но нужно помнить о точности.&lt;/p&gt;
+&lt;h4 id=&#34;3-проблема-семантика-возвращаемых-значений&#34;&gt;&lt;strong&gt;3. Проблема: Семантика возвращаемых значений&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Что возвращать при некорректных данных? 0, nil, исключение?&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Решение:&lt;/strong&gt; Я выбрал 0 как наименее разрушительный вариант:&lt;/p&gt;
+&lt;p&gt;(if (or (zero? total-vol) (empty? valid-window))
+0
+(/ total-pv total-vol))&lt;/p&gt;
+&lt;h3 id=&#34;тестирование-от-идеального-к-реальному&#34;&gt;&lt;strong&gt;Тестирование: От идеального к реальному&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Тесты охватывают весь спектр сценариев:&lt;/p&gt;
+&lt;h4 id=&#34;идеальный-случай&#34;&gt;&lt;strong&gt;Идеальный случай&lt;/strong&gt;&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;is&lt;/span&gt; (= &lt;span style=&#34;color:#ae81ff&#34;&gt;10.666666666666666&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       (&lt;span style=&#34;color:#a6e22e&#34;&gt;vwap&lt;/span&gt; [{&lt;span style=&#34;color:#e6db74&#34;&gt;:high&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:low&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;9&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:close&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:volume&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              {&lt;span style=&#34;color:#e6db74&#34;&gt;:high&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:low&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:close&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;12&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:volume&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;200&lt;/span&gt;}])))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;реальные-данные-с-проблемами&#34;&gt;&lt;strong&gt;Реальные данные с проблемами&lt;/strong&gt;&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;;; Пустое окно&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;is&lt;/span&gt; (= &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;vwap&lt;/span&gt; [])))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;;; Nil элементы&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;is&lt;/span&gt; (= &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;vwap&lt;/span&gt; [nil nil nil])))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;;; Отсутствие объема&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;is&lt;/span&gt; (= &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;vwap&lt;/span&gt; [{&lt;span style=&#34;color:#e6db74&#34;&gt;:high&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:low&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;9&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:close&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11&lt;/span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                {&lt;span style=&#34;color:#e6db74&#34;&gt;:high&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:low&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:close&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;12&lt;/span&gt;}])))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;смешанные-данные&#34;&gt;&lt;strong&gt;Смешанные данные&lt;/strong&gt;&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;is&lt;/span&gt; (= &lt;span style=&#34;color:#ae81ff&#34;&gt;11.333333333333334&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       (&lt;span style=&#34;color:#a6e22e&#34;&gt;vwap&lt;/span&gt; [{&lt;span style=&#34;color:#e6db74&#34;&gt;:high&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:low&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;9&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:close&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:volume&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              nil
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              {&lt;span style=&#34;color:#e6db74&#34;&gt;:high&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;12&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:low&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:close&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;13&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:volume&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;200&lt;/span&gt;}])))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;ключевые-моменты&#34;&gt;&lt;strong&gt;Ключевые моменты&lt;/strong&gt;&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Защитное программирование&lt;/strong&gt; — необходимость для работы с реальными данными&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Фильтрация вместо исключений&lt;/strong&gt; — более устойчивый подход&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Типичная цена&lt;/strong&gt; — интересная альтернатива close price&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Нулевой результат&lt;/strong&gt; — лучше чем исключение для непрерывности расчетов&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Композиция функций&lt;/strong&gt; — мощь функционального подхода&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;почему-vwap-уходит-в-simple&#34;&gt;&lt;strong&gt;Почему VWAP уходит в simple&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Несмотря на сложность данных, VWAP находится в simple потому что:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Концептуальная простота&lt;/strong&gt; — взвешенное среднее&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Прозрачность алгоритма&lt;/strong&gt; — легко понять и проверить&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Отсутствие рекуррентности&lt;/strong&gt; — простой агрегирующий расчет&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Практическая важность&lt;/strong&gt; — широко используется на практике&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;оптимизации-для-будущего&#34;&gt;&lt;strong&gt;Оптимизации для будущего&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Для production-use можно добавить:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Инкрементальный расчет&lt;/strong&gt; — для потоковых данных&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Кеширование промежуточных значений&lt;/strong&gt; — для производительности&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Поддержка разных типов цены&lt;/strong&gt; — не только типичной&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Валидация структуры данных&lt;/strong&gt; — явные проверки схемы свечи&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;заключение-мост-между-теорией-и-практикой&#34;&gt;&lt;strong&gt;Заключение: Мост между теорией и практикой&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;VWAP показал мне, что самые интересные случаи возникают не в сложной математике, а в работе с неидеальными реальными данными.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Что делает эту реализацию successful:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;✅ Устойчивость к плохим данным&lt;/li&gt;
+&lt;li&gt;✅ Четкая семантика возвращаемых значений&lt;/li&gt;
+&lt;li&gt;✅ Композиционная архитектура&lt;/li&gt;
+&lt;li&gt;✅ Comprehensive тестирование&lt;/li&gt;
+&lt;li&gt;✅ Практическая полезность&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Финальный вердикт:&lt;/strong&gt; VWAP остался в &lt;code&gt;simple&lt;/code&gt; как пример того, как элегантная математика встречается с суровой реальностью финансовых данных.&lt;/p&gt;
+&lt;p&gt;Исходный код доступен на &lt;a href=&#34;https://gitflic.ru/project/konkin/taljure&#34;&gt;GitFlic&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;А как вы обрабатываете неидеальные данные в своих финансовых приложениях?&lt;/strong&gt;&lt;/p&gt;
+</content>
+    </item>
+    
+    <item>
+      <title>Разработка стохастического осциллятора</title>
+      <link>http://localhost:1313/posts/taljure-stochastic/</link>
+      <pubDate>Fri, 29 Aug 2025 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://localhost:1313/posts/taljure-stochastic/</guid>
+      <description>В этой статье я хочу рассказать о реализации одного из самых популярных и визуально понятных индикаторов — стохастического осциллятора. Этот индикатор прекрасно демонстрирует силу функционального программирования для финансовых вычислений.</description>
+      <content type="html">&lt;h1 id=&#34;разработка-стохастического-осциллятора&#34;&gt;Разработка стохастического осциллятора&lt;/h1&gt;
+&lt;h2 id=&#34;разработка-стохастического-осциллятора-функциональный-подход-к-измерению-импульса&#34;&gt;&lt;strong&gt;Разработка стохастического осциллятора: Функциональный подход к измерению импульса&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/posts/taljure/taljure-stoh.png&#34; alt=&#34;Разработка индикатора Stoh&#34;&gt;&lt;/p&gt;
+&lt;p&gt;В этой статье я хочу рассказать о реализации одного из самых популярных и визуально понятных индикаторов — стохастического осциллятора. Этот индикатор прекрасно демонстрирует силу функционального программирования для финансовых вычислений.&lt;/p&gt;
+&lt;h3 id=&#34;что-делает-стохастик-особенным&#34;&gt;&lt;strong&gt;Что делает стохастик особенным?&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Стохастический осциллятор — это не просто индикатор, это целая философия:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Измеряет импульс&lt;/strong&gt; — положение цены относительно диапазона&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Работает в диапазоне 0-100&lt;/strong&gt; — идеально для определения перекупленности/перепроданности&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Имеет две линии&lt;/strong&gt; — %K (быстрая) и %D (медленная)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Визуально интуитивный&lt;/strong&gt; — легко интерпретировать на графике&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;архитектурные-решения&#34;&gt;&lt;strong&gt;Архитектурные решения&lt;/strong&gt;&lt;/h3&gt;
+&lt;h4 id=&#34;1-многоарность-для-гибкости&#34;&gt;&lt;strong&gt;1. Многоарность для гибкости&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Реализовал две версии функции:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;;; Версия с периодами по умолчанию&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;([highs lows closes] (&lt;span style=&#34;color:#a6e22e&#34;&gt;stochastic&lt;/span&gt; highs lows closes &lt;span style=&#34;color:#ae81ff&#34;&gt;14&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;;; Версия с кастомными периодами&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;([highs lows closes k-period d-period]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;;; основная логика&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Преимущество:&lt;/strong&gt; Пользователи могут использовать стандартные настройки или кастомизировать под свои стратегии.&lt;/p&gt;
+&lt;h4 id=&#34;2-локальные-функции-для-ясности&#34;&gt;&lt;strong&gt;2. Локальные функции для ясности&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Вместо монолитной функции я использовал локальные функции:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[&lt;span style=&#34;color:#75715e&#34;&gt;; Функция для вычисления %K на позиции i&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;     calculate-k (&lt;span style=&#34;color:#66d9ef&#34;&gt;fn &lt;/span&gt;[i] ...)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;     
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;     &lt;span style=&#34;color:#75715e&#34;&gt;; Функция для вычисления %D (SMA от %K)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;     calculate-d (&lt;span style=&#34;color:#66d9ef&#34;&gt;fn &lt;/span&gt;[i] ...)]
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Почему это важно:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Изоляция ответственности&lt;/strong&gt; — каждая функция делает одну вещь&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Упрощение тестирования&lt;/strong&gt; — можно тестировать логику по частям&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Улучшение читаемости&lt;/strong&gt; — ясное разделение логики&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;3-обработка-edge-cases&#34;&gt;&lt;strong&gt;3. Обработка edge cases&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Я предусмотрел специальные случаи:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;; Защита от деления на ноль&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(when (and window-high window-low (not= window-high window-low))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (* &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt; (/ (- close window-low) (- window-high window-low)))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;; Фильтрация nil-значений для %D&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;k-window (filter some? (subvec k-values start end))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;математическая-элегантность&#34;&gt;&lt;strong&gt;Математическая элегантность&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Формула %K поражает простотой и эффективностью:&lt;/p&gt;
+&lt;p&gt;%K = 100 * (close - lowest_low) / (highest_high - lowest_low)&lt;/p&gt;
+&lt;p&gt;А %D — это просто сглаживание %K:&lt;/p&gt;
+&lt;p&gt;%D = SMA(%K, period)&lt;/p&gt;
+&lt;h3 id=&#34;подводные-камни-реализации&#34;&gt;&lt;strong&gt;Подводные камни реализации&lt;/strong&gt;&lt;/h3&gt;
+&lt;h4 id=&#34;1-проблема-производительность-с-большими-данными&#34;&gt;&lt;strong&gt;1. Проблема: Производительность с большими данными&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Использование &lt;code&gt;apply max&lt;/code&gt; и &lt;code&gt;apply min&lt;/code&gt; на каждом шаге может быть медленным:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;window-high (apply max (subvec highs start end))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;window-low (apply min (subvec lows start end))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Решение:&lt;/strong&gt; Для оптимизации можно использовать скользящее окно с обновляемыми экстремумами, но я выбрал читаемость над производительностью для первой версии.&lt;/p&gt;
+&lt;h4 id=&#34;2-проблема-обработка-идентичных-значений&#34;&gt;&lt;strong&gt;2. Проблема: Обработка идентичных значений&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Если high = low в окне, возникает деление на ноль:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;; Тест подтверждает обработку этого случая&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[highs   [&lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt;]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      lows    [&lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt;]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      closes  [&lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt;]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      result  (&lt;span style=&#34;color:#a6e22e&#34;&gt;stochastic&lt;/span&gt; highs lows closes)]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#a6e22e&#34;&gt;is&lt;/span&gt; (every? nil? (map &lt;span style=&#34;color:#e6db74&#34;&gt;:k&lt;/span&gt; result))) &lt;span style=&#34;color:#75715e&#34;&gt;; Все значения %K = nil&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;3-проблема-синхронизация-данных&#34;&gt;&lt;strong&gt;3. Проблема: Синхронизация данных&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Три вектора должны быть одинаковой длины и правильно синхронизированы:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;; Неявное предположение:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(= (count highs) (count lows) (count closes))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;В продакшн-версии нужно добавить явную проверку.&lt;/p&gt;
+&lt;h3 id=&#34;тестирование-от-простого-к-сложному&#34;&gt;&lt;strong&gt;Тестирование: От простого к сложному&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Тесты охватывают все аспекты работы индикатора:&lt;/p&gt;
+&lt;h4 id=&#34;базовый-функционал&#34;&gt;&lt;strong&gt;Базовый функционал&lt;/strong&gt;&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;testing&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Basic stochastic oscillator calculation&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[highs   [&lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;110&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;105&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;120&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;115&lt;/span&gt;]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        lows    [&lt;span style=&#34;color:#ae81ff&#34;&gt;90&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;95&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;90&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;105&lt;/span&gt;]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        closes  [&lt;span style=&#34;color:#ae81ff&#34;&gt;95&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;98&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;110&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;108&lt;/span&gt;]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        result  (&lt;span style=&#34;color:#a6e22e&#34;&gt;stochastic&lt;/span&gt; highs lows closes)]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;is&lt;/span&gt; (= (count result) &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;is&lt;/span&gt; (every? &lt;span style=&#34;color:#f92672&#34;&gt;#&lt;/span&gt;(contains? % &lt;span style=&#34;color:#e6db74&#34;&gt;:k&lt;/span&gt;) result))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;is&lt;/span&gt; (every? &lt;span style=&#34;color:#f92672&#34;&gt;#&lt;/span&gt;(contains? % &lt;span style=&#34;color:#e6db74&#34;&gt;:d&lt;/span&gt;) result))))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;граничные-случаи&#34;&gt;&lt;strong&gt;Граничные случаи&lt;/strong&gt;&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;testing&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Vectors with identical values&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[highs   [&lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt;]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        lows    [&lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt;]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        closes  [&lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt;]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        result  (&lt;span style=&#34;color:#a6e22e&#34;&gt;stochastic&lt;/span&gt; highs lows closes)]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;is&lt;/span&gt; (every? nil? (map &lt;span style=&#34;color:#e6db74&#34;&gt;:k&lt;/span&gt; result)))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;is&lt;/span&gt; (every? nil? (map &lt;span style=&#34;color:#e6db74&#34;&gt;:d&lt;/span&gt; result)))))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;производительность&#34;&gt;&lt;strong&gt;Производительность&lt;/strong&gt;&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;testing&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Performance with large dataset&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[large-highs  (&lt;span style=&#34;color:#a6e22e&#34;&gt;vec&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;repeatedly&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1000&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;#&lt;/span&gt;(rand-int &lt;span style=&#34;color:#ae81ff&#34;&gt;200&lt;/span&gt;)))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        large-lows   (&lt;span style=&#34;color:#a6e22e&#34;&gt;vec&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;repeatedly&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1000&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;#&lt;/span&gt;(rand-int &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt;)))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        large-closes (&lt;span style=&#34;color:#a6e22e&#34;&gt;vec&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;repeatedly&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1000&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;#&lt;/span&gt;(rand-int &lt;span style=&#34;color:#ae81ff&#34;&gt;150&lt;/span&gt;)))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        result       (&lt;span style=&#34;color:#a6e22e&#34;&gt;stochastic&lt;/span&gt; large-highs large-lows large-closes)]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;is&lt;/span&gt; (= (count result) &lt;span style=&#34;color:#ae81ff&#34;&gt;1000&lt;/span&gt;))))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;ключевые-моменты&#34;&gt;&lt;strong&gt;Ключевые моменты&lt;/strong&gt;&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Композиция функций&lt;/strong&gt; — стохастик строится из простых блоков&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Обработка edge cases&lt;/strong&gt; — критически важна для надежности&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Гибкость через многоарность&lt;/strong&gt; — баланс между удобством и настраиваемостью&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Локальные функции&lt;/strong&gt; — мощный инструмент для организации сложной логики&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Визуальная природа&lt;/strong&gt; — некоторые индикаторы лучше воспринимаются графически&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;почему-стохастик-belongs-в-simple&#34;&gt;&lt;strong&gt;Почему стохастик belongs в simple&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Несмотря на относительную сложность, стохастик относится к simple потому что:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Концептуальная простота&lt;/strong&gt; — положение цены в диапазоне&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Прозрачность формулы&lt;/strong&gt; — легко понять и проверить&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Отсутствие рекуррентности&lt;/strong&gt; — в отличие от EMA/ATR&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Широкая применимость&lt;/strong&gt; — используется трейдерами всех уровней&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;оптимизации-для-будущего&#34;&gt;&lt;strong&gt;Оптимизации для будущего&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Для production-use можно добавить:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Скользящие экстремумы&lt;/strong&gt; — для O(1) расчета на шаг вместо O(n)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Проверки синхронизации&lt;/strong&gt; — явные проверки длины векторов&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Кеширование результатов&lt;/strong&gt; — для повторных вычислений&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Batch processing&lt;/strong&gt; — оптимизация для больших исторических данных&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;заключение-элегантность-в-простоте&#34;&gt;&lt;strong&gt;Заключение: Элегантность в простоте&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Стохастический осциллятор показал мне, что сложные trading-идеи могут иметь простые и элегантные реализации.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Что делает эту реализацию successful:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;✅ Чистая функциональная архитектура&lt;/li&gt;
+&lt;li&gt;✅ Comprehensive обработка edge cases&lt;/li&gt;
+&lt;li&gt;✅ Гибкий API с разными арностями&lt;/li&gt;
+&lt;li&gt;✅ Ясное разделение ответственности&lt;/li&gt;
+&lt;li&gt;✅ Баланс между точностью и производительностью&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Финальный вердикт:&lt;/strong&gt; Стохастик остался в &lt;code&gt;simple&lt;/code&gt; как пример того, как сложная концепция может иметь простую и elegant реализацию.&lt;/p&gt;
+&lt;p&gt;Исходный код доступен на &lt;a href=&#34;https://gitflic.ru/project/konkin/taljure&#34;&gt;GitFlic&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;А какой ваш любимый осциллятор и почему?&lt;/strong&gt;&lt;/p&gt;
+</content>
+    </item>
     
     <item>
       <title>Разработка индикатора ATR</title>

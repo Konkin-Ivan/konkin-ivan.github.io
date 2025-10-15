@@ -9,8 +9,419 @@
     
     
     
-    <lastBuildDate>Thu, 09 Oct 2025 20:17:39 +0300</lastBuildDate>
+    <lastBuildDate>Wed, 15 Oct 2025 17:42:13 +0300</lastBuildDate>
     <atom:link href="http://localhost:1313/tags/clojure/" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Архитектурный чек-лист: Функциональный пайплайн в Clojure</title>
+      <link>http://localhost:1313/posts/clojure-pipeline-architecture/</link>
+      <pubDate>Wed, 15 Oct 2025 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://localhost:1313/posts/clojure-pipeline-architecture/</guid>
+      <description>Практическое руководство по рефакторингу монстр-функций в элегантные пайплайны. Четкие правила, примеры и чек-лист для поддержания кода в соответствии с принципами функционального пайплайна, единого data-bag и композиции простых функций.</description>
+      <content type="html">&lt;h1 id=&#34;от-монстр-функций-к-элегантным-пайплайнам-архитектурный-чек-лист&#34;&gt;От монстр-функций к элегантным пайплайнам: архитектурный чек-лист&lt;/h1&gt;
+&lt;p&gt;В предыдущей статье &lt;a href=&#34;http://localhost:1313/posts/pipeline-refactoring/&#34;&gt;«От монолита к модульному пайплайну»&lt;/a&gt; мы рассмотрели базовые принципы декомпозиции. Однако на практике возникает новая проблема: &lt;strong&gt;отдельные фазы сами превращаются в монстров&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Основная идея остается прежней — вынос логики в самостоятельные инкапсулированные фазы. Но что делать, когда эти фазы начинают разрастаться до неузнаваемости?&lt;/p&gt;
+&lt;h2 id=&#34;проблема-вторичная-сложность&#34;&gt;&lt;strong&gt;Проблема: вторичная сложность&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;Допустим, вы проверили идею, подтвердили ее, но получился лютый монолит.&lt;/p&gt;
+&lt;p&gt;Допустим, вы провели рефакторинг, разбили монолит на фазы, но теперь каждая фаза похожа на монстра:&lt;/p&gt;
+&lt;h3 id=&#34;фаза-монстр&#34;&gt;&lt;strong&gt;Фаза-монстр&lt;/strong&gt;&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn- &lt;/span&gt;generate-signals-phase
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Разделенная фаза генерации торговых сигналов для уровней и боковика&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  [{&lt;span style=&#34;color:#e6db74&#34;&gt;:keys&lt;/span&gt; [price extremums level-breached? market-analysis minute-volume-analysis timestamp] &lt;span style=&#34;color:#e6db74&#34;&gt;:as&lt;/span&gt; market-data}] 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#75715e&#34;&gt;;; ⭐ ДОБАВЛЯЕМ timestamp в деструктуризацию&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[volume-analysis (or minute-volume-analysis {})
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        volume-spike? (true? (&lt;span style=&#34;color:#e6db74&#34;&gt;:volume-spike?&lt;/span&gt; volume-analysis))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        volume-ratio (&lt;span style=&#34;color:#e6db74&#34;&gt;:volume-ratio&lt;/span&gt; volume-analysis)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        candle-history (&lt;span style=&#34;color:#e6db74&#34;&gt;:candles&lt;/span&gt; market-data)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#75715e&#34;&gt;;; ⭐ ВРЕМЕННЫЙ ФИКС: ЕСЛИ ОБЪЕМЫ НЕ РАБОТАЮТ, РАЗРЕШАЕМ УРОВНЕВУЮ ТОРГОВЛЮ&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        has-volume-data? (and volume-ratio (pos? volume-ratio))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        volume-ok? (or volume-spike? (not has-volume-data?))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#75715e&#34;&gt;;; ⭐ ЗАЩИТА ОТ NIL ДЛЯ ТОРГОВОЙ ЗОНЫ&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        trading-zone (&lt;span style=&#34;color:#e6db74&#34;&gt;:trading-zone&lt;/span&gt; market-analysis)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        trading-zone-name (&lt;span style=&#34;color:#66d9ef&#34;&gt;if &lt;/span&gt;trading-zone (name trading-zone) &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;unknown&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#75715e&#34;&gt;;; 1. УСЛОВИЯ ДЛЯ УРОВНЕВОЙ ТОРГОВЛИ (ОТ УРОВНЕЙ)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        level-trading? (and (not level-breached?)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                   volume-ok?)  &lt;span style=&#34;color:#75715e&#34;&gt;;; ← УБРАЛИ ПРОВЕРКУ ТРЕНДА&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#75715e&#34;&gt;;; 2. УСЛОВИЯ ДЛЯ ТОРГОВЛИ В БОКОВИКЕ (ОТ ФЛЭТА)  &lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        flat-trading? (and (&lt;span style=&#34;color:#e6db74&#34;&gt;:flat?&lt;/span&gt; market-analysis)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                          (&lt;span style=&#34;color:#a6e22e&#34;&gt;get-in&lt;/span&gt; market-analysis [&lt;span style=&#34;color:#e6db74&#34;&gt;:squeeze-analysis&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:squeeze?&lt;/span&gt;])
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                          volume-spike?)  &lt;span style=&#34;color:#75715e&#34;&gt;;; ← ДЛЯ БОКОВИКА СТРОГАЯ ПРОВЕРКА&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#75715e&#34;&gt;;; 3. ОБЩИЕ УСЛОВИЯ ДЛЯ ЛЮБОЙ ТОРГОВЛИ&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        levels-calculated? (&lt;span style=&#34;color:#e6db74&#34;&gt;:levels-calculated?&lt;/span&gt; market-data)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        can-accept-signal? (&lt;span style=&#34;color:#a6e22e&#34;&gt;deal/can-accept-signal?&lt;/span&gt; price &lt;span style=&#34;color:#f92672&#34;&gt;@&lt;/span&gt;active-order)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        base-conditions (and levels-calculated? can-accept-signal?)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        can-trade? (and base-conditions (or level-trading? flat-trading?))]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;;; ⭐ ДЕТАЛЬНОЕ ЛОГИРОВАНИЕ БАЗОВЫХ УСЛОВИЙ&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;=== ПРОВЕРКА БАЗОВЫХ УСЛОВИЙ ===&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;📊 Уровни рассчитаны:&amp;#34;&lt;/span&gt; levels-calculated?)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;✅ Можно принять сигнал:&amp;#34;&lt;/span&gt; can-accept-signal?)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;📍 Торговая зона:&amp;#34;&lt;/span&gt; trading-zone-name)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;📈 Всплеск объема:&amp;#34;&lt;/span&gt; volume-spike? &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;(ratio:&amp;#34;&lt;/span&gt; volume-ratio &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;)&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;📊 Есть данные объема:&amp;#34;&lt;/span&gt; has-volume-data?)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;✅ Объем проверка:&amp;#34;&lt;/span&gt; volume-ok?)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;💥 Сжатие:&amp;#34;&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;get-in&lt;/span&gt; market-analysis [&lt;span style=&#34;color:#e6db74&#34;&gt;:squeeze-analysis&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:squeeze?&lt;/span&gt;]))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;🔄 Флэ�:&amp;#34;&lt;/span&gt; (&lt;span style=&#34;color:#e6db74&#34;&gt;:flat?&lt;/span&gt; market-analysis))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#66d9ef&#34;&gt;if &lt;/span&gt;can-trade?
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      (&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[current-levels (&lt;span style=&#34;color:#e6db74&#34;&gt;:active-levels&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;@&lt;/span&gt;levels-state)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#75715e&#34;&gt;;; ⭐ ИЗМЕНЕНИЕ: ГЕНЕРИРУЕМ СИГНАЛ С СОСТОЯНИЕМ ДИВЕРГЕНЦИЙ&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            raw-signal (&lt;span style=&#34;color:#a6e22e&#34;&gt;generator/generate-trading-signal&lt;/span&gt; current-levels price extremums
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                                  {&lt;span style=&#34;color:#e6db74&#34;&gt;:market-analysis&lt;/span&gt; market-analysis
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                                   &lt;span style=&#34;color:#e6db74&#34;&gt;:volume-analysis&lt;/span&gt; volume-analysis  
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                                   &lt;span style=&#34;color:#e6db74&#34;&gt;:candle-history&lt;/span&gt; candle-history
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                                   &lt;span style=&#34;color:#e6db74&#34;&gt;:divergence-state&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;@&lt;/span&gt;divergence-state})  &lt;span style=&#34;color:#75715e&#34;&gt;;; ← ПЕРЕДАЕМ СОСТОЯНИЕ&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#75715e&#34;&gt;;; ⭐ ОБНОВЛЯЕМ СОСТОЯНИЕ ДИВЕРГЕНЦИЙ&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            _ (when raw-signal
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                (&lt;span style=&#34;color:#a6e22e&#34;&gt;update-divergence-state&lt;/span&gt; (&lt;span style=&#34;color:#e6db74&#34;&gt;:divergences&lt;/span&gt; raw-signal) timestamp))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#75715e&#34;&gt;;; ⭐ ОБОГАЩАЕМ СИГНАЛ ИНФОРМАЦИЕЙ О ДИВЕРГЕНЦИЯХ&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            signal (when raw-signal
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                    (&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[divergence-info &lt;span style=&#34;color:#f92672&#34;&gt;@&lt;/span&gt;divergence-state
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                          strong-divergence? (&amp;gt;= (&lt;span style=&#34;color:#e6db74&#34;&gt;:duration&lt;/span&gt; divergence-info) &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;)]  &lt;span style=&#34;color:#75715e&#34;&gt;;; дивергенция сильная если длится 2+ свечи&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                      
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                      (assoc raw-signal
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                             &lt;span style=&#34;color:#e6db74&#34;&gt;:divergence-memory&lt;/span&gt; divergence-info
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                             &lt;span style=&#34;color:#e6db74&#34;&gt;:divergence-strong?&lt;/span&gt; strong-divergence?)))]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        (&lt;span style=&#34;color:#a6e22e&#34;&gt;logger/log-trading-decision&lt;/span&gt; current-levels price nil signal)  &lt;span style=&#34;color:#75715e&#34;&gt;;; ← ПЕРЕДАЕМ nil ВМЕСТО trend&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#75715e&#34;&gt;;; Обновляем кеш&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        (&lt;span style=&#34;color:#a6e22e&#34;&gt;reset!&lt;/span&gt; levels-cache {&lt;span style=&#34;color:#e6db74&#34;&gt;:timestamp&lt;/span&gt; (&lt;span style=&#34;color:#e6db74&#34;&gt;:timestamp&lt;/span&gt; market-data) 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                             &lt;span style=&#34;color:#e6db74&#34;&gt;:candle-count&lt;/span&gt; (&lt;span style=&#34;color:#e6db74&#34;&gt;:candle-count&lt;/span&gt; market-data)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                             &lt;span style=&#34;color:#e6db74&#34;&gt;:levels&lt;/span&gt; current-levels 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                             &lt;span style=&#34;color:#e6db74&#34;&gt;:extremums&lt;/span&gt; extremums})
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        (when signal
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          (&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[signal-type (&lt;span style=&#34;color:#e6db74&#34;&gt;:type&lt;/span&gt; signal)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                trading-type (&lt;span style=&#34;color:#66d9ef&#34;&gt;if &lt;/span&gt;level-trading? &lt;span style=&#34;color:#e6db74&#34;&gt;:level-based&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:flat-based&lt;/span&gt;)]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;=== РАЗДЕЛЕННЫЙ ТОРГОВЫЙ СИГНАЛ ===&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;🎯 ТИП: &amp;#34;&lt;/span&gt; (name trading-type) &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34; | СИГНАЛ: &amp;#34;&lt;/span&gt; (name signal-type))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;💰 Цена входа: &amp;#34;&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;format&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;%.2f&amp;#34;&lt;/span&gt; price))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;📊 Зона: &amp;#34;&lt;/span&gt; trading-zone-name)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;📈 Дивергенция: &amp;#34;&lt;/span&gt; (&lt;span style=&#34;color:#e6db74&#34;&gt;:active&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;@&lt;/span&gt;divergence-state) 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                     &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34; (длится &amp;#34;&lt;/span&gt; (&lt;span style=&#34;color:#e6db74&#34;&gt;:duration&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;@&lt;/span&gt;divergence-state) &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34; свечей)&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#75715e&#34;&gt;;; Сохраняем в кеш (убираем trend)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            (&lt;span style=&#34;color:#a6e22e&#34;&gt;reset!&lt;/span&gt; last-cache {&lt;span style=&#34;color:#e6db74&#34;&gt;:timestamp&lt;/span&gt; (&lt;span style=&#34;color:#e6db74&#34;&gt;:timestamp&lt;/span&gt; market-data) 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                               &lt;span style=&#34;color:#e6db74&#34;&gt;:levels&lt;/span&gt; current-levels
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                               &lt;span style=&#34;color:#e6db74&#34;&gt;:signal&lt;/span&gt; signal 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                               &lt;span style=&#34;color:#e6db74&#34;&gt;:trading-type&lt;/span&gt; trading-type})  &lt;span style=&#34;color:#75715e&#34;&gt;;; ← УБРАЛИ :trend&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            (assoc market-data &lt;span style=&#34;color:#e6db74&#34;&gt;:signal&lt;/span&gt; signal &lt;span style=&#34;color:#e6db74&#34;&gt;:trading-type&lt;/span&gt; trading-type))))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      &lt;span style=&#34;color:#75715e&#34;&gt;;; ⭐ ДЕТАЛЬНОЕ ЛОГИРОВАНИЕ ПРИ ОТСУТСТВИИ СИГНАЛА&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      (&lt;span style=&#34;color:#a6e22e&#34;&gt;do&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        (&lt;span style=&#34;color:#a6e22e&#34;&gt;cond&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          (not levels-calculated?)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;⚡ Базовые условия: уровни не рассчитаны&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          (not can-accept-signal?)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;⚡ Базовые условия: нельзя принять сигнал (активный ордер?)&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          (and (not level-trading?) (not flat-trading?))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          (&lt;span style=&#34;color:#a6e22e&#34;&gt;do&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;⚡ Торговые условия не выполнены:&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            (when (not (and trading-zone (&lt;span style=&#34;color:#f92672&#34;&gt;#&lt;/span&gt;{&lt;span style=&#34;color:#e6db74&#34;&gt;:near-support&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:near-resistance&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:internal-support&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:internal-resistance&lt;/span&gt;} trading-zone)))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;   📍 Не в торговой зоне: &amp;#34;&lt;/span&gt; trading-zone-name))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            (when (not volume-ok?)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;   📈 Проблема с объемом (spike:&amp;#34;&lt;/span&gt; volume-spike? &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;ratio:&amp;#34;&lt;/span&gt; volume-ratio &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;)&amp;#34;&lt;/span&gt;))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            (when (and (&lt;span style=&#34;color:#e6db74&#34;&gt;:flat?&lt;/span&gt; market-analysis) 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                      (not (&lt;span style=&#34;color:#a6e22e&#34;&gt;get-in&lt;/span&gt; market-analysis [&lt;span style=&#34;color:#e6db74&#34;&gt;:squeeze-analysis&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:squeeze?&lt;/span&gt;])))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;   💥 Нет сжатия в боковике&amp;#34;&lt;/span&gt;))))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        market-data))))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Это классическая проблема - фазы превращаются в &amp;ldquo;монстров&amp;rdquo;. &lt;code&gt;generate-signals-phase&lt;/code&gt; действительно стала слишком сложной. Подобные функции-переростки напрочь отбивают любое желание продолжать разработку и постепенно вступает во власть - ее величиство прокрестинация. Лично меня эта проблема, конкретно достала.&lt;/p&gt;
+&lt;h2 id=&#34;проблемы-текущей-реализации&#34;&gt; &lt;strong&gt;Проблемы текущей реализации:&lt;/strong&gt;&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Слишком много ответственностей&lt;/strong&gt; - проверка условий, логирование, генерация сигналов, обновление состояния&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Высокая цикломатическая сложность&lt;/strong&gt; - много вложенных условий&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Смешение уровней абстракции&lt;/strong&gt; - низкоуровневая логика с бизнес-правилами&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Жесткие зависимости&lt;/strong&gt; - глобальные состояния (&lt;code&gt;@levels-state&lt;/code&gt;, &lt;code&gt;@divergence-state&lt;/code&gt;)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;рефакторинг&#34;&gt;🔧 &lt;strong&gt;Рефакторинг:&lt;/strong&gt;&lt;/h2&gt;
+&lt;h3 id=&#34;1-разделяем-на-специализированные-фазы&#34;&gt;&lt;strong&gt;1. Разделяем на специализированные фазы&lt;/strong&gt;&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;;; Главная фаза становится тонким координатором&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn- &lt;/span&gt;generate-signals-phase
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  [{&lt;span style=&#34;color:#e6db74&#34;&gt;:keys&lt;/span&gt; [price market-analysis] &lt;span style=&#34;color:#e6db74&#34;&gt;:as&lt;/span&gt; market-data}]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (-&amp;gt; market-data
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      (&lt;span style=&#34;color:#a6e22e&#34;&gt;validate-trading-conditions&lt;/span&gt;)    &lt;span style=&#34;color:#75715e&#34;&gt;;; ✅ отдельная фаза проверки&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      (&lt;span style=&#34;color:#a6e22e&#34;&gt;check-volume-conditions&lt;/span&gt;)        &lt;span style=&#34;color:#75715e&#34;&gt;;; ✅ отдельная фаза объемов  &lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      (&lt;span style=&#34;color:#a6e22e&#34;&gt;generate-potential-signals&lt;/span&gt;)     &lt;span style=&#34;color:#75715e&#34;&gt;;; ✅ отдельная фаза генерации&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      (&lt;span style=&#34;color:#a6e22e&#34;&gt;enrich-with-divergence-info&lt;/span&gt;)    &lt;span style=&#34;color:#75715e&#34;&gt;;; ✅ отдельная фаза обогащения&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      (&lt;span style=&#34;color:#a6e22e&#34;&gt;log-trading-decisions&lt;/span&gt;)          &lt;span style=&#34;color:#75715e&#34;&gt;;; ✅ отдельная фаза логирования&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      (&lt;span style=&#34;color:#a6e22e&#34;&gt;update-system-state&lt;/span&gt;)))          &lt;span style=&#34;color:#75715e&#34;&gt;;; ✅ отдельная фаза состояния&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;2-выносим-проверку-условий&#34;&gt;&lt;strong&gt;2. Выносим проверку условий&lt;/strong&gt;&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn- &lt;/span&gt;validate-trading-conditions [{&lt;span style=&#34;color:#e6db74&#34;&gt;:keys&lt;/span&gt; [price market-analysis levels-calculated?] &lt;span style=&#34;color:#e6db74&#34;&gt;:as&lt;/span&gt; data}]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[base-conditions (and levels-calculated?
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                            (&lt;span style=&#34;color:#a6e22e&#34;&gt;deal/can-accept-signal?&lt;/span&gt; price &lt;span style=&#34;color:#f92672&#34;&gt;@&lt;/span&gt;active-order))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        trading-zone (&lt;span style=&#34;color:#e6db74&#34;&gt;:trading-zone&lt;/span&gt; market-analysis)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        valid-zone? (&lt;span style=&#34;color:#f92672&#34;&gt;#&lt;/span&gt;{&lt;span style=&#34;color:#e6db74&#34;&gt;:near-support&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:near-resistance&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:internal-support&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:internal-resistance&lt;/span&gt;} trading-zone)]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (assoc data &lt;span style=&#34;color:#e6db74&#34;&gt;:trading-conditions&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           {&lt;span style=&#34;color:#e6db74&#34;&gt;:base-conditions?&lt;/span&gt; base-conditions
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#e6db74&#34;&gt;:valid-zone?&lt;/span&gt; valid-zone?
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#e6db74&#34;&gt;:trading-zone&lt;/span&gt; trading-zone})))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;3-выносим-логику-объемов&#34;&gt;&lt;strong&gt;3. Выносим логику объемов&lt;/strong&gt;&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn- &lt;/span&gt;check-volume-conditions [{&lt;span style=&#34;color:#e6db74&#34;&gt;:keys&lt;/span&gt; [minute-volume-analysis market-analysis] &lt;span style=&#34;color:#e6db74&#34;&gt;:as&lt;/span&gt; data}]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[volume-analysis (or minute-volume-analysis {})
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        volume-spike? (&lt;span style=&#34;color:#e6db74&#34;&gt;:volume-spike?&lt;/span&gt; volume-analysis)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        volume-ratio (&lt;span style=&#34;color:#e6db74&#34;&gt;:volume-ratio&lt;/span&gt; volume-analysis)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        has-volume-data? (and volume-ratio (pos? volume-ratio))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#75715e&#34;&gt;;; ⭐ ВЫНОСИМ БИЗНЕС-ПРАВИЛА В КОНФИГУРАЦИЮ&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        level-volume-ok? (or volume-spike? (not has-volume-data?))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        flat-volume-ok? volume-spike?]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (assoc data &lt;span style=&#34;color:#e6db74&#34;&gt;:volume-conditions&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           {&lt;span style=&#34;color:#e6db74&#34;&gt;:level-trading?&lt;/span&gt; level-volume-ok?
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#e6db74&#34;&gt;:flat-trading?&lt;/span&gt; flat-volume-ok?
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#e6db74&#34;&gt;:volume-spike?&lt;/span&gt; volume-spike?
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#e6db74&#34;&gt;:volume-ratio&lt;/span&gt; volume-ratio})))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;4-выносим-генерацию-сигналов&#34;&gt;&lt;strong&gt;4. Выносим генерацию сигналов&lt;/strong&gt;&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn- &lt;/span&gt;generate-potential-signals [{&lt;span style=&#34;color:#e6db74&#34;&gt;:keys&lt;/span&gt; [trading-conditions volume-conditions price extremums market-analysis] &lt;span style=&#34;color:#e6db74&#34;&gt;:as&lt;/span&gt; data}]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[{&lt;span style=&#34;color:#e6db74&#34;&gt;:keys&lt;/span&gt; [base-conditions? valid-zone?]} trading-conditions
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        {&lt;span style=&#34;color:#e6db74&#34;&gt;:keys&lt;/span&gt; [level-trading? flat-trading?]} volume-conditions
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        level-signal? (and base-conditions? valid-zone? level-trading?)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        flat-signal? (and base-conditions? 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                         (&lt;span style=&#34;color:#e6db74&#34;&gt;:flat?&lt;/span&gt; market-analysis)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                         (&lt;span style=&#34;color:#a6e22e&#34;&gt;get-in&lt;/span&gt; market-analysis [&lt;span style=&#34;color:#e6db74&#34;&gt;:squeeze-analysis&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:squeeze?&lt;/span&gt;])
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                         flat-trading?)]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;cond-&amp;gt;&lt;/span&gt; data
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      (or level-signal? flat-signal?)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      (assoc &lt;span style=&#34;color:#e6db74&#34;&gt;:raw-signal&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;signals/generate-level-signal&lt;/span&gt; price extremums market-analysis)))))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;5-выносим-работу-с-дивергенциями&#34;&gt;&lt;strong&gt;5. Выносим работу с дивергенциями&lt;/strong&gt;&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn- &lt;/span&gt;enrich-with-divergence-info [{&lt;span style=&#34;color:#e6db74&#34;&gt;:keys&lt;/span&gt; [raw-signal timestamp] &lt;span style=&#34;color:#e6db74&#34;&gt;:as&lt;/span&gt; data}]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#66d9ef&#34;&gt;if &lt;/span&gt;raw-signal
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[divergences (&lt;span style=&#34;color:#e6db74&#34;&gt;:divergences&lt;/span&gt; raw-signal)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          _ (&lt;span style=&#34;color:#a6e22e&#34;&gt;update-divergence-state&lt;/span&gt; divergences timestamp)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          divergence-info &lt;span style=&#34;color:#f92672&#34;&gt;@&lt;/span&gt;divergence-state
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          strong-divergence? (&amp;gt;= (&lt;span style=&#34;color:#e6db74&#34;&gt;:duration&lt;/span&gt; divergence-info) &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;)]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      (assoc data &lt;span style=&#34;color:#e6db74&#34;&gt;:signal&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;             (-&amp;gt; raw-signal
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                 (assoc &lt;span style=&#34;color:#e6db74&#34;&gt;:divergence-memory&lt;/span&gt; divergence-info
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                        &lt;span style=&#34;color:#e6db74&#34;&gt;:divergence-strong?&lt;/span&gt; strong-divergence?))))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    data))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;6-выносим-логирование&#34;&gt;&lt;strong&gt;6. Выносим логирование&lt;/strong&gt;&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn- &lt;/span&gt;log-trading-decisions [{&lt;span style=&#34;color:#e6db74&#34;&gt;:keys&lt;/span&gt; [trading-conditions volume-conditions signal] &lt;span style=&#34;color:#e6db74&#34;&gt;:as&lt;/span&gt; data}]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[{&lt;span style=&#34;color:#e6db74&#34;&gt;:keys&lt;/span&gt; [base-conditions? valid-zone? trading-zone]} trading-conditions
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        {&lt;span style=&#34;color:#e6db74&#34;&gt;:keys&lt;/span&gt; [level-trading? flat-trading? volume-spike?]} volume-conditions]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;;; Детальное логирование условий&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;=== ДЕТАЛИЗАЦИЯ УСЛОВИЙ ===&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;📊 Базовые условия:&amp;#34;&lt;/span&gt; base-conditions?)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;📍 Валидная зона:&amp;#34;&lt;/span&gt; valid-zone? &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;(зона:&amp;#34;&lt;/span&gt; trading-zone &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;)&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;📈 Уровневая торговля:&amp;#34;&lt;/span&gt; level-trading?)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;🔄 Флэт торговля:&amp;#34;&lt;/span&gt; flat-trading?)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (when signal
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      (&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[signal-type (&lt;span style=&#34;color:#e6db74&#34;&gt;:type&lt;/span&gt; signal)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            trading-type (&lt;span style=&#34;color:#66d9ef&#34;&gt;if &lt;/span&gt;level-trading? &lt;span style=&#34;color:#e6db74&#34;&gt;:level-based&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:flat-based&lt;/span&gt;)]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;🎯 СГЕНЕРИРОВАН СИГНАЛ:&amp;#34;&lt;/span&gt; (name signal-type))))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    data))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;итоговый-результат&#34;&gt;&lt;strong&gt;Итоговый результат:&lt;/strong&gt;&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn- &lt;/span&gt;generate-signals-phase
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Рефакторнутая фаза - тонкий координатор&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  [market-data]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (-&amp;gt; market-data
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      validate-trading-conditions     &lt;span style=&#34;color:#75715e&#34;&gt;;; → возвращает data с :trading-conditions&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      check-volume-conditions         &lt;span style=&#34;color:#75715e&#34;&gt;;; → возвращает data с :volume-conditions  &lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      generate-potential-signals      &lt;span style=&#34;color:#75715e&#34;&gt;;; → возвращает data с :raw-signal&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      enrich-with-divergence-info     &lt;span style=&#34;color:#75715e&#34;&gt;;; → возвращает data с :signal&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      log-trading-decisions           &lt;span style=&#34;color:#75715e&#34;&gt;;; → логирует, возвращает data&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      update-system-state))           &lt;span style=&#34;color:#75715e&#34;&gt;;; → обновляет кеши, возвращает data&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;преимущества-рефакторинга&#34;&gt; &lt;strong&gt;Преимущества рефакторинга:&lt;/strong&gt;&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Тестируемость&lt;/strong&gt; - каждую фазу можно тестировать отдельно&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Переиспользование&lt;/strong&gt; - фазы объема/условий можно использовать в других местах&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Читаемость&lt;/strong&gt; - каждая функция делает одну понятную вещь&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Поддержка&lt;/strong&gt; - легко модифицировать отдельные аспекты логики&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Соответствие вашим принципам&lt;/strong&gt; - чистый пайплайн, единый data-bag&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Каждая фаза теперь следует правилу: &lt;strong&gt;&amp;ldquo;получает data-bag, возвращает data-bag&amp;rdquo;&lt;/strong&gt; 🎯&lt;/p&gt;
+&lt;h2 id=&#34;философия-стиля&#34;&gt;&lt;strong&gt;Философия стиля:&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;&amp;ldquo;Любая сложная проблема должна быть разбита на последовательность простых шагов,
+каждый из которых умещается в голове и делает одну понятную вещь&amp;rdquo;&lt;/p&gt;
+&lt;h2 id=&#34;правило-большого-пальца&#34;&gt; &lt;strong&gt;Правило большого пальца:&lt;/strong&gt;&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;;; ❌ ЕСЛИ функция не помещается на экране без скролла&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;monster-function [data]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[a (&lt;span style=&#34;color:#a6e22e&#34;&gt;...&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          (&lt;span style=&#34;color:#a6e22e&#34;&gt;...&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            (&lt;span style=&#34;color:#a6e22e&#34;&gt;...&lt;/span&gt;)))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        b (&lt;span style=&#34;color:#a6e22e&#34;&gt;...&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        c (&lt;span style=&#34;color:#a6e22e&#34;&gt;...&lt;/span&gt;)]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (when (&lt;span style=&#34;color:#a6e22e&#34;&gt;...&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      (&lt;span style=&#34;color:#66d9ef&#34;&gt;do &lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;...&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          (&lt;span style=&#34;color:#a6e22e&#34;&gt;...&lt;/span&gt;)))))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;;; ✅ ОНА ДОЛЖНА стать пайплайном&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;clean-function [data]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (-&amp;gt; data
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      step-one    &lt;span style=&#34;color:#75715e&#34;&gt;;; ← каждая функция простая&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      step-two    &lt;span style=&#34;color:#75715e&#34;&gt;;; ← и понятная&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      step-three
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      step-four))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;шаблон-модуля&#34;&gt;&lt;strong&gt;Шаблон модуля&lt;/strong&gt;&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;ns &lt;/span&gt;app.trader.module-name.core
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#e6db74&#34;&gt;:require&lt;/span&gt; [clojure.tools.logging &lt;span style=&#34;color:#e6db74&#34;&gt;:as&lt;/span&gt; log]))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;;; ===== КОНФИГУРАЦИЯ =====&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;def &lt;/span&gt;default-config
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  {&lt;span style=&#34;color:#e6db74&#34;&gt;:param-1&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;14&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;:param-2&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0.02&lt;/span&gt;})
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;;; ===== ИНТЕРФЕЙСНЫЕ ФУНКЦИИ =====&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;calc-module-from-data
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Основная функция модуля&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  [data-bag &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&lt;/span&gt; [config]]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[full-config (merge default-config config)]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (-&amp;gt; data-bag
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        (&lt;span style=&#34;color:#a6e22e&#34;&gt;prepare-data-for-module&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        (&lt;span style=&#34;color:#a6e22e&#34;&gt;calculate-module-logic&lt;/span&gt; full-config)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        (&lt;span style=&#34;color:#a6e22e&#34;&gt;format-module-result&lt;/span&gt;))))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;;; ===== ВНУТРЕННИЕ ФУНКЦИИ =====&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn- &lt;/span&gt;prepare-data-for-module [data]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;🔧 Preparing data for module&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (assoc data &lt;span style=&#34;color:#e6db74&#34;&gt;:module-data&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;extract-needed-data&lt;/span&gt; data)))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn- &lt;/span&gt;calculate-module-logic [data config]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;🧮 Calculating module logic&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#a6e22e&#34;&gt;try&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[result (&lt;span style=&#34;color:#a6e22e&#34;&gt;some-calculation&lt;/span&gt; (&lt;span style=&#34;color:#e6db74&#34;&gt;:module-data&lt;/span&gt; data) config)]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      (assoc data &lt;span style=&#34;color:#e6db74&#34;&gt;:module-result&lt;/span&gt; result))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;catch&lt;/span&gt; Exception e
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/error&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Module calculation failed:&amp;#34;&lt;/span&gt; e)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      nil)))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn- &lt;/span&gt;format-module-result [data]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;📊 Formatting module result&amp;#34;&lt;/span&gt;) 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (-&amp;gt; data
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      (assoc &lt;span style=&#34;color:#e6db74&#34;&gt;:final-result&lt;/span&gt; (&lt;span style=&#34;color:#e6db74&#34;&gt;:module-result&lt;/span&gt; data))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      (dissoc &lt;span style=&#34;color:#e6db74&#34;&gt;:module-data&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;:module-result&lt;/span&gt;)))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;основные-принципы&#34;&gt;&lt;strong&gt;ОСНОВНЫЕ ПРИНЦИПЫ:&lt;/strong&gt;&lt;/h2&gt;
+&lt;h3 id=&#34;1-архитектурный-шаблон&#34;&gt;&lt;strong&gt;1. Архитектурный шаблон: &amp;ldquo;Функциональный пайплайн&amp;rdquo;&lt;/strong&gt;&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ВХОД → &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;Фаза 1&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt; → &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;Фаза 2&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt; → &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;Фаза N&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt; → ВЫХОД
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Правило:&lt;/strong&gt; ВСЕ данные проходят через пайплайн. Нет побочных эффектов между фазами.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;;; ✅ ПРАВИЛЬНО&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;process-data [input]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (-&amp;gt; input
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      phase-1-clean
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      phase-2-analyze
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      phase-3-transform))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;;; ❌ НЕПРАВИЛЬНО  &lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;process-data [input]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[a (&lt;span style=&#34;color:#a6e22e&#34;&gt;phase-1&lt;/span&gt; input)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        b (&lt;span style=&#34;color:#a6e22e&#34;&gt;phase-2&lt;/span&gt; input)  &lt;span style=&#34;color:#75715e&#34;&gt;;; работаем с исходным input!&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        c (&lt;span style=&#34;color:#a6e22e&#34;&gt;phase-3&lt;/span&gt; a)]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    c))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;2-структура-данных-единый-data-bag&#34;&gt;&lt;strong&gt;2. Структура данных: Единый Data Bag&lt;/strong&gt;&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;;; ВСЕ данные в одной мапе&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;def &lt;/span&gt;initial-data
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  {&lt;span style=&#34;color:#e6db74&#34;&gt;:price-data&lt;/span&gt; {&lt;span style=&#34;color:#e6db74&#34;&gt;:open&lt;/span&gt; [] &lt;span style=&#34;color:#e6db74&#34;&gt;:high&lt;/span&gt; [] &lt;span style=&#34;color:#e6db74&#34;&gt;:close&lt;/span&gt; [] &lt;span style=&#34;color:#e6db74&#34;&gt;:low&lt;/span&gt; [] &lt;span style=&#34;color:#e6db74&#34;&gt;:volume&lt;/span&gt; []}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;:levels&lt;/span&gt; {&lt;span style=&#34;color:#e6db74&#34;&gt;:support&lt;/span&gt; nil &lt;span style=&#34;color:#e6db74&#34;&gt;:resistance&lt;/span&gt; nil}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;:indicators&lt;/span&gt; {&lt;span style=&#34;color:#e6db74&#34;&gt;:rsi&lt;/span&gt; [] &lt;span style=&#34;color:#e6db74&#34;&gt;:macd&lt;/span&gt; []}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;:signals&lt;/span&gt; {&lt;span style=&#34;color:#e6db74&#34;&gt;:current&lt;/span&gt; nil &lt;span style=&#34;color:#e6db74&#34;&gt;:history&lt;/span&gt; []}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;:context&lt;/span&gt; {&lt;span style=&#34;color:#e6db74&#34;&gt;:timestamp&lt;/span&gt; nil &lt;span style=&#34;color:#e6db74&#34;&gt;:instrument&lt;/span&gt; nil}})
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Правило:&lt;/strong&gt; Каждая фаза получает data-bag, возвращает data-bag.&lt;/p&gt;
+&lt;h3 id=&#34;3-именование-жесткий-convention&#34;&gt;&lt;strong&gt;3. Именование: Жесткий convention&lt;/strong&gt;&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-txt&#34; data-lang=&#34;txt&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ТИП-ДЕЙСТВИЕ-ОБЪЕКТ-ДОПОЛНИТЕЛЬНО
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ТИП: [calc-, find-, analyze-, generate-, create-]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ДЕЙСТВИЕ: [rsi, levels, signal, trend]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ОБЪЕКТ: [for-, from-, based-on-]
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;;; ✅ ПРАВИЛЬНО&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;calc-rsi-from-prices [prices period])
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;find-levels-based-on-extremums [extremums])
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;generate-signal-for-instrument [instrument-data])
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;;; ❌ НЕПРАВИЛЬНО&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;rsi [p n])                    &lt;span style=&#34;color:#75715e&#34;&gt;;; непонятно&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;find-levels [extremes])       &lt;span style=&#34;color:#75715e&#34;&gt;;; нет контекста&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;make-signal [data])           &lt;span style=&#34;color:#75715e&#34;&gt;;; слишком абстрактно&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;4-фазы-пайплайна-четкие-ответственности&#34;&gt;&lt;strong&gt;4. Фазы пайплайна: Четкие ответственности&lt;/strong&gt;&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;;; СТАНДАРТНЫЙ ПАЙПЛАЙН ТОРГОВОЙ СИСТЕМЫ&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;def &lt;/span&gt;trading-pipeline
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  [phase-prepare-data      &lt;span style=&#34;color:#75715e&#34;&gt;;; подготовка данных&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   phase-calc-indicators   &lt;span style=&#34;color:#75715e&#34;&gt;;; индикаторы (RSI, MACD)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   phase-find-levels       &lt;span style=&#34;color:#75715e&#34;&gt;;; уровни поддержки/сопротивления  &lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   phase-analyze-context   &lt;span style=&#34;color:#75715e&#34;&gt;;; контекст рынка&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   phase-generate-signals  &lt;span style=&#34;color:#75715e&#34;&gt;;; генерация сигналов&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   phase-validate-signals  &lt;span style=&#34;color:#75715e&#34;&gt;;; валидация сигналов&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   phase-execute-logic])   &lt;span style=&#34;color:#75715e&#34;&gt;;; исполнение логики&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;5-обработка-ошибок-единый-подход&#34;&gt;&lt;strong&gt;5. Обработка ошибок: Единый подход&lt;/strong&gt;&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;;; ВСЕ функции возвращают либо data-bag, либо nil&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;safe-phase [data]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#a6e22e&#34;&gt;try&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#66d9ef&#34;&gt;if &lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;valid-data?&lt;/span&gt; data)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      (&lt;span style=&#34;color:#a6e22e&#34;&gt;do-phase-work&lt;/span&gt; data)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      (&lt;span style=&#34;color:#66d9ef&#34;&gt;do &lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;log/warn&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Invalid data in phase&amp;#34;&lt;/span&gt;) nil))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;catch&lt;/span&gt; Exception e
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/error&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Phase failed:&amp;#34;&lt;/span&gt; e)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      nil)))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;;; В пайплайне - проверяем каждый шаг&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;run-pipeline [initial-data pipeline]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (reduce (&lt;span style=&#34;color:#66d9ef&#34;&gt;fn &lt;/span&gt;[data phase-fn]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            (if-let [result (&lt;span style=&#34;color:#a6e22e&#34;&gt;phase-fn&lt;/span&gt; data)]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              result
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              (&lt;span style=&#34;color:#a6e22e&#34;&gt;reduced&lt;/span&gt; nil)))  &lt;span style=&#34;color:#75715e&#34;&gt;;; останавливаем пайплайн&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          initial-data
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          pipeline))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;6-логирование-стандартные-форматы&#34;&gt;&lt;strong&gt;6. Логирование: Стандартные форматы&lt;/strong&gt;&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;;; ВСЕ логи в едином формате&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;log-phase-start [phase-name data]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;▶️ &amp;#34;&lt;/span&gt; phase-name &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34; | data-keys:&amp;#34;&lt;/span&gt; (keys data)))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;log-phase-result [phase-name result]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#66d9ef&#34;&gt;if &lt;/span&gt;result
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;✅ &amp;#34;&lt;/span&gt; phase-name &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34; | success&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/warn&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;❌ &amp;#34;&lt;/span&gt; phase-name &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34; | failed&amp;#34;&lt;/span&gt;)))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;log-trading-signal [signal]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#a6e22e&#34;&gt;log/info&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;🎯 SIGNAL | type:&amp;#34;&lt;/span&gt; (&lt;span style=&#34;color:#e6db74&#34;&gt;:type&lt;/span&gt; signal) 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34; | confidence:&amp;#34;&lt;/span&gt; (&lt;span style=&#34;color:#e6db74&#34;&gt;:confidence&lt;/span&gt; signal)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34; | price:&amp;#34;&lt;/span&gt; (&lt;span style=&#34;color:#e6db74&#34;&gt;:price&lt;/span&gt; signal)))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;чек-лист-при-написании-кода&#34;&gt;📋 &lt;strong&gt;ЧЕК-ЛИСТ ПРИ НАПИСАНИИ КОДА:&lt;/strong&gt;&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Данные проходят через пайплайн?&lt;/li&gt;
+&lt;li&gt;Функция возвращает data-bag или nil?&lt;/li&gt;
+&lt;li&gt;Именование по convention?&lt;/li&gt;
+&lt;li&gt;Есть обработка ошибок?&lt;/li&gt;
+&lt;li&gt;Логирование в стандартном формате?&lt;/li&gt;
+&lt;li&gt;Конфигурация вынесена в default-config?&lt;/li&gt;
+&lt;li&gt;Внутренние функции приватные?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;-заключение&#34;&gt;💎 Заключение&lt;/h2&gt;
+&lt;p&gt;Описанный подход — это не просто стиль кодирования, а &lt;strong&gt;единая система разработки&lt;/strong&gt;, которую я применяю во всех проектах. Она позволяет:&lt;/p&gt;
+&lt;h3 id=&#34;преимущества&#34;&gt;Преимущества:&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Стандартизировать процесс&lt;/strong&gt; — больше не нужно каждый раз решать, какие данные куда передавать&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Снизить когнитивную нагрузку&lt;/strong&gt; — архитектурные решения уже приняты, остается только следовать правилам&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Ускорить разработку&lt;/strong&gt; — четкий протокол для любой функциональности&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;главный-принцип&#34;&gt;Главный принцип:&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;;; Когда не знаешь как сделать - смотри style guide&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(when (&lt;span style=&#34;color:#a6e22e&#34;&gt;not-understand-how-to-implement?&lt;/span&gt; task)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#a6e22e&#34;&gt;read-style-guide-and-follow-rules&lt;/span&gt;))
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content>
+    </item>
     
     <item>
       <title>Алгоритмическая торговля на максимумах: Что делать, когда сопротивления просто нет?</title>
@@ -1617,116 +2028,6 @@
 &lt;p&gt;Теперь этот индикатор готов к работе в реальных торговых системах, обеспечивая точность и надежность.&lt;/p&gt;
 &lt;p&gt;Исходный код доступен на &lt;a href=&#34;https://gitflic.ru/project/konkin/taljure&#34;&gt;GitFlic&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;А какой индикатор ваш любимый и почему?&lt;/strong&gt;&lt;/p&gt;
-</content>
-    </item>
-    
-    <item>
-      <title>Разработка индикатора SMA</title>
-      <link>http://localhost:1313/posts/taljure-sma/</link>
-      <pubDate>Tue, 26 Aug 2025 00:00:00 +0000</pubDate>
-      <author></author>
-      <guid>http://localhost:1313/posts/taljure-sma/</guid>
-      <description>В этой статье я хочу показать эволюцию разработки, казалось бы, простой функции — Simple Moving Average (SMA). То, что начиналось как несколько строк математики, превратилось в robust промышленное решение с comprehensive тестированием.</description>
-      <content type="html">&lt;h1 id=&#34;разработка-индикатора-sma&#34;&gt;Разработка индикатора SMA&lt;/h1&gt;
-&lt;h2 id=&#34;разработка-индикатора-sma-от-наивной-реализации-к-промышленному-решению&#34;&gt;&lt;strong&gt;Разработка индикатора SMA: От наивной реализации к промышленному решению&lt;/strong&gt;&lt;/h2&gt;
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/posts/taljure/taljure-sma.png&#34; alt=&#34;Разработка индикатора SMA&#34;&gt;&lt;/p&gt;
-&lt;p&gt;В этой статье я хочу показать эволюцию разработки, казалось бы, простой функции — Simple Moving Average (SMA). То, что начиналось как несколько строк математики, превратилось в robust промышленное решение с comprehensive тестированием.&lt;/p&gt;
-&lt;h3 id=&#34;начало-наивная-реализация&#34;&gt;&lt;strong&gt;Начало: Наивная реализация&lt;/strong&gt;&lt;/h3&gt;
-&lt;p&gt;Изначально SMA казался элементарным:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;naive-sma [prices period]
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#a6e22e&#34;&gt;-&amp;gt;&amp;gt;&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;partition&lt;/span&gt; period &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; prices)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       (map &lt;span style=&#34;color:#f92672&#34;&gt;#&lt;/span&gt;(/ (apply + %) period))))
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;20 минут работы&lt;/strong&gt; — и готово? Как бы не так! Первые же тесты показали, что реальный мир сложнее.&lt;/p&gt;
-&lt;h3 id=&#34;этап-1-обнаружение-edge-cases&#34;&gt;&lt;strong&gt;Этап 1: Обнаружение edge cases&lt;/strong&gt;&lt;/h3&gt;
-&lt;p&gt;Мои первые тесты выявили шокирующие проблемы:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;naive-sma&lt;/span&gt; [] &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;)         &lt;span style=&#34;color:#75715e&#34;&gt;; NullPointerException!&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;naive-sma&lt;/span&gt; [&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; nil &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;] &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;)  &lt;span style=&#34;color:#75715e&#34;&gt;; Тот же NPE&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;naive-sma&lt;/span&gt; [&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;] &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;)      &lt;span style=&#34;color:#75715e&#34;&gt;; Бессмысленный результат&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Инсайт:&lt;/strong&gt; Математическая корректность ≠ промышленная надежность.&lt;/p&gt;
-&lt;h4 id=&#34;этап-2-защитное-программирование&#34;&gt;&lt;strong&gt;Этап 2: Защитное программирование&lt;/strong&gt;&lt;/h4&gt;
-&lt;p&gt;Добавил валидацию входных данных:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;sma [prices period]
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#75715e&#34;&gt;;; Проверка, что входные данные являются последовательностью, не пусты и не содержат nil&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (when (or (not (&lt;span style=&#34;color:#a6e22e&#34;&gt;sequential?&lt;/span&gt; prices))
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            (&lt;span style=&#34;color:#a6e22e&#34;&gt;empty?&lt;/span&gt; prices)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            (some nil? prices))
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;throw&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;IllegalArgumentException.&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Некорректный список цен...&amp;#34;&lt;/span&gt;)))
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#75715e&#34;&gt;;; Проверка периода&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (when (or (not (&lt;span style=&#34;color:#a6e22e&#34;&gt;pos-int?&lt;/span&gt; period))
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            (&amp;gt; period (count prices)))
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;throw&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;IllegalArgumentException.&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Некорректный период...&amp;#34;&lt;/span&gt;)))
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#75715e&#34;&gt;;; Основная логика...&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;этап-3-борьба-с-особенностями-float-арифметики&#34;&gt;&lt;strong&gt;Этап 3: Борьба с особенностями float-арифметики&lt;/strong&gt;&lt;/h3&gt;
-&lt;p&gt;Новые тесты выявили проблемы с особых значений:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;sma&lt;/span&gt; [&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; Double/NaN &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;] &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;) &lt;span style=&#34;color:#75715e&#34;&gt;; Непонятное поведение&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;sma&lt;/span&gt; [&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;##&lt;/span&gt;Inf &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;] &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;)      &lt;span style=&#34;color:#75715e&#34;&gt;; Бесконечности ломали расчеты&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Решение — явная проверка:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;;; Проверка на наличие NaN, Infinity или -Infinity&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(when (some &lt;span style=&#34;color:#f92672&#34;&gt;#&lt;/span&gt;(or (&lt;span style=&#34;color:#a6e22e&#34;&gt;Double/isNaN&lt;/span&gt; %) (&lt;span style=&#34;color:#a6e22e&#34;&gt;Double/isInfinite&lt;/span&gt; %)) prices)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#a6e22e&#34;&gt;throw&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;IllegalArgumentException.&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Некорректный список цен: содержит NaN или Infinity&amp;#34;&lt;/span&gt;)))
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;этап-4-специальный-случай-period1&#34;&gt;&lt;strong&gt;Этап 4: Специальный случай period=1&lt;/strong&gt;&lt;/h3&gt;
-&lt;p&gt;Оказалось, что при period=1 логика ломается:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;sma&lt;/span&gt; [&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;] &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;) &lt;span style=&#34;color:#75715e&#34;&gt;; Ожидалось: [2.0 3.0], получалось: [1.0 2.0 3.0]&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Пришлось добавить специальную обработку:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;if &lt;/span&gt;(= period &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#a6e22e&#34;&gt;-&amp;gt;&amp;gt;&lt;/span&gt; prices
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       (&lt;span style=&#34;color:#a6e22e&#34;&gt;rest&lt;/span&gt;)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       (&lt;span style=&#34;color:#a6e22e&#34;&gt;mapv&lt;/span&gt; double))
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#75715e&#34;&gt;;; Основная логика&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  )
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;этап-5-тестирование-как-дизайн-инструмент&#34;&gt;&lt;strong&gt;Этап 5: Тестирование как дизайн-инструмент&lt;/strong&gt;&lt;/h3&gt;
-&lt;p&gt;Создал юнит-тест, который стал моим главным дизайн-инструментом:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;deftest&lt;/span&gt; sma-math-test
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#a6e22e&#34;&gt;testing&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Базовые математические расчеты&amp;#34;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;is&lt;/span&gt; (= (&lt;span style=&#34;color:#a6e22e&#34;&gt;sma&lt;/span&gt; [&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;] &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;) [&lt;span style=&#34;color:#ae81ff&#34;&gt;1.5&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;2.5&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;3.5&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;4.5&lt;/span&gt;]))
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;is&lt;/span&gt; (= (&lt;span style=&#34;color:#a6e22e&#34;&gt;sma&lt;/span&gt; [&lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;20&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;30&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;40&lt;/span&gt;] &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;) [&lt;span style=&#34;color:#ae81ff&#34;&gt;15.0&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;25.0&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;35.0&lt;/span&gt;]))))
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;deftest&lt;/span&gt; sma-special-cases-test
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  (&lt;span style=&#34;color:#a6e22e&#34;&gt;testing&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Специальные случаи&amp;#34;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#a6e22e&#34;&gt;testing&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Период = 1&amp;#34;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      (&lt;span style=&#34;color:#a6e22e&#34;&gt;is&lt;/span&gt; (= (&lt;span style=&#34;color:#a6e22e&#34;&gt;sma&lt;/span&gt; [&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;] &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;) [&lt;span style=&#34;color:#ae81ff&#34;&gt;2.0&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;3.0&lt;/span&gt;]))
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      (&lt;span style=&#34;color:#a6e22e&#34;&gt;is&lt;/span&gt; (= (&lt;span style=&#34;color:#a6e22e&#34;&gt;sma&lt;/span&gt; [&lt;span style=&#34;color:#ae81ff&#34;&gt;5.5&lt;/span&gt;] &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;) [])))))
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;этап-6-тонкая-настройка-числовой-точности&#34;&gt;&lt;strong&gt;Этап 6: Тонкая настройка числовой точности&lt;/strong&gt;&lt;/h3&gt;
-&lt;p&gt;Обнаружились проблемы с разными типами чисел:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;sma&lt;/span&gt; [&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;2.0&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;/1 &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;N] &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;) &lt;span style=&#34;color:#75715e&#34;&gt;; Смешанные типы → неожиданные результаты&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Решение — явное приведение к double:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;let &lt;/span&gt;[prices (&lt;span style=&#34;color:#a6e22e&#34;&gt;vec&lt;/span&gt; (map double prices))] &lt;span style=&#34;color:#75715e&#34;&gt;; Преобразуем цены в вектор значений с плавающей точкой&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#75715e&#34;&gt;;; дальнейшие вычисления&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;итоговая-архитектура&#34;&gt;&lt;strong&gt;Итоговая архитектура&lt;/strong&gt;&lt;/h3&gt;
-&lt;p&gt;Вот что получилось в результате итераций:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-clojure&#34; data-lang=&#34;clojure&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;defn &lt;/span&gt;sma
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Вычисление простой скользящей средней (SMA).&amp;#34;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  [prices period]
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#75715e&#34;&gt;;; Валидация входных данных (3 уровня проверок)&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#75715e&#34;&gt;;; Специальный случай period=1&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#75715e&#34;&gt;;; Основная логика с преобразованием типов&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#75715e&#34;&gt;;; Обработка числовой точности&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  )
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;ключевые-инсайты-разработки&#34;&gt;&lt;strong&gt;Ключевые инсайты разработки&lt;/strong&gt;&lt;/h3&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;strong&gt;Защитное программирование&lt;/strong&gt; — библиотечные функции должны быть неубиваемыми&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Явное лучше неявного&lt;/strong&gt; — явные проверки и преобразования типов&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Тестирование граничных случаев&lt;/strong&gt; — happy path покрывает только 20% реального использования&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Документация исключений&lt;/strong&gt; — пользователь должен знать, чего ожидать&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Производительность vs. надежность&lt;/strong&gt; — сначала надежность, потом оптимизация&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3 id=&#34;что-осталось-за-кадром&#34;&gt;&lt;strong&gt;Что осталось за кадром&lt;/strong&gt;&lt;/h3&gt;
-&lt;p&gt;В финальной версии я убрал тесты с очень большими числами и списками из-за проблем с стабильностью в CI/CD, но оставил как комментарии для будущих оптимизаций.&lt;/p&gt;
-&lt;h3 id=&#34;заключение-простота-как-сложная-цель&#34;&gt;&lt;strong&gt;Заключение: Простота как сложная цель&lt;/strong&gt;&lt;/h3&gt;
-&lt;p&gt;SMA научил меня, что &lt;strong&gt;простота пользовательского API&lt;/strong&gt; требует &lt;strong&gt;сложности внутренней реализации&lt;/strong&gt;. То, что выглядит как элементарная математика, превращается в комплексную инженерную задачу при промышленном использовании.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Финальная статистика:&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;✅ 20 строк математической логики&lt;/li&gt;
-&lt;li&gt;✅ 15 строк валидации и проверок&lt;/li&gt;
-&lt;li&gt;✅ 50+ строк тестов&lt;/li&gt;
-&lt;li&gt;✅ 5 специальных случаев&lt;/li&gt;
-&lt;li&gt;✅ 10+ edge cases&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Теперь эта функция готова к работе в реальных торговых системах, а не только в учебных примерах.&lt;/p&gt;
-&lt;p&gt;Исходный код доступен на &lt;a href=&#34;https://gitflic.ru/project/konkin/taljure&#34;&gt;GitFlic&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;С какими подобными моментами сталкивались вы при разработке &amp;ldquo;простых&amp;rdquo; математических функций?&lt;/strong&gt;&lt;/p&gt;
 </content>
     </item>
     

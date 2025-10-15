@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dracula">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Архитектурный чек-лист: Функциональный пайплайн в Clojure | Mr.Proger</title>
+    
+    <meta name="description" content="Практическое руководство по рефакторингу монстр-функций в элегантные пайплайны. Четкие правила, примеры и чек-лист для поддержания кода в соответствии с принципами функционального пайплайна, единого data-bag и композиции простых функций.">
+    
+    
+    <meta property="og:title" content="Архитектурный чек-лист: Функциональный пайплайн в Clojure">
+    <meta property="og:description" content="Практическое руководство по рефакторингу монстр-функций в элегантные пайплайны. Четкие правила, примеры и чек-лист для поддержания кода в соответствии с принципами функционального пайплайна, единого data-bag и композиции простых функций.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="http://localhost:1313/posts/clojure-pipeline-architecture/">
+    <meta property="og:image" content="http://localhost:1313/images/posts/pipeline-architecture/pipeline-architecture.png">
+    <meta property="og:image:alt" content="Архитектурный чек-лист: Функциональный пайплайн в Clojure">
+    <meta property="og:site_name" content="Mr.Proger">
+    
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Архитектурный чек-лист: Функциональный пайплайн в Clojure">
+    <meta name="twitter:description" content="Практическое руководство по рефакторингу монстр-функций в элегантные пайплайны. Четкие правила, примеры и чек-лист для поддержания кода в соответствии с принципами функционального пайплайна, единого data-bag и композиции простых функций.">
+    <meta name="twitter:image" content="http://localhost:1313/images/posts/pipeline-architecture/pipeline-architecture.png">
+    <meta name="twitter:image:alt" content="Архитектурный чек-лист: Функциональный пайплайн в Clojure">
+
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="http://localhost:1313/css/style.css">
+      
+    
+    <script type="text/javascript">
+      (function(m,e,t,r,i,k,a){
+          m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+          m[i].l=1*new Date();
+          for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+          k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+      })(window, document,'script','https://mc.yandex.ru/metrika/tag.js', 'ym');
+
+      ym(94746958, 'init', {webvisor:true, clickmap:true, accurateTrackBounce:true, trackLinks:true});
+    </script>
+  <noscript><div><img src="https://mc.yandex.ru/watch/94746958" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav class="nav">
+                <a href="http://localhost:1313/"><strong>Mr.Proger</strong></a>
+    
+                <button class="nav-toggle" aria-expanded="false" aria-label="Меню">☰</button>
+                <div class="nav-links" id="navLinks">
+                  <a href="/about">О сайте</a>
+                  <a href="/tags">Теги</a>
+                  <a href="/index.xml" title="RSS">📡 RSS</a>
+                </div>
+                <div class="theme-switcher">
+                    <button class="theme-btn" onclick="setTheme('catppuccin')">☀️</button>
+                    <button class="theme-btn" onclick="setTheme('dracula')">🌙</button>
+                </div>
+            </nav>
+        </header>
+
+        <main>
+            
+<article class="post" data-post-id="d7c211065bf081811a47fcda546d6d5a">
+    <header> 
+        <nav class="breadcrumbs">
+    <a href="http://localhost:1313/">🏠 Главная</a>
+    
+    
+        
+        <span class="sep">→</span>
+        <span class="current">Архитектурный чек-лист: Функциональный пайплайн в Clojure</span>
+    
+    
+</nav>
+
+        <time>2025.10.15</time>
+        <div class="post-tags">
+          
+          <a href="/tags/clojure" class="tag">#clojure</a>
+          
+        </div>
+    </header>
+    
+    <div class="content">
+        
+        
+        
+        <nav class="table-of-contents">
+            <h2>📑 Содержание</h2>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#проблема-вторичная-сложность"><strong>Проблема: вторичная сложность</strong></a>
+      <ul>
+        <li><a href="#фаза-монстр"><strong>Фаза-монстр</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#проблемы-текущей-реализации"><strong>Проблемы текущей реализации:</strong></a></li>
+    <li><a href="#рефакторинг">🔧 <strong>Рефакторинг:</strong></a>
+      <ul>
+        <li><a href="#1-разделяем-на-специализированные-фазы"><strong>1. Разделяем на специализированные фазы</strong></a></li>
+        <li><a href="#2-выносим-проверку-условий"><strong>2. Выносим проверку условий</strong></a></li>
+        <li><a href="#3-выносим-логику-объемов"><strong>3. Выносим логику объемов</strong></a></li>
+        <li><a href="#4-выносим-генерацию-сигналов"><strong>4. Выносим генерацию сигналов</strong></a></li>
+        <li><a href="#5-выносим-работу-с-дивергенциями"><strong>5. Выносим работу с дивергенциями</strong></a></li>
+        <li><a href="#6-выносим-логирование"><strong>6. Выносим логирование</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#итоговый-результат"><strong>Итоговый результат:</strong></a></li>
+    <li><a href="#преимущества-рефакторинга"><strong>Преимущества рефакторинга:</strong></a></li>
+    <li><a href="#философия-стиля"><strong>Философия стиля:</strong></a></li>
+    <li><a href="#правило-большого-пальца"><strong>Правило большого пальца:</strong></a></li>
+    <li><a href="#шаблон-модуля"><strong>Шаблон модуля</strong></a></li>
+    <li><a href="#основные-принципы"><strong>ОСНОВНЫЕ ПРИНЦИПЫ:</strong></a>
+      <ul>
+        <li><a href="#1-архитектурный-шаблон"><strong>1. Архитектурный шаблон: “Функциональный пайплайн”</strong></a></li>
+        <li><a href="#2-структура-данных-единый-data-bag"><strong>2. Структура данных: Единый Data Bag</strong></a></li>
+        <li><a href="#3-именование-жесткий-convention"><strong>3. Именование: Жесткий convention</strong></a></li>
+        <li><a href="#4-фазы-пайплайна-четкие-ответственности"><strong>4. Фазы пайплайна: Четкие ответственности</strong></a></li>
+        <li><a href="#5-обработка-ошибок-единый-подход"><strong>5. Обработка ошибок: Единый подход</strong></a></li>
+        <li><a href="#6-логирование-стандартные-форматы"><strong>6. Логирование: Стандартные форматы</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#чек-лист-при-написании-кода">📋 <strong>ЧЕК-ЛИСТ ПРИ НАПИСАНИИ КОДА:</strong></a></li>
+    <li><a href="#-заключение">💎 Заключение</a>
+      <ul>
+        <li><a href="#преимущества">Преимущества:</a></li>
+        <li><a href="#главный-принцип">Главный принцип:</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </nav>
+        
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          document.querySelectorAll('pre').forEach(function(pre) {
+            const button = document.createElement('button');
+            button.textContent = '📋';
+            button.className = 'copy-btn';
+            button.onclick = function() {
+            navigator.clipboard.writeText(pre.textContent);
+            button.textContent = '✅';
+            setTimeout(() => button.textContent = '📋', 2000);
+          };
+            pre.style.position = 'relative';
+            button.style.position = 'absolute';
+            button.style.top = '10px';
+            button.style.right = '10px';
+            pre.appendChild(button);
+          });
+        });
+        </script>
+        <h1 id="от-монстр-функций-к-элегантным-пайплайнам-архитектурный-чек-лист">От монстр-функций к элегантным пайплайнам: архитектурный чек-лист</h1>
+<p>В предыдущей статье <a href="/posts/pipeline-refactoring/">«От монолита к модульному пайплайну»</a> мы рассмотрели базовые принципы декомпозиции. Однако на практике возникает новая проблема: <strong>отдельные фазы сами превращаются в монстров</strong>.</p>
+<p>Основная идея остается прежней — вынос логики в самостоятельные инкапсулированные фазы. Но что делать, когда эти фазы начинают разрастаться до неузнаваемости?</p>
+<h2 id="проблема-вторичная-сложность"><strong>Проблема: вторичная сложность</strong></h2>
+<p>Допустим, вы проверили идею, подтвердили ее, но получился лютый монолит.</p>
+<p>Допустим, вы провели рефакторинг, разбили монолит на фазы, но теперь каждая фаза похожа на монстра:</p>
+<h3 id="фаза-монстр"><strong>Фаза-монстр</strong></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span>(<span style="color:#66d9ef">defn- </span>generate-signals-phase
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Разделенная фаза генерации торговых сигналов для уровней и боковика&#34;</span>
+</span></span><span style="display:flex;"><span>  [{<span style="color:#e6db74">:keys</span> [price extremums level-breached? market-analysis minute-volume-analysis timestamp] <span style="color:#e6db74">:as</span> market-data}] 
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">;; ⭐ ДОБАВЛЯЕМ timestamp в деструктуризацию</span>
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  (<span style="color:#66d9ef">let </span>[volume-analysis (or minute-volume-analysis {})
+</span></span><span style="display:flex;"><span>        volume-spike? (true? (<span style="color:#e6db74">:volume-spike?</span> volume-analysis))
+</span></span><span style="display:flex;"><span>        volume-ratio (<span style="color:#e6db74">:volume-ratio</span> volume-analysis)
+</span></span><span style="display:flex;"><span>        candle-history (<span style="color:#e6db74">:candles</span> market-data)
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">;; ⭐ ВРЕМЕННЫЙ ФИКС: ЕСЛИ ОБЪЕМЫ НЕ РАБОТАЮТ, РАЗРЕШАЕМ УРОВНЕВУЮ ТОРГОВЛЮ</span>
+</span></span><span style="display:flex;"><span>        has-volume-data? (and volume-ratio (pos? volume-ratio))
+</span></span><span style="display:flex;"><span>        volume-ok? (or volume-spike? (not has-volume-data?))
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">;; ⭐ ЗАЩИТА ОТ NIL ДЛЯ ТОРГОВОЙ ЗОНЫ</span>
+</span></span><span style="display:flex;"><span>        trading-zone (<span style="color:#e6db74">:trading-zone</span> market-analysis)
+</span></span><span style="display:flex;"><span>        trading-zone-name (<span style="color:#66d9ef">if </span>trading-zone (name trading-zone) <span style="color:#e6db74">&#34;unknown&#34;</span>)
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">;; 1. УСЛОВИЯ ДЛЯ УРОВНЕВОЙ ТОРГОВЛИ (ОТ УРОВНЕЙ)</span>
+</span></span><span style="display:flex;"><span>        level-trading? (and (not level-breached?)
+</span></span><span style="display:flex;"><span>                   volume-ok?)  <span style="color:#75715e">;; ← УБРАЛИ ПРОВЕРКУ ТРЕНДА</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">;; 2. УСЛОВИЯ ДЛЯ ТОРГОВЛИ В БОКОВИКЕ (ОТ ФЛЭТА)  </span>
+</span></span><span style="display:flex;"><span>        flat-trading? (and (<span style="color:#e6db74">:flat?</span> market-analysis)
+</span></span><span style="display:flex;"><span>                          (<span style="color:#a6e22e">get-in</span> market-analysis [<span style="color:#e6db74">:squeeze-analysis</span> <span style="color:#e6db74">:squeeze?</span>])
+</span></span><span style="display:flex;"><span>                          volume-spike?)  <span style="color:#75715e">;; ← ДЛЯ БОКОВИКА СТРОГАЯ ПРОВЕРКА</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">;; 3. ОБЩИЕ УСЛОВИЯ ДЛЯ ЛЮБОЙ ТОРГОВЛИ</span>
+</span></span><span style="display:flex;"><span>        levels-calculated? (<span style="color:#e6db74">:levels-calculated?</span> market-data)
+</span></span><span style="display:flex;"><span>        can-accept-signal? (<span style="color:#a6e22e">deal/can-accept-signal?</span> price <span style="color:#f92672">@</span>active-order)
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        base-conditions (and levels-calculated? can-accept-signal?)
+</span></span><span style="display:flex;"><span>        can-trade? (and base-conditions (or level-trading? flat-trading?))]
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">;; ⭐ ДЕТАЛЬНОЕ ЛОГИРОВАНИЕ БАЗОВЫХ УСЛОВИЙ</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;=== ПРОВЕРКА БАЗОВЫХ УСЛОВИЙ ===&#34;</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;📊 Уровни рассчитаны:&#34;</span> levels-calculated?)
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;✅ Можно принять сигнал:&#34;</span> can-accept-signal?)
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;📍 Торговая зона:&#34;</span> trading-zone-name)
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;📈 Всплеск объема:&#34;</span> volume-spike? <span style="color:#e6db74">&#34;(ratio:&#34;</span> volume-ratio <span style="color:#e6db74">&#34;)&#34;</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;📊 Есть данные объема:&#34;</span> has-volume-data?)
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;✅ Объем проверка:&#34;</span> volume-ok?)
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;💥 Сжатие:&#34;</span> (<span style="color:#a6e22e">get-in</span> market-analysis [<span style="color:#e6db74">:squeeze-analysis</span> <span style="color:#e6db74">:squeeze?</span>]))
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;🔄 Флэ�:&#34;</span> (<span style="color:#e6db74">:flat?</span> market-analysis))
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    (<span style="color:#66d9ef">if </span>can-trade?
+</span></span><span style="display:flex;"><span>      (<span style="color:#66d9ef">let </span>[current-levels (<span style="color:#e6db74">:active-levels</span> <span style="color:#f92672">@</span>levels-state)
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">;; ⭐ ИЗМЕНЕНИЕ: ГЕНЕРИРУЕМ СИГНАЛ С СОСТОЯНИЕМ ДИВЕРГЕНЦИЙ</span>
+</span></span><span style="display:flex;"><span>            raw-signal (<span style="color:#a6e22e">generator/generate-trading-signal</span> current-levels price extremums
+</span></span><span style="display:flex;"><span>                                  {<span style="color:#e6db74">:market-analysis</span> market-analysis
+</span></span><span style="display:flex;"><span>                                   <span style="color:#e6db74">:volume-analysis</span> volume-analysis  
+</span></span><span style="display:flex;"><span>                                   <span style="color:#e6db74">:candle-history</span> candle-history
+</span></span><span style="display:flex;"><span>                                   <span style="color:#e6db74">:divergence-state</span> <span style="color:#f92672">@</span>divergence-state})  <span style="color:#75715e">;; ← ПЕРЕДАЕМ СОСТОЯНИЕ</span>
+</span></span><span style="display:flex;"><span>            
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">;; ⭐ ОБНОВЛЯЕМ СОСТОЯНИЕ ДИВЕРГЕНЦИЙ</span>
+</span></span><span style="display:flex;"><span>            _ (when raw-signal
+</span></span><span style="display:flex;"><span>                (<span style="color:#a6e22e">update-divergence-state</span> (<span style="color:#e6db74">:divergences</span> raw-signal) timestamp))
+</span></span><span style="display:flex;"><span>            
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">;; ⭐ ОБОГАЩАЕМ СИГНАЛ ИНФОРМАЦИЕЙ О ДИВЕРГЕНЦИЯХ</span>
+</span></span><span style="display:flex;"><span>            signal (when raw-signal
+</span></span><span style="display:flex;"><span>                    (<span style="color:#66d9ef">let </span>[divergence-info <span style="color:#f92672">@</span>divergence-state
+</span></span><span style="display:flex;"><span>                          strong-divergence? (&gt;= (<span style="color:#e6db74">:duration</span> divergence-info) <span style="color:#ae81ff">2</span>)]  <span style="color:#75715e">;; дивергенция сильная если длится 2+ свечи</span>
+</span></span><span style="display:flex;"><span>                      
+</span></span><span style="display:flex;"><span>                      (assoc raw-signal
+</span></span><span style="display:flex;"><span>                             <span style="color:#e6db74">:divergence-memory</span> divergence-info
+</span></span><span style="display:flex;"><span>                             <span style="color:#e6db74">:divergence-strong?</span> strong-divergence?)))]
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        (<span style="color:#a6e22e">logger/log-trading-decision</span> current-levels price nil signal)  <span style="color:#75715e">;; ← ПЕРЕДАЕМ nil ВМЕСТО trend</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">;; Обновляем кеш</span>
+</span></span><span style="display:flex;"><span>        (<span style="color:#a6e22e">reset!</span> levels-cache {<span style="color:#e6db74">:timestamp</span> (<span style="color:#e6db74">:timestamp</span> market-data) 
+</span></span><span style="display:flex;"><span>                             <span style="color:#e6db74">:candle-count</span> (<span style="color:#e6db74">:candle-count</span> market-data)
+</span></span><span style="display:flex;"><span>                             <span style="color:#e6db74">:levels</span> current-levels 
+</span></span><span style="display:flex;"><span>                             <span style="color:#e6db74">:extremums</span> extremums})
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        (when signal
+</span></span><span style="display:flex;"><span>          (<span style="color:#66d9ef">let </span>[signal-type (<span style="color:#e6db74">:type</span> signal)
+</span></span><span style="display:flex;"><span>                trading-type (<span style="color:#66d9ef">if </span>level-trading? <span style="color:#e6db74">:level-based</span> <span style="color:#e6db74">:flat-based</span>)]
+</span></span><span style="display:flex;"><span>            (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;=== РАЗДЕЛЕННЫЙ ТОРГОВЫЙ СИГНАЛ ===&#34;</span>)
+</span></span><span style="display:flex;"><span>            (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;🎯 ТИП: &#34;</span> (name trading-type) <span style="color:#e6db74">&#34; | СИГНАЛ: &#34;</span> (name signal-type))
+</span></span><span style="display:flex;"><span>            (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;💰 Цена входа: &#34;</span> (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;%.2f&#34;</span> price))
+</span></span><span style="display:flex;"><span>            (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;📊 Зона: &#34;</span> trading-zone-name)
+</span></span><span style="display:flex;"><span>            (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;📈 Дивергенция: &#34;</span> (<span style="color:#e6db74">:active</span> <span style="color:#f92672">@</span>divergence-state) 
+</span></span><span style="display:flex;"><span>                     <span style="color:#e6db74">&#34; (длится &#34;</span> (<span style="color:#e6db74">:duration</span> <span style="color:#f92672">@</span>divergence-state) <span style="color:#e6db74">&#34; свечей)&#34;</span>)
+</span></span><span style="display:flex;"><span>            
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">;; Сохраняем в кеш (убираем trend)</span>
+</span></span><span style="display:flex;"><span>            (<span style="color:#a6e22e">reset!</span> last-cache {<span style="color:#e6db74">:timestamp</span> (<span style="color:#e6db74">:timestamp</span> market-data) 
+</span></span><span style="display:flex;"><span>                               <span style="color:#e6db74">:levels</span> current-levels
+</span></span><span style="display:flex;"><span>                               <span style="color:#e6db74">:signal</span> signal 
+</span></span><span style="display:flex;"><span>                               <span style="color:#e6db74">:trading-type</span> trading-type})  <span style="color:#75715e">;; ← УБРАЛИ :trend</span>
+</span></span><span style="display:flex;"><span>            
+</span></span><span style="display:flex;"><span>            (assoc market-data <span style="color:#e6db74">:signal</span> signal <span style="color:#e6db74">:trading-type</span> trading-type))))
+</span></span><span style="display:flex;"><span>      
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">;; ⭐ ДЕТАЛЬНОЕ ЛОГИРОВАНИЕ ПРИ ОТСУТСТВИИ СИГНАЛА</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#a6e22e">do</span>
+</span></span><span style="display:flex;"><span>        (<span style="color:#a6e22e">cond</span>
+</span></span><span style="display:flex;"><span>          (not levels-calculated?)
+</span></span><span style="display:flex;"><span>          (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;⚡ Базовые условия: уровни не рассчитаны&#34;</span>)
+</span></span><span style="display:flex;"><span>          
+</span></span><span style="display:flex;"><span>          (not can-accept-signal?)
+</span></span><span style="display:flex;"><span>          (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;⚡ Базовые условия: нельзя принять сигнал (активный ордер?)&#34;</span>)
+</span></span><span style="display:flex;"><span>          
+</span></span><span style="display:flex;"><span>          (and (not level-trading?) (not flat-trading?))
+</span></span><span style="display:flex;"><span>          (<span style="color:#a6e22e">do</span>
+</span></span><span style="display:flex;"><span>            (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;⚡ Торговые условия не выполнены:&#34;</span>)
+</span></span><span style="display:flex;"><span>            (when (not (and trading-zone (<span style="color:#f92672">#</span>{<span style="color:#e6db74">:near-support</span> <span style="color:#e6db74">:near-resistance</span> <span style="color:#e6db74">:internal-support</span> <span style="color:#e6db74">:internal-resistance</span>} trading-zone)))
+</span></span><span style="display:flex;"><span>              (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;   📍 Не в торговой зоне: &#34;</span> trading-zone-name))
+</span></span><span style="display:flex;"><span>            (when (not volume-ok?)
+</span></span><span style="display:flex;"><span>              (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;   📈 Проблема с объемом (spike:&#34;</span> volume-spike? <span style="color:#e6db74">&#34;ratio:&#34;</span> volume-ratio <span style="color:#e6db74">&#34;)&#34;</span>))
+</span></span><span style="display:flex;"><span>            (when (and (<span style="color:#e6db74">:flat?</span> market-analysis) 
+</span></span><span style="display:flex;"><span>                      (not (<span style="color:#a6e22e">get-in</span> market-analysis [<span style="color:#e6db74">:squeeze-analysis</span> <span style="color:#e6db74">:squeeze?</span>])))
+</span></span><span style="display:flex;"><span>              (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;   💥 Нет сжатия в боковике&#34;</span>))))
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        market-data))))
+</span></span></code></pre></div><p>Это классическая проблема - фазы превращаются в &ldquo;монстров&rdquo;. <code>generate-signals-phase</code> действительно стала слишком сложной. Подобные функции-переростки напрочь отбивают любое желание продолжать разработку и постепенно вступает во власть - ее величиство прокрестинация. Лично меня эта проблема, конкретно достала.</p>
+<h2 id="проблемы-текущей-реализации"> <strong>Проблемы текущей реализации:</strong></h2>
+<ol>
+<li><strong>Слишком много ответственностей</strong> - проверка условий, логирование, генерация сигналов, обновление состояния</li>
+<li><strong>Высокая цикломатическая сложность</strong> - много вложенных условий</li>
+<li><strong>Смешение уровней абстракции</strong> - низкоуровневая логика с бизнес-правилами</li>
+<li><strong>Жесткие зависимости</strong> - глобальные состояния (<code>@levels-state</code>, <code>@divergence-state</code>)</li>
+</ol>
+<h2 id="рефакторинг">🔧 <strong>Рефакторинг:</strong></h2>
+<h3 id="1-разделяем-на-специализированные-фазы"><strong>1. Разделяем на специализированные фазы</strong></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#75715e">;; Главная фаза становится тонким координатором</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn- </span>generate-signals-phase
+</span></span><span style="display:flex;"><span>  [{<span style="color:#e6db74">:keys</span> [price market-analysis] <span style="color:#e6db74">:as</span> market-data}]
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  (-&gt; market-data
+</span></span><span style="display:flex;"><span>      (<span style="color:#a6e22e">validate-trading-conditions</span>)    <span style="color:#75715e">;; ✅ отдельная фаза проверки</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#a6e22e">check-volume-conditions</span>)        <span style="color:#75715e">;; ✅ отдельная фаза объемов  </span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#a6e22e">generate-potential-signals</span>)     <span style="color:#75715e">;; ✅ отдельная фаза генерации</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#a6e22e">enrich-with-divergence-info</span>)    <span style="color:#75715e">;; ✅ отдельная фаза обогащения</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#a6e22e">log-trading-decisions</span>)          <span style="color:#75715e">;; ✅ отдельная фаза логирования</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#a6e22e">update-system-state</span>)))          <span style="color:#75715e">;; ✅ отдельная фаза состояния</span>
+</span></span></code></pre></div><h3 id="2-выносим-проверку-условий"><strong>2. Выносим проверку условий</strong></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span>(<span style="color:#66d9ef">defn- </span>validate-trading-conditions [{<span style="color:#e6db74">:keys</span> [price market-analysis levels-calculated?] <span style="color:#e6db74">:as</span> data}]
+</span></span><span style="display:flex;"><span>  (<span style="color:#66d9ef">let </span>[base-conditions (and levels-calculated?
+</span></span><span style="display:flex;"><span>                            (<span style="color:#a6e22e">deal/can-accept-signal?</span> price <span style="color:#f92672">@</span>active-order))
+</span></span><span style="display:flex;"><span>        trading-zone (<span style="color:#e6db74">:trading-zone</span> market-analysis)
+</span></span><span style="display:flex;"><span>        valid-zone? (<span style="color:#f92672">#</span>{<span style="color:#e6db74">:near-support</span> <span style="color:#e6db74">:near-resistance</span> <span style="color:#e6db74">:internal-support</span> <span style="color:#e6db74">:internal-resistance</span>} trading-zone)]
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    (assoc data <span style="color:#e6db74">:trading-conditions</span> 
+</span></span><span style="display:flex;"><span>           {<span style="color:#e6db74">:base-conditions?</span> base-conditions
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">:valid-zone?</span> valid-zone?
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">:trading-zone</span> trading-zone})))
+</span></span></code></pre></div><h3 id="3-выносим-логику-объемов"><strong>3. Выносим логику объемов</strong></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span>(<span style="color:#66d9ef">defn- </span>check-volume-conditions [{<span style="color:#e6db74">:keys</span> [minute-volume-analysis market-analysis] <span style="color:#e6db74">:as</span> data}]
+</span></span><span style="display:flex;"><span>  (<span style="color:#66d9ef">let </span>[volume-analysis (or minute-volume-analysis {})
+</span></span><span style="display:flex;"><span>        volume-spike? (<span style="color:#e6db74">:volume-spike?</span> volume-analysis)
+</span></span><span style="display:flex;"><span>        volume-ratio (<span style="color:#e6db74">:volume-ratio</span> volume-analysis)
+</span></span><span style="display:flex;"><span>        has-volume-data? (and volume-ratio (pos? volume-ratio))
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">;; ⭐ ВЫНОСИМ БИЗНЕС-ПРАВИЛА В КОНФИГУРАЦИЮ</span>
+</span></span><span style="display:flex;"><span>        level-volume-ok? (or volume-spike? (not has-volume-data?))
+</span></span><span style="display:flex;"><span>        flat-volume-ok? volume-spike?]
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    (assoc data <span style="color:#e6db74">:volume-conditions</span>
+</span></span><span style="display:flex;"><span>           {<span style="color:#e6db74">:level-trading?</span> level-volume-ok?
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">:flat-trading?</span> flat-volume-ok?
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">:volume-spike?</span> volume-spike?
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">:volume-ratio</span> volume-ratio})))
+</span></span></code></pre></div><h3 id="4-выносим-генерацию-сигналов"><strong>4. Выносим генерацию сигналов</strong></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span>(<span style="color:#66d9ef">defn- </span>generate-potential-signals [{<span style="color:#e6db74">:keys</span> [trading-conditions volume-conditions price extremums market-analysis] <span style="color:#e6db74">:as</span> data}]
+</span></span><span style="display:flex;"><span>  (<span style="color:#66d9ef">let </span>[{<span style="color:#e6db74">:keys</span> [base-conditions? valid-zone?]} trading-conditions
+</span></span><span style="display:flex;"><span>        {<span style="color:#e6db74">:keys</span> [level-trading? flat-trading?]} volume-conditions
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        level-signal? (and base-conditions? valid-zone? level-trading?)
+</span></span><span style="display:flex;"><span>        flat-signal? (and base-conditions? 
+</span></span><span style="display:flex;"><span>                         (<span style="color:#e6db74">:flat?</span> market-analysis)
+</span></span><span style="display:flex;"><span>                         (<span style="color:#a6e22e">get-in</span> market-analysis [<span style="color:#e6db74">:squeeze-analysis</span> <span style="color:#e6db74">:squeeze?</span>])
+</span></span><span style="display:flex;"><span>                         flat-trading?)]
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">cond-&gt;</span> data
+</span></span><span style="display:flex;"><span>      (or level-signal? flat-signal?)
+</span></span><span style="display:flex;"><span>      (assoc <span style="color:#e6db74">:raw-signal</span> (<span style="color:#a6e22e">signals/generate-level-signal</span> price extremums market-analysis)))))
+</span></span></code></pre></div><h3 id="5-выносим-работу-с-дивергенциями"><strong>5. Выносим работу с дивергенциями</strong></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span>(<span style="color:#66d9ef">defn- </span>enrich-with-divergence-info [{<span style="color:#e6db74">:keys</span> [raw-signal timestamp] <span style="color:#e6db74">:as</span> data}]
+</span></span><span style="display:flex;"><span>  (<span style="color:#66d9ef">if </span>raw-signal
+</span></span><span style="display:flex;"><span>    (<span style="color:#66d9ef">let </span>[divergences (<span style="color:#e6db74">:divergences</span> raw-signal)
+</span></span><span style="display:flex;"><span>          _ (<span style="color:#a6e22e">update-divergence-state</span> divergences timestamp)
+</span></span><span style="display:flex;"><span>          divergence-info <span style="color:#f92672">@</span>divergence-state
+</span></span><span style="display:flex;"><span>          strong-divergence? (&gt;= (<span style="color:#e6db74">:duration</span> divergence-info) <span style="color:#ae81ff">2</span>)]
+</span></span><span style="display:flex;"><span>      
+</span></span><span style="display:flex;"><span>      (assoc data <span style="color:#e6db74">:signal</span>
+</span></span><span style="display:flex;"><span>             (-&gt; raw-signal
+</span></span><span style="display:flex;"><span>                 (assoc <span style="color:#e6db74">:divergence-memory</span> divergence-info
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">:divergence-strong?</span> strong-divergence?))))
+</span></span><span style="display:flex;"><span>    data))
+</span></span></code></pre></div><h3 id="6-выносим-логирование"><strong>6. Выносим логирование</strong></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span>(<span style="color:#66d9ef">defn- </span>log-trading-decisions [{<span style="color:#e6db74">:keys</span> [trading-conditions volume-conditions signal] <span style="color:#e6db74">:as</span> data}]
+</span></span><span style="display:flex;"><span>  (<span style="color:#66d9ef">let </span>[{<span style="color:#e6db74">:keys</span> [base-conditions? valid-zone? trading-zone]} trading-conditions
+</span></span><span style="display:flex;"><span>        {<span style="color:#e6db74">:keys</span> [level-trading? flat-trading? volume-spike?]} volume-conditions]
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">;; Детальное логирование условий</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;=== ДЕТАЛИЗАЦИЯ УСЛОВИЙ ===&#34;</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;📊 Базовые условия:&#34;</span> base-conditions?)
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;📍 Валидная зона:&#34;</span> valid-zone? <span style="color:#e6db74">&#34;(зона:&#34;</span> trading-zone <span style="color:#e6db74">&#34;)&#34;</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;📈 Уровневая торговля:&#34;</span> level-trading?)
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;🔄 Флэт торговля:&#34;</span> flat-trading?)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    (when signal
+</span></span><span style="display:flex;"><span>      (<span style="color:#66d9ef">let </span>[signal-type (<span style="color:#e6db74">:type</span> signal)
+</span></span><span style="display:flex;"><span>            trading-type (<span style="color:#66d9ef">if </span>level-trading? <span style="color:#e6db74">:level-based</span> <span style="color:#e6db74">:flat-based</span>)]
+</span></span><span style="display:flex;"><span>        (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;🎯 СГЕНЕРИРОВАН СИГНАЛ:&#34;</span> (name signal-type))))
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    data))
+</span></span></code></pre></div><h2 id="итоговый-результат"><strong>Итоговый результат:</strong></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span>(<span style="color:#66d9ef">defn- </span>generate-signals-phase
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Рефакторнутая фаза - тонкий координатор&#34;</span>
+</span></span><span style="display:flex;"><span>  [market-data]
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  (-&gt; market-data
+</span></span><span style="display:flex;"><span>      validate-trading-conditions     <span style="color:#75715e">;; → возвращает data с :trading-conditions</span>
+</span></span><span style="display:flex;"><span>      check-volume-conditions         <span style="color:#75715e">;; → возвращает data с :volume-conditions  </span>
+</span></span><span style="display:flex;"><span>      generate-potential-signals      <span style="color:#75715e">;; → возвращает data с :raw-signal</span>
+</span></span><span style="display:flex;"><span>      enrich-with-divergence-info     <span style="color:#75715e">;; → возвращает data с :signal</span>
+</span></span><span style="display:flex;"><span>      log-trading-decisions           <span style="color:#75715e">;; → логирует, возвращает data</span>
+</span></span><span style="display:flex;"><span>      update-system-state))           <span style="color:#75715e">;; → обновляет кеши, возвращает data</span>
+</span></span></code></pre></div><h2 id="преимущества-рефакторинга"> <strong>Преимущества рефакторинга:</strong></h2>
+<ol>
+<li><strong>Тестируемость</strong> - каждую фазу можно тестировать отдельно</li>
+<li><strong>Переиспользование</strong> - фазы объема/условий можно использовать в других местах</li>
+<li><strong>Читаемость</strong> - каждая функция делает одну понятную вещь</li>
+<li><strong>Поддержка</strong> - легко модифицировать отдельные аспекты логики</li>
+<li><strong>Соответствие вашим принципам</strong> - чистый пайплайн, единый data-bag</li>
+</ol>
+<p>Каждая фаза теперь следует правилу: <strong>&ldquo;получает data-bag, возвращает data-bag&rdquo;</strong> 🎯</p>
+<h2 id="философия-стиля"><strong>Философия стиля:</strong></h2>
+<p>&ldquo;Любая сложная проблема должна быть разбита на последовательность простых шагов,
+каждый из которых умещается в голове и делает одну понятную вещь&rdquo;</p>
+<h2 id="правило-большого-пальца"> <strong>Правило большого пальца:</strong></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#75715e">;; ❌ ЕСЛИ функция не помещается на экране без скролла</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>monster-function [data]
+</span></span><span style="display:flex;"><span>  (<span style="color:#66d9ef">let </span>[a (<span style="color:#a6e22e">...</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#a6e22e">...</span>
+</span></span><span style="display:flex;"><span>            (<span style="color:#a6e22e">...</span>)))
+</span></span><span style="display:flex;"><span>        b (<span style="color:#a6e22e">...</span>)
+</span></span><span style="display:flex;"><span>        c (<span style="color:#a6e22e">...</span>)]
+</span></span><span style="display:flex;"><span>    (when (<span style="color:#a6e22e">...</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#66d9ef">do </span>(<span style="color:#a6e22e">...</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#a6e22e">...</span>)))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">;; ✅ ОНА ДОЛЖНА стать пайплайном</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>clean-function [data]
+</span></span><span style="display:flex;"><span>  (-&gt; data
+</span></span><span style="display:flex;"><span>      step-one    <span style="color:#75715e">;; ← каждая функция простая</span>
+</span></span><span style="display:flex;"><span>      step-two    <span style="color:#75715e">;; ← и понятная</span>
+</span></span><span style="display:flex;"><span>      step-three
+</span></span><span style="display:flex;"><span>      step-four))
+</span></span></code></pre></div><h2 id="шаблон-модуля"><strong>Шаблон модуля</strong></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span>(<span style="color:#66d9ef">ns </span>app.trader.module-name.core
+</span></span><span style="display:flex;"><span>  (<span style="color:#e6db74">:require</span> [clojure.tools.logging <span style="color:#e6db74">:as</span> log]))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">;; ===== КОНФИГУРАЦИЯ =====</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">def </span>default-config
+</span></span><span style="display:flex;"><span>  {<span style="color:#e6db74">:param-1</span> <span style="color:#ae81ff">14</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#e6db74">:param-2</span> <span style="color:#ae81ff">0.02</span>})
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">;; ===== ИНТЕРФЕЙСНЫЕ ФУНКЦИИ =====</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>calc-module-from-data
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Основная функция модуля&#34;</span>
+</span></span><span style="display:flex;"><span>  [data-bag <span style="color:#f92672">&amp;</span> [config]]
+</span></span><span style="display:flex;"><span>  (<span style="color:#66d9ef">let </span>[full-config (merge default-config config)]
+</span></span><span style="display:flex;"><span>    (-&gt; data-bag
+</span></span><span style="display:flex;"><span>        (<span style="color:#a6e22e">prepare-data-for-module</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#a6e22e">calculate-module-logic</span> full-config)
+</span></span><span style="display:flex;"><span>        (<span style="color:#a6e22e">format-module-result</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">;; ===== ВНУТРЕННИЕ ФУНКЦИИ =====</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn- </span>prepare-data-for-module [data]
+</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;🔧 Preparing data for module&#34;</span>)
+</span></span><span style="display:flex;"><span>  (assoc data <span style="color:#e6db74">:module-data</span> (<span style="color:#a6e22e">extract-needed-data</span> data)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn- </span>calculate-module-logic [data config]
+</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;🧮 Calculating module logic&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">try</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#66d9ef">let </span>[result (<span style="color:#a6e22e">some-calculation</span> (<span style="color:#e6db74">:module-data</span> data) config)]
+</span></span><span style="display:flex;"><span>      (assoc data <span style="color:#e6db74">:module-result</span> result))
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">catch</span> Exception e
+</span></span><span style="display:flex;"><span>      (<span style="color:#a6e22e">log/error</span> <span style="color:#e6db74">&#34;Module calculation failed:&#34;</span> e)
+</span></span><span style="display:flex;"><span>      nil)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn- </span>format-module-result [data]
+</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;📊 Formatting module result&#34;</span>) 
+</span></span><span style="display:flex;"><span>  (-&gt; data
+</span></span><span style="display:flex;"><span>      (assoc <span style="color:#e6db74">:final-result</span> (<span style="color:#e6db74">:module-result</span> data))
+</span></span><span style="display:flex;"><span>      (dissoc <span style="color:#e6db74">:module-data</span> <span style="color:#e6db74">:module-result</span>)))
+</span></span></code></pre></div><h2 id="основные-принципы"><strong>ОСНОВНЫЕ ПРИНЦИПЫ:</strong></h2>
+<h3 id="1-архитектурный-шаблон"><strong>1. Архитектурный шаблон: &ldquo;Функциональный пайплайн&rdquo;</strong></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ВХОД → <span style="color:#f92672">[</span>Фаза 1<span style="color:#f92672">]</span> → <span style="color:#f92672">[</span>Фаза 2<span style="color:#f92672">]</span> → <span style="color:#f92672">[</span>Фаза N<span style="color:#f92672">]</span> → ВЫХОД
+</span></span></code></pre></div><p><strong>Правило:</strong> ВСЕ данные проходят через пайплайн. Нет побочных эффектов между фазами.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#75715e">;; ✅ ПРАВИЛЬНО</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>process-data [input]
+</span></span><span style="display:flex;"><span>  (-&gt; input
+</span></span><span style="display:flex;"><span>      phase-1-clean
+</span></span><span style="display:flex;"><span>      phase-2-analyze
+</span></span><span style="display:flex;"><span>      phase-3-transform))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">;; ❌ НЕПРАВИЛЬНО  </span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>process-data [input]
+</span></span><span style="display:flex;"><span>  (<span style="color:#66d9ef">let </span>[a (<span style="color:#a6e22e">phase-1</span> input)
+</span></span><span style="display:flex;"><span>        b (<span style="color:#a6e22e">phase-2</span> input)  <span style="color:#75715e">;; работаем с исходным input!</span>
+</span></span><span style="display:flex;"><span>        c (<span style="color:#a6e22e">phase-3</span> a)]
+</span></span><span style="display:flex;"><span>    c))
+</span></span></code></pre></div><h3 id="2-структура-данных-единый-data-bag"><strong>2. Структура данных: Единый Data Bag</strong></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#75715e">;; ВСЕ данные в одной мапе</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">def </span>initial-data
+</span></span><span style="display:flex;"><span>  {<span style="color:#e6db74">:price-data</span> {<span style="color:#e6db74">:open</span> [] <span style="color:#e6db74">:high</span> [] <span style="color:#e6db74">:close</span> [] <span style="color:#e6db74">:low</span> [] <span style="color:#e6db74">:volume</span> []}
+</span></span><span style="display:flex;"><span>   <span style="color:#e6db74">:levels</span> {<span style="color:#e6db74">:support</span> nil <span style="color:#e6db74">:resistance</span> nil}
+</span></span><span style="display:flex;"><span>   <span style="color:#e6db74">:indicators</span> {<span style="color:#e6db74">:rsi</span> [] <span style="color:#e6db74">:macd</span> []}
+</span></span><span style="display:flex;"><span>   <span style="color:#e6db74">:signals</span> {<span style="color:#e6db74">:current</span> nil <span style="color:#e6db74">:history</span> []}
+</span></span><span style="display:flex;"><span>   <span style="color:#e6db74">:context</span> {<span style="color:#e6db74">:timestamp</span> nil <span style="color:#e6db74">:instrument</span> nil}})
+</span></span></code></pre></div><p><strong>Правило:</strong> Каждая фаза получает data-bag, возвращает data-bag.</p>
+<h3 id="3-именование-жесткий-convention"><strong>3. Именование: Жесткий convention</strong></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>ТИП-ДЕЙСТВИЕ-ОБЪЕКТ-ДОПОЛНИТЕЛЬНО
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ТИП: [calc-, find-, analyze-, generate-, create-]
+</span></span><span style="display:flex;"><span>ДЕЙСТВИЕ: [rsi, levels, signal, trend]
+</span></span><span style="display:flex;"><span>ОБЪЕКТ: [for-, from-, based-on-]
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#75715e">;; ✅ ПРАВИЛЬНО</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>calc-rsi-from-prices [prices period])
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>find-levels-based-on-extremums [extremums])
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>generate-signal-for-instrument [instrument-data])
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">;; ❌ НЕПРАВИЛЬНО</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>rsi [p n])                    <span style="color:#75715e">;; непонятно</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>find-levels [extremes])       <span style="color:#75715e">;; нет контекста</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>make-signal [data])           <span style="color:#75715e">;; слишком абстрактно</span>
+</span></span></code></pre></div><h3 id="4-фазы-пайплайна-четкие-ответственности"><strong>4. Фазы пайплайна: Четкие ответственности</strong></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#75715e">;; СТАНДАРТНЫЙ ПАЙПЛАЙН ТОРГОВОЙ СИСТЕМЫ</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">def </span>trading-pipeline
+</span></span><span style="display:flex;"><span>  [phase-prepare-data      <span style="color:#75715e">;; подготовка данных</span>
+</span></span><span style="display:flex;"><span>   phase-calc-indicators   <span style="color:#75715e">;; индикаторы (RSI, MACD)</span>
+</span></span><span style="display:flex;"><span>   phase-find-levels       <span style="color:#75715e">;; уровни поддержки/сопротивления  </span>
+</span></span><span style="display:flex;"><span>   phase-analyze-context   <span style="color:#75715e">;; контекст рынка</span>
+</span></span><span style="display:flex;"><span>   phase-generate-signals  <span style="color:#75715e">;; генерация сигналов</span>
+</span></span><span style="display:flex;"><span>   phase-validate-signals  <span style="color:#75715e">;; валидация сигналов</span>
+</span></span><span style="display:flex;"><span>   phase-execute-logic])   <span style="color:#75715e">;; исполнение логики</span>
+</span></span></code></pre></div><h3 id="5-обработка-ошибок-единый-подход"><strong>5. Обработка ошибок: Единый подход</strong></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#75715e">;; ВСЕ функции возвращают либо data-bag, либо nil</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>safe-phase [data]
+</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">try</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#66d9ef">if </span>(<span style="color:#a6e22e">valid-data?</span> data)
+</span></span><span style="display:flex;"><span>      (<span style="color:#a6e22e">do-phase-work</span> data)
+</span></span><span style="display:flex;"><span>      (<span style="color:#66d9ef">do </span>(<span style="color:#a6e22e">log/warn</span> <span style="color:#e6db74">&#34;Invalid data in phase&#34;</span>) nil))
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">catch</span> Exception e
+</span></span><span style="display:flex;"><span>      (<span style="color:#a6e22e">log/error</span> <span style="color:#e6db74">&#34;Phase failed:&#34;</span> e)
+</span></span><span style="display:flex;"><span>      nil)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">;; В пайплайне - проверяем каждый шаг</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>run-pipeline [initial-data pipeline]
+</span></span><span style="display:flex;"><span>  (reduce (<span style="color:#66d9ef">fn </span>[data phase-fn]
+</span></span><span style="display:flex;"><span>            (if-let [result (<span style="color:#a6e22e">phase-fn</span> data)]
+</span></span><span style="display:flex;"><span>              result
+</span></span><span style="display:flex;"><span>              (<span style="color:#a6e22e">reduced</span> nil)))  <span style="color:#75715e">;; останавливаем пайплайн</span>
+</span></span><span style="display:flex;"><span>          initial-data
+</span></span><span style="display:flex;"><span>          pipeline))
+</span></span></code></pre></div><h3 id="6-логирование-стандартные-форматы"><strong>6. Логирование: Стандартные форматы</strong></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#75715e">;; ВСЕ логи в едином формате</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>log-phase-start [phase-name data]
+</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;▶️ &#34;</span> phase-name <span style="color:#e6db74">&#34; | data-keys:&#34;</span> (keys data)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>log-phase-result [phase-name result]
+</span></span><span style="display:flex;"><span>  (<span style="color:#66d9ef">if </span>result
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;✅ &#34;</span> phase-name <span style="color:#e6db74">&#34; | success&#34;</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">log/warn</span> <span style="color:#e6db74">&#34;❌ &#34;</span> phase-name <span style="color:#e6db74">&#34; | failed&#34;</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>log-trading-signal [signal]
+</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">log/info</span> <span style="color:#e6db74">&#34;🎯 SIGNAL | type:&#34;</span> (<span style="color:#e6db74">:type</span> signal) 
+</span></span><span style="display:flex;"><span>           <span style="color:#e6db74">&#34; | confidence:&#34;</span> (<span style="color:#e6db74">:confidence</span> signal)
+</span></span><span style="display:flex;"><span>           <span style="color:#e6db74">&#34; | price:&#34;</span> (<span style="color:#e6db74">:price</span> signal)))
+</span></span></code></pre></div><h2 id="чек-лист-при-написании-кода">📋 <strong>ЧЕК-ЛИСТ ПРИ НАПИСАНИИ КОДА:</strong></h2>
+<ol>
+<li>Данные проходят через пайплайн?</li>
+<li>Функция возвращает data-bag или nil?</li>
+<li>Именование по convention?</li>
+<li>Есть обработка ошибок?</li>
+<li>Логирование в стандартном формате?</li>
+<li>Конфигурация вынесена в default-config?</li>
+<li>Внутренние функции приватные?</li>
+</ol>
+<h2 id="-заключение">💎 Заключение</h2>
+<p>Описанный подход — это не просто стиль кодирования, а <strong>единая система разработки</strong>, которую я применяю во всех проектах. Она позволяет:</p>
+<h3 id="преимущества">Преимущества:</h3>
+<ul>
+<li><strong>Стандартизировать процесс</strong> — больше не нужно каждый раз решать, какие данные куда передавать</li>
+<li><strong>Снизить когнитивную нагрузку</strong> — архитектурные решения уже приняты, остается только следовать правилам</li>
+<li><strong>Ускорить разработку</strong> — четкий протокол для любой функциональности</li>
+</ul>
+<h3 id="главный-принцип">Главный принцип:</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#75715e">;; Когда не знаешь как сделать - смотри style guide</span>
+</span></span><span style="display:flex;"><span>(when (<span style="color:#a6e22e">not-understand-how-to-implement?</span> task)
+</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">read-style-guide-and-follow-rules</span>))
+</span></span></code></pre></div>
+        
+        <div class="post-stats">
+            <span class="views">👁‍🗨 0</span>
+            <span class="likes">💛 0</span>
+        </div>
+    </div>
+</article>
+
+<style>
+.table-of-contents {
+    background: var(--post-card);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 2rem 0;
+    border-left: 4px solid var(--accent);
+}
+
+.table-of-contents h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.2em;
+    color: #f8f8f2;
+}
+
+.table-of-contents ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.table-of-contents li {
+    margin: 0.5rem 0;
+    line-height: 1.4;
+}
+
+.table-of-contents a {
+    text-decoration: none;
+    color: var(--meta);
+    transition: color 0.2s ease;
+    display: block;
+    padding: 0.2rem 0;
+}
+
+.table-of-contents a:hover {
+    color: #ff79c6;
+}
+
+.table-of-contents ul ul {
+    padding-left: 1rem;
+    margin: 0.25rem 0;
+    border-left: 1px solid var(--meta);
+}
+
+ 
+@media (max-width: 768px) {
+    .table-of-contents {
+        padding: 1rem;
+        margin: 1.5rem 0;
+    }
+    
+    .table-of-contents ul ul {
+        padding-left: 0.5rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    document.querySelectorAll('pre').forEach(function(pre) {
+        const button = document.createElement('button');
+        button.textContent = '📋';
+        button.className = 'copy-btn';
+        button.onclick = function() {
+            navigator.clipboard.writeText(pre.textContent);
+            button.textContent = '✅';
+            setTimeout(() => button.textContent = '📋', 2000);
+        };
+        pre.style.position = 'relative';
+        button.style.position = 'absolute';
+        button.style.top = '10px';
+        button.style.right = '10px';
+        pre.appendChild(button);
+    });
+    
+    
+    document.querySelectorAll('.table-of-contents a[href^="#"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+});
+</script>
+
+        </main>
+
+        <footer>
+            <p>© 2025 Mr.Proger • Powered by Konkin</p>
+        </footer>
+    </div>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Архитектурный чек-лист: Функциональный пайплайн в Clojure",
+        "description": "Практическое руководство по рефакторингу монстр-функций в элегантные пайплайны. Четкие правила, примеры и чек-лист для поддержания кода в соответствии с принципами функционального пайплайна, единого data-bag и композиции простых функций.",
+          "author": {
+          "@type": "Person",
+          "name": "Иван"
+        }
+      }
+    </script>
+    <script>
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        }
+        
+        
+        const savedTheme = localStorage.getItem('theme') || 'dracula';
+        setTheme(savedTheme);
+    </script>
+    <div id="reading-progress"></div>
+
+    <script>
+    
+    const progressBar = document.getElementById('reading-progress');
+
+    function updateProgressBar() {
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight - windowHeight;
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    
+      const progress = (scrollTop / documentHeight) * 100;
+      progressBar.style.width = progress + '%';
+    }
+
+    
+    if (document.querySelector('.post')) {
+      progressBar.style.display = 'block';
+      window.addEventListener('scroll', updateProgressBar);
+      window.addEventListener('resize', updateProgressBar);
+    }
+    </script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="http://localhost:1313/js/analytics.js"></script>
+    <script src="http://localhost:1313/js/toogle_menu.js"></script> 
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dracula">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Примеры на Clojure | Мой крутой блог на Hugo</title>
+    
+    <meta name="description" content="Демонстрация Clojure кода с подсветкой синтаксиса">
+    
+    
+    <meta property="og:title" content="Примеры на Clojure">
+    <meta property="og:description" content="Демонстрация Clojure кода с подсветкой синтаксиса">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:1313/posts/test/">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="http://localhost:1313/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav>
+                <a href="http://localhost:1313/"><strong>Мой крутой блог на Hugo</strong></a>
+                <div class="theme-switcher">
+                    <button class="theme-btn" onclick="setTheme('catppuccin')">☀️ Latte</button>
+                    <button class="theme-btn" onclick="setTheme('dracula')">🌙 Dracula</button>
+                </div>
+            </nav>
+        </header>
+
+        <main>
+            
+<article class="post">
+    <header>
+        <h1>Примеры на Clojure</h1>
+        <time>20 May 2024</time>
+    </header>
+    
+    <div class="content">
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('pre').forEach(function(pre) {
+        const button = document.createElement('button');
+        button.textContent = '📋';
+        button.className = 'copy-btn';
+        button.onclick = function() {
+            navigator.clipboard.writeText(pre.textContent);
+            button.textContent = '✅';
+            setTimeout(() => button.textContent = '📋', 2000);
+        };
+        pre.style.position = 'relative';
+        button.style.position = 'absolute';
+        button.style.top = '10px';
+        button.style.right = '10px';
+        pre.appendChild(button);
+    });
+});
+</script>
+        <h2 id="базовые-примеры">Базовые примеры</h2>
+<h3 id="функции-высшего-порядка">Функции высшего порядка</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>square [x] 
+</span></span><span style="display:flex;"><span>  (* x x))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>process-numbers [numbers]
+</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">-&gt;&gt;</span> numbers
+</span></span><span style="display:flex;"><span>       (filter odd?)
+</span></span><span style="display:flex;"><span>       (map square)
+</span></span><span style="display:flex;"><span>       (reduce +)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">;; Использование</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">process-numbers</span> [<span style="color:#ae81ff">1</span> <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">3</span> <span style="color:#ae81ff">4</span> <span style="color:#ae81ff">5</span> <span style="color:#ae81ff">6</span> <span style="color:#ae81ff">7</span> <span style="color:#ae81ff">8</span> <span style="color:#ae81ff">9</span> <span style="color:#ae81ff">10</span>])
+</span></span><span style="display:flex;"><span><span style="color:#75715e">;; =&gt; 165</span>
+</span></span></code></pre></div><h3 id="макросы">Макросы</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span>(<span style="color:#66d9ef">defmacro </span>unless [condition <span style="color:#f92672">&amp;</span> body]
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">`</span>(<span style="color:#66d9ef">if </span>(not <span style="color:#f92672">~</span>condition)
+</span></span><span style="display:flex;"><span>     (<span style="color:#66d9ef">do </span><span style="color:#f92672">~@</span>body)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">;; Пример использования</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">unless</span> (&gt; <span style="color:#ae81ff">10</span> <span style="color:#ae81ff">20</span>)
+</span></span><span style="display:flex;"><span>  (println <span style="color:#e6db74">&#34;10 не больше 20&#34;</span>)
+</span></span><span style="display:flex;"><span>  (+ <span style="color:#ae81ff">10</span> <span style="color:#ae81ff">20</span>))
+</span></span></code></pre></div><h3 id="работа-с-коллекциями">Работа с коллекциями</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span>(<span style="color:#66d9ef">def </span>user-data
+</span></span><span style="display:flex;"><span>  [{<span style="color:#e6db74">:name</span> <span style="color:#e6db74">&#34;Alice&#34;</span> <span style="color:#e6db74">:age</span> <span style="color:#ae81ff">30</span> <span style="color:#e6db74">:role</span> <span style="color:#e6db74">:admin</span>}
+</span></span><span style="display:flex;"><span>   {<span style="color:#e6db74">:name</span> <span style="color:#e6db74">&#34;Bob&#34;</span> <span style="color:#e6db74">:age</span> <span style="color:#ae81ff">25</span> <span style="color:#e6db74">:role</span> <span style="color:#e6db74">:user</span>}
+</span></span><span style="display:flex;"><span>   {<span style="color:#e6db74">:name</span> <span style="color:#e6db74">&#34;Charlie&#34;</span> <span style="color:#e6db74">:age</span> <span style="color:#ae81ff">35</span> <span style="color:#e6db74">:role</span> <span style="color:#e6db74">:moderator</span>}])
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">;; Трансдьюсеры</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">transduce</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">comp</span>
+</span></span><span style="display:flex;"><span>    (filter <span style="color:#f92672">#</span>(&gt; (<span style="color:#e6db74">:age</span> %) <span style="color:#ae81ff">25</span>))
+</span></span><span style="display:flex;"><span>    (map <span style="color:#e6db74">:name</span>))
+</span></span><span style="display:flex;"><span>  conj
+</span></span><span style="display:flex;"><span>  user-data)
+</span></span><span style="display:flex;"><span><span style="color:#75715e">;; =&gt; [&#34;Alice&#34; &#34;Charlie&#34;]</span>
+</span></span></code></pre></div><h3 id="coreasync-пример">Core.async пример</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span>(<span style="color:#66d9ef">ns </span>async-example
+</span></span><span style="display:flex;"><span>  (<span style="color:#e6db74">:require</span> [clojure.core.async <span style="color:#e6db74">:as</span> a <span style="color:#e6db74">:refer</span> [go &lt;! &gt;! chan]]))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>async-process [data]
+</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">go</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#66d9ef">let </span>[result (<span style="color:#a6e22e">&lt;!</span> (<span style="color:#a6e22e">fetch-data</span> data))]
+</span></span><span style="display:flex;"><span>      (when (<span style="color:#e6db74">:valid?</span> result)
+</span></span><span style="display:flex;"><span>        (<span style="color:#a6e22e">&gt;!</span> (<span style="color:#a6e22e">process-chan</span>) result)))))
+</span></span></code></pre></div><h2 id="особенности-подсветки">Особенности подсветки</h2>
+<ul>
+<li><strong>Keywords</strong> (<code>:like-this</code>) выделяются цветом</li>
+<li><strong>Symbols</strong> и функции различаются</li>
+<li><strong>Скобки</strong> сохраняют читаемость</li>
+<li><strong>Комментарии</strong> не отвлекают</li>
+</ul>
+
+    </div>
+</article>
+
+        </main>
+
+        <footer>
+            <p>© 2025 Мой крутой блог на Hugo • Powered by Konkin</p>
+        </footer>
+    </div>
+
+    <script>
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        }
+        
+        
+        const savedTheme = localStorage.getItem('theme') || 'dracula';
+        setTheme(savedTheme);
+    </script>
+</body>
+</html>

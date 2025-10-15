@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /preview/
+Disallow: /tags/
+Disallow: /page/1/
+Disallow: /postsf/
+Disallow: /categories/
+Disallow: /.nojekyll
+Disallow: /CNAME
+
+# Для поисковиков
+Sitemap: https://program-mister.ru/sitemap.xml

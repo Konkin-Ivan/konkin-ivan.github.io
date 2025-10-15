@@ -1,0 +1,1180 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Mr.Proger</title><link>https://program-mister.ru/tags/%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B0_taljure/</link><description>Описание моего блога</description><generator>Hugo</generator><language>ru-ru</language><lastBuildDate>Wed, 15 Oct 2025 14:55:20 +0000</lastBuildDate><atom:link href="https://program-mister.ru/tags/%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B0_taljure/" rel="self" type="application/rss+xml"/><item><title>Разработка индикатора VWAP</title><link>https://program-mister.ru/posts/taljure-vwap/</link><pubDate>Sat, 30 Aug 2025 00:00:00 +0000</pubDate><author/><guid>https://program-mister.ru/posts/taljure-vwap/</guid><description>В этой статье я хочу рассказать о реализации индикатора VWAP (Volume Weighted Average Price) — индикатора, который выглядит простым на поверхности, но раскрывает глубинные сложности работы с реальными финансовыми данными.</description><content type="html">&lt;h1 id="разработка-индикатора-vwap">Разработка индикатора VWAP&lt;/h1>
+&lt;h3 id="разработка-индикатора-vwap-когда-простота-встречает-сложность-данных">&lt;strong>Разработка индикатора VWAP: Когда простота встречает сложность данных&lt;/strong>&lt;/h3>
+&lt;p>&lt;img src="https://program-mister.ru/images/posts/taljure/taljure-vwap.png" alt="Разработка индикатора VWAP">&lt;/p>
+&lt;p>В этой статье я хочу рассказать о реализации индикатора VWAP (Volume Weighted Average Price) — индикатора, который выглядит простым на поверхности, но раскрывает глубинные сложности работы с реальными финансовыми данными.&lt;/p>
+&lt;h3 id="что-делает-vwap-особенным">&lt;strong>Что делает VWAP особенным?&lt;/strong>&lt;/h3>
+&lt;p>VWAP — это не просто средняя цена. Это:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Взвешенная по объему&lt;/strong> — большие сделки влияют сильнее&lt;/li>
+&lt;li>&lt;strong>Стандарт для институциональных трейдеров&lt;/strong> — эталон исполнения ордеров&lt;/li>
+&lt;li>&lt;strong>Тактический инструмент&lt;/strong> — помогает оценить fair value актива&lt;/li>
+&lt;li>&lt;strong>Сложный в данных&lt;/strong> — требует полной структуры свечи&lt;/li>
+&lt;/ul>
+&lt;h3 id="архитектурные-решения">&lt;strong>Архитектурные решения&lt;/strong>&lt;/h3>
+&lt;h4 id="1-разделение-на-вспомогательные-функции">&lt;strong>1. Разделение на вспомогательные функции&lt;/strong>&lt;/h4>
+&lt;p>Первое ключевое решение — вынесение расчета типичной цены:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">defn- &lt;/span>typical-price
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;Вычисляет типичную цену для свечи (high + low + close) / 3&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [{&lt;span style="color:#e6db74">:keys&lt;/span> [high low close] &lt;span style="color:#e6db74">:as&lt;/span> candle}]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (when (and candle high low close)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (/ (+ high low close) &lt;span style="color:#ae81ff">3.0&lt;/span>)))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Почему это важно:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Принцип единственной ответственности&lt;/strong> — каждая функция делает одну thing&lt;/li>
+&lt;li>&lt;strong>Повторное использование&lt;/strong> — типичная цена может пригодиться elsewhere&lt;/li>
+&lt;li>&lt;strong>Упрощение тестирования&lt;/strong> — можно тестировать отдельно&lt;/li>
+&lt;/ul>
+&lt;h4 id="2-защитное-программирование-как-философия">&lt;strong>2. Защитное программирование как философия&lt;/strong>&lt;/h4>
+&lt;p>VWAP работает с реальными данными, которые часто неидеальны:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">let &lt;/span>[valid-window (filter &lt;span style="color:#f92672">#&lt;/span>(and % (&lt;span style="color:#e6db74">:volume&lt;/span> %) (&lt;span style="color:#a6e22e">typical-price&lt;/span> %)) window)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Трехуровневая проверка:&lt;/strong>&lt;/p>
+&lt;ol>
+&lt;li>&lt;code>%&lt;/code> — элемент существует (не nil)&lt;/li>
+&lt;li>&lt;code>(:volume %)&lt;/code> — есть объем&lt;/li>
+&lt;li>&lt;code>(typical-price %)&lt;/code> — можно вычислить типичную цену&lt;/li>
+&lt;/ol>
+&lt;h4 id="3-обработка-всех-edge-cases">&lt;strong>3. Обработка всех edge cases&lt;/strong>&lt;/h4>
+&lt;p>Предусмотрел все возможные сценарии:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">if &lt;/span>(or (zero? total-vol) (&lt;span style="color:#a6e22e">empty?&lt;/span> valid-window))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ae81ff">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (/ total-pv total-vol))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Граничные случаи:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>Пустое окно → 0&lt;/li>
+&lt;li>Нулевой объем → 0&lt;/li>
+&lt;li>Некорректные данные → фильтрация → 0 если ничего не осталось&lt;/li>
+&lt;/ul>
+&lt;h3 id="математическая-элегантность">&lt;strong>Математическая элегантность&lt;/strong>&lt;/h3>
+&lt;p>Формула VWAP обманчиво проста:&lt;/p>
+&lt;p>VWAP = Σ(ТипичнаяЦена × Объем) / Σ(Объем)&lt;/p>
+&lt;p>Но за этой простотой скрывается глубина:&lt;/p>
+&lt;h4 id="почему-типичная-цена">&lt;strong>Почему типичная цена?&lt;/strong>&lt;/h4>
+&lt;p>&lt;code>(high + low + close) / 3&lt;/code> лучше представляет &amp;ldquo;справедливую цену&amp;rdquo; бара чем просто close.&lt;/p>
+&lt;h4 id="взвешивание-по-объему">&lt;strong>Взвешивание по объему&lt;/strong>&lt;/h4>
+&lt;p>Большие объемы имеют большее влияние — это ближе к реальной торговле.&lt;/p>
+&lt;h3 id="подводные-камни-реализации">&lt;strong>Подводные камни реализации&lt;/strong>&lt;/h3>
+&lt;h4 id="1-проблема-качество-данных">&lt;strong>1. Проблема: Качество данных&lt;/strong>&lt;/h4>
+&lt;p>Реальные данные часто:&lt;/p>
+&lt;ul>
+&lt;li>Содержат nil значения&lt;/li>
+&lt;li>Имеют пропущенные поля&lt;/li>
+&lt;li>Содержат нулевые объемы&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Решение:&lt;/strong> Многоуровневая фильтрация и graceful degradation:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>valid-window (filter &lt;span style="color:#f92672">#&lt;/span>(and % (&lt;span style="color:#e6db74">:volume&lt;/span> %) (&lt;span style="color:#a6e22e">typical-price&lt;/span> %)) window)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="2-проблема-численная-стабильность">&lt;strong>2. Проблема: Численная стабильность&lt;/strong>&lt;/h4>
+&lt;p>При больших объемах и ценах может возникнуть переполнение.&lt;/p>
+&lt;p>&lt;strong>Решение:&lt;/strong> В Clojure с BigDecimals по умолчанию это менее критично, но нужно помнить о точности.&lt;/p>
+&lt;h4 id="3-проблема-семантика-возвращаемых-значений">&lt;strong>3. Проблема: Семантика возвращаемых значений&lt;/strong>&lt;/h4>
+&lt;p>Что возвращать при некорректных данных? 0, nil, исключение?&lt;/p>
+&lt;p>&lt;strong>Решение:&lt;/strong> Я выбрал 0 как наименее разрушительный вариант:&lt;/p>
+&lt;p>(if (or (zero? total-vol) (empty? valid-window))
+0
+(/ total-pv total-vol))&lt;/p>
+&lt;h3 id="тестирование-от-идеального-к-реальному">&lt;strong>Тестирование: От идеального к реальному&lt;/strong>&lt;/h3>
+&lt;p>Тесты охватывают весь спектр сценариев:&lt;/p>
+&lt;h4 id="идеальный-случай">&lt;strong>Идеальный случай&lt;/strong>&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">is&lt;/span> (= &lt;span style="color:#ae81ff">10.666666666666666&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">vwap&lt;/span> [{&lt;span style="color:#e6db74">:high&lt;/span> &lt;span style="color:#ae81ff">10&lt;/span> &lt;span style="color:#e6db74">:low&lt;/span> &lt;span style="color:#ae81ff">9&lt;/span> &lt;span style="color:#e6db74">:close&lt;/span> &lt;span style="color:#ae81ff">11&lt;/span> &lt;span style="color:#e6db74">:volume&lt;/span> &lt;span style="color:#ae81ff">100&lt;/span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> {&lt;span style="color:#e6db74">:high&lt;/span> &lt;span style="color:#ae81ff">11&lt;/span> &lt;span style="color:#e6db74">:low&lt;/span> &lt;span style="color:#ae81ff">10&lt;/span> &lt;span style="color:#e6db74">:close&lt;/span> &lt;span style="color:#ae81ff">12&lt;/span> &lt;span style="color:#e6db74">:volume&lt;/span> &lt;span style="color:#ae81ff">200&lt;/span>}])))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="реальные-данные-с-проблемами">&lt;strong>Реальные данные с проблемами&lt;/strong>&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; Пустое окно&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">is&lt;/span> (= &lt;span style="color:#ae81ff">0&lt;/span> (&lt;span style="color:#a6e22e">vwap&lt;/span> [])))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; Nil элементы&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">is&lt;/span> (= &lt;span style="color:#ae81ff">0&lt;/span> (&lt;span style="color:#a6e22e">vwap&lt;/span> [nil nil nil])))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; Отсутствие объема&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">is&lt;/span> (= &lt;span style="color:#ae81ff">0&lt;/span> (&lt;span style="color:#a6e22e">vwap&lt;/span> [{&lt;span style="color:#e6db74">:high&lt;/span> &lt;span style="color:#ae81ff">10&lt;/span> &lt;span style="color:#e6db74">:low&lt;/span> &lt;span style="color:#ae81ff">9&lt;/span> &lt;span style="color:#e6db74">:close&lt;/span> &lt;span style="color:#ae81ff">11&lt;/span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> {&lt;span style="color:#e6db74">:high&lt;/span> &lt;span style="color:#ae81ff">11&lt;/span> &lt;span style="color:#e6db74">:low&lt;/span> &lt;span style="color:#ae81ff">10&lt;/span> &lt;span style="color:#e6db74">:close&lt;/span> &lt;span style="color:#ae81ff">12&lt;/span>}])))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="смешанные-данные">&lt;strong>Смешанные данные&lt;/strong>&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">is&lt;/span> (= &lt;span style="color:#ae81ff">11.333333333333334&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">vwap&lt;/span> [{&lt;span style="color:#e6db74">:high&lt;/span> &lt;span style="color:#ae81ff">10&lt;/span> &lt;span style="color:#e6db74">:low&lt;/span> &lt;span style="color:#ae81ff">9&lt;/span> &lt;span style="color:#e6db74">:close&lt;/span> &lt;span style="color:#ae81ff">11&lt;/span> &lt;span style="color:#e6db74">:volume&lt;/span> &lt;span style="color:#ae81ff">100&lt;/span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> nil
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> {&lt;span style="color:#e6db74">:high&lt;/span> &lt;span style="color:#ae81ff">12&lt;/span> &lt;span style="color:#e6db74">:low&lt;/span> &lt;span style="color:#ae81ff">11&lt;/span> &lt;span style="color:#e6db74">:close&lt;/span> &lt;span style="color:#ae81ff">13&lt;/span> &lt;span style="color:#e6db74">:volume&lt;/span> &lt;span style="color:#ae81ff">200&lt;/span>}])))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="ключевые-моменты">&lt;strong>Ключевые моменты&lt;/strong>&lt;/h3>
+&lt;ol>
+&lt;li>&lt;strong>Защитное программирование&lt;/strong> — необходимость для работы с реальными данными&lt;/li>
+&lt;li>&lt;strong>Фильтрация вместо исключений&lt;/strong> — более устойчивый подход&lt;/li>
+&lt;li>&lt;strong>Типичная цена&lt;/strong> — интересная альтернатива close price&lt;/li>
+&lt;li>&lt;strong>Нулевой результат&lt;/strong> — лучше чем исключение для непрерывности расчетов&lt;/li>
+&lt;li>&lt;strong>Композиция функций&lt;/strong> — мощь функционального подхода&lt;/li>
+&lt;/ol>
+&lt;h3 id="почему-vwap-уходит-в-simple">&lt;strong>Почему VWAP уходит в simple&lt;/strong>&lt;/h3>
+&lt;p>Несмотря на сложность данных, VWAP находится в simple потому что:&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>Концептуальная простота&lt;/strong> — взвешенное среднее&lt;/li>
+&lt;li>&lt;strong>Прозрачность алгоритма&lt;/strong> — легко понять и проверить&lt;/li>
+&lt;li>&lt;strong>Отсутствие рекуррентности&lt;/strong> — простой агрегирующий расчет&lt;/li>
+&lt;li>&lt;strong>Практическая важность&lt;/strong> — широко используется на практике&lt;/li>
+&lt;/ol>
+&lt;h3 id="оптимизации-для-будущего">&lt;strong>Оптимизации для будущего&lt;/strong>&lt;/h3>
+&lt;p>Для production-use можно добавить:&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>Инкрементальный расчет&lt;/strong> — для потоковых данных&lt;/li>
+&lt;li>&lt;strong>Кеширование промежуточных значений&lt;/strong> — для производительности&lt;/li>
+&lt;li>&lt;strong>Поддержка разных типов цены&lt;/strong> — не только типичной&lt;/li>
+&lt;li>&lt;strong>Валидация структуры данных&lt;/strong> — явные проверки схемы свечи&lt;/li>
+&lt;/ol>
+&lt;h3 id="заключение-мост-между-теорией-и-практикой">&lt;strong>Заключение: Мост между теорией и практикой&lt;/strong>&lt;/h3>
+&lt;p>VWAP показал мне, что самые интересные случаи возникают не в сложной математике, а в работе с неидеальными реальными данными.&lt;/p>
+&lt;p>&lt;strong>Что делает эту реализацию successful:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>✅ Устойчивость к плохим данным&lt;/li>
+&lt;li>✅ Четкая семантика возвращаемых значений&lt;/li>
+&lt;li>✅ Композиционная архитектура&lt;/li>
+&lt;li>✅ Comprehensive тестирование&lt;/li>
+&lt;li>✅ Практическая полезность&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Финальный вердикт:&lt;/strong> VWAP остался в &lt;code>simple&lt;/code> как пример того, как элегантная математика встречается с суровой реальностью финансовых данных.&lt;/p>
+&lt;p>Исходный код доступен на &lt;a href="https://gitflic.ru/project/konkin/taljure">GitFlic&lt;/a>.&lt;/p>
+&lt;p>&lt;strong>А как вы обрабатываете неидеальные данные в своих финансовых приложениях?&lt;/strong>&lt;/p></content></item><item><title>Разработка стохастического осциллятора</title><link>https://program-mister.ru/posts/taljure-stochastic/</link><pubDate>Fri, 29 Aug 2025 00:00:00 +0000</pubDate><author/><guid>https://program-mister.ru/posts/taljure-stochastic/</guid><description>В этой статье я хочу рассказать о реализации одного из самых популярных и визуально понятных индикаторов — стохастического осциллятора. Этот индикатор прекрасно демонстрирует силу функционального программирования для финансовых вычислений.</description><content type="html">&lt;h1 id="разработка-стохастического-осциллятора">Разработка стохастического осциллятора&lt;/h1>
+&lt;h2 id="разработка-стохастического-осциллятора-функциональный-подход-к-измерению-импульса">&lt;strong>Разработка стохастического осциллятора: Функциональный подход к измерению импульса&lt;/strong>&lt;/h2>
+&lt;p>&lt;img src="https://program-mister.ru/images/posts/taljure/taljure-stoh.png" alt="Разработка индикатора Stoh">&lt;/p>
+&lt;p>В этой статье я хочу рассказать о реализации одного из самых популярных и визуально понятных индикаторов — стохастического осциллятора. Этот индикатор прекрасно демонстрирует силу функционального программирования для финансовых вычислений.&lt;/p>
+&lt;h3 id="что-делает-стохастик-особенным">&lt;strong>Что делает стохастик особенным?&lt;/strong>&lt;/h3>
+&lt;p>Стохастический осциллятор — это не просто индикатор, это целая философия:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Измеряет импульс&lt;/strong> — положение цены относительно диапазона&lt;/li>
+&lt;li>&lt;strong>Работает в диапазоне 0-100&lt;/strong> — идеально для определения перекупленности/перепроданности&lt;/li>
+&lt;li>&lt;strong>Имеет две линии&lt;/strong> — %K (быстрая) и %D (медленная)&lt;/li>
+&lt;li>&lt;strong>Визуально интуитивный&lt;/strong> — легко интерпретировать на графике&lt;/li>
+&lt;/ul>
+&lt;h3 id="архитектурные-решения">&lt;strong>Архитектурные решения&lt;/strong>&lt;/h3>
+&lt;h4 id="1-многоарность-для-гибкости">&lt;strong>1. Многоарность для гибкости&lt;/strong>&lt;/h4>
+&lt;p>Реализовал две версии функции:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; Версия с периодами по умолчанию&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>([highs lows closes] (&lt;span style="color:#a6e22e">stochastic&lt;/span> highs lows closes &lt;span style="color:#ae81ff">14&lt;/span> &lt;span style="color:#ae81ff">3&lt;/span>))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; Версия с кастомными периодами&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>([highs lows closes k-period d-period]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">;; основная логика&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Преимущество:&lt;/strong> Пользователи могут использовать стандартные настройки или кастомизировать под свои стратегии.&lt;/p>
+&lt;h4 id="2-локальные-функции-для-ясности">&lt;strong>2. Локальные функции для ясности&lt;/strong>&lt;/h4>
+&lt;p>Вместо монолитной функции я использовал локальные функции:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">let &lt;/span>[&lt;span style="color:#75715e">; Функция для вычисления %K на позиции i&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> calculate-k (&lt;span style="color:#66d9ef">fn &lt;/span>[i] ...)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">; Функция для вычисления %D (SMA от %K)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> calculate-d (&lt;span style="color:#66d9ef">fn &lt;/span>[i] ...)]
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Почему это важно:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Изоляция ответственности&lt;/strong> — каждая функция делает одну вещь&lt;/li>
+&lt;li>&lt;strong>Упрощение тестирования&lt;/strong> — можно тестировать логику по частям&lt;/li>
+&lt;li>&lt;strong>Улучшение читаемости&lt;/strong> — ясное разделение логики&lt;/li>
+&lt;/ul>
+&lt;h4 id="3-обработка-edge-cases">&lt;strong>3. Обработка edge cases&lt;/strong>&lt;/h4>
+&lt;p>Я предусмотрел специальные случаи:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">; Защита от деления на ноль&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(when (and window-high window-low (not= window-high window-low))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (* &lt;span style="color:#ae81ff">100&lt;/span> (/ (- close window-low) (- window-high window-low)))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">; Фильтрация nil-значений для %D&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>k-window (filter some? (subvec k-values start end))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="математическая-элегантность">&lt;strong>Математическая элегантность&lt;/strong>&lt;/h3>
+&lt;p>Формула %K поражает простотой и эффективностью:&lt;/p>
+&lt;p>%K = 100 * (close - lowest_low) / (highest_high - lowest_low)&lt;/p>
+&lt;p>А %D — это просто сглаживание %K:&lt;/p>
+&lt;p>%D = SMA(%K, period)&lt;/p>
+&lt;h3 id="подводные-камни-реализации">&lt;strong>Подводные камни реализации&lt;/strong>&lt;/h3>
+&lt;h4 id="1-проблема-производительность-с-большими-данными">&lt;strong>1. Проблема: Производительность с большими данными&lt;/strong>&lt;/h4>
+&lt;p>Использование &lt;code>apply max&lt;/code> и &lt;code>apply min&lt;/code> на каждом шаге может быть медленным:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>window-high (apply max (subvec highs start end))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>window-low (apply min (subvec lows start end))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Решение:&lt;/strong> Для оптимизации можно использовать скользящее окно с обновляемыми экстремумами, но я выбрал читаемость над производительностью для первой версии.&lt;/p>
+&lt;h4 id="2-проблема-обработка-идентичных-значений">&lt;strong>2. Проблема: Обработка идентичных значений&lt;/strong>&lt;/h4>
+&lt;p>Если high = low в окне, возникает деление на ноль:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">; Тест подтверждает обработку этого случая&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">let &lt;/span>[highs [&lt;span style="color:#ae81ff">100&lt;/span> &lt;span style="color:#ae81ff">100&lt;/span> &lt;span style="color:#ae81ff">100&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> lows [&lt;span style="color:#ae81ff">100&lt;/span> &lt;span style="color:#ae81ff">100&lt;/span> &lt;span style="color:#ae81ff">100&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> closes [&lt;span style="color:#ae81ff">100&lt;/span> &lt;span style="color:#ae81ff">100&lt;/span> &lt;span style="color:#ae81ff">100&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> result (&lt;span style="color:#a6e22e">stochastic&lt;/span> highs lows closes)]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">is&lt;/span> (every? nil? (map &lt;span style="color:#e6db74">:k&lt;/span> result))) &lt;span style="color:#75715e">; Все значения %K = nil&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="3-проблема-синхронизация-данных">&lt;strong>3. Проблема: Синхронизация данных&lt;/strong>&lt;/h4>
+&lt;p>Три вектора должны быть одинаковой длины и правильно синхронизированы:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">; Неявное предположение:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(= (count highs) (count lows) (count closes))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>В продакшн-версии нужно добавить явную проверку.&lt;/p>
+&lt;h3 id="тестирование-от-простого-к-сложному">&lt;strong>Тестирование: От простого к сложному&lt;/strong>&lt;/h3>
+&lt;p>Тесты охватывают все аспекты работы индикатора:&lt;/p>
+&lt;h4 id="базовый-функционал">&lt;strong>Базовый функционал&lt;/strong>&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">testing&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Basic stochastic oscillator calculation&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#66d9ef">let &lt;/span>[highs [&lt;span style="color:#ae81ff">100&lt;/span> &lt;span style="color:#ae81ff">110&lt;/span> &lt;span style="color:#ae81ff">105&lt;/span> &lt;span style="color:#ae81ff">120&lt;/span> &lt;span style="color:#ae81ff">115&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> lows [&lt;span style="color:#ae81ff">90&lt;/span> &lt;span style="color:#ae81ff">95&lt;/span> &lt;span style="color:#ae81ff">90&lt;/span> &lt;span style="color:#ae81ff">100&lt;/span> &lt;span style="color:#ae81ff">105&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> closes [&lt;span style="color:#ae81ff">95&lt;/span> &lt;span style="color:#ae81ff">100&lt;/span> &lt;span style="color:#ae81ff">98&lt;/span> &lt;span style="color:#ae81ff">110&lt;/span> &lt;span style="color:#ae81ff">108&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> result (&lt;span style="color:#a6e22e">stochastic&lt;/span> highs lows closes)]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">is&lt;/span> (= (count result) &lt;span style="color:#ae81ff">5&lt;/span>))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">is&lt;/span> (every? &lt;span style="color:#f92672">#&lt;/span>(contains? % &lt;span style="color:#e6db74">:k&lt;/span>) result))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">is&lt;/span> (every? &lt;span style="color:#f92672">#&lt;/span>(contains? % &lt;span style="color:#e6db74">:d&lt;/span>) result))))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="граничные-случаи">&lt;strong>Граничные случаи&lt;/strong>&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">testing&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Vectors with identical values&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#66d9ef">let &lt;/span>[highs [&lt;span style="color:#ae81ff">100&lt;/span> &lt;span style="color:#ae81ff">100&lt;/span> &lt;span style="color:#ae81ff">100&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> lows [&lt;span style="color:#ae81ff">100&lt;/span> &lt;span style="color:#ae81ff">100&lt;/span> &lt;span style="color:#ae81ff">100&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> closes [&lt;span style="color:#ae81ff">100&lt;/span> &lt;span style="color:#ae81ff">100&lt;/span> &lt;span style="color:#ae81ff">100&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> result (&lt;span style="color:#a6e22e">stochastic&lt;/span> highs lows closes)]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">is&lt;/span> (every? nil? (map &lt;span style="color:#e6db74">:k&lt;/span> result)))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">is&lt;/span> (every? nil? (map &lt;span style="color:#e6db74">:d&lt;/span> result)))))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="производительность">&lt;strong>Производительность&lt;/strong>&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">testing&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Performance with large dataset&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#66d9ef">let &lt;/span>[large-highs (&lt;span style="color:#a6e22e">vec&lt;/span> (&lt;span style="color:#a6e22e">repeatedly&lt;/span> &lt;span style="color:#ae81ff">1000&lt;/span> &lt;span style="color:#f92672">#&lt;/span>(rand-int &lt;span style="color:#ae81ff">200&lt;/span>)))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> large-lows (&lt;span style="color:#a6e22e">vec&lt;/span> (&lt;span style="color:#a6e22e">repeatedly&lt;/span> &lt;span style="color:#ae81ff">1000&lt;/span> &lt;span style="color:#f92672">#&lt;/span>(rand-int &lt;span style="color:#ae81ff">100&lt;/span>)))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> large-closes (&lt;span style="color:#a6e22e">vec&lt;/span> (&lt;span style="color:#a6e22e">repeatedly&lt;/span> &lt;span style="color:#ae81ff">1000&lt;/span> &lt;span style="color:#f92672">#&lt;/span>(rand-int &lt;span style="color:#ae81ff">150&lt;/span>)))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> result (&lt;span style="color:#a6e22e">stochastic&lt;/span> large-highs large-lows large-closes)]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">is&lt;/span> (= (count result) &lt;span style="color:#ae81ff">1000&lt;/span>))))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="ключевые-моменты">&lt;strong>Ключевые моменты&lt;/strong>&lt;/h3>
+&lt;ol>
+&lt;li>&lt;strong>Композиция функций&lt;/strong> — стохастик строится из простых блоков&lt;/li>
+&lt;li>&lt;strong>Обработка edge cases&lt;/strong> — критически важна для надежности&lt;/li>
+&lt;li>&lt;strong>Гибкость через многоарность&lt;/strong> — баланс между удобством и настраиваемостью&lt;/li>
+&lt;li>&lt;strong>Локальные функции&lt;/strong> — мощный инструмент для организации сложной логики&lt;/li>
+&lt;li>&lt;strong>Визуальная природа&lt;/strong> — некоторые индикаторы лучше воспринимаются графически&lt;/li>
+&lt;/ol>
+&lt;h3 id="почему-стохастик-belongs-в-simple">&lt;strong>Почему стохастик belongs в simple&lt;/strong>&lt;/h3>
+&lt;p>Несмотря на относительную сложность, стохастик относится к simple потому что:&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>Концептуальная простота&lt;/strong> — положение цены в диапазоне&lt;/li>
+&lt;li>&lt;strong>Прозрачность формулы&lt;/strong> — легко понять и проверить&lt;/li>
+&lt;li>&lt;strong>Отсутствие рекуррентности&lt;/strong> — в отличие от EMA/ATR&lt;/li>
+&lt;li>&lt;strong>Широкая применимость&lt;/strong> — используется трейдерами всех уровней&lt;/li>
+&lt;/ol>
+&lt;h3 id="оптимизации-для-будущего">&lt;strong>Оптимизации для будущего&lt;/strong>&lt;/h3>
+&lt;p>Для production-use можно добавить:&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>Скользящие экстремумы&lt;/strong> — для O(1) расчета на шаг вместо O(n)&lt;/li>
+&lt;li>&lt;strong>Проверки синхронизации&lt;/strong> — явные проверки длины векторов&lt;/li>
+&lt;li>&lt;strong>Кеширование результатов&lt;/strong> — для повторных вычислений&lt;/li>
+&lt;li>&lt;strong>Batch processing&lt;/strong> — оптимизация для больших исторических данных&lt;/li>
+&lt;/ol>
+&lt;h3 id="заключение-элегантность-в-простоте">&lt;strong>Заключение: Элегантность в простоте&lt;/strong>&lt;/h3>
+&lt;p>Стохастический осциллятор показал мне, что сложные trading-идеи могут иметь простые и элегантные реализации.&lt;/p>
+&lt;p>&lt;strong>Что делает эту реализацию successful:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>✅ Чистая функциональная архитектура&lt;/li>
+&lt;li>✅ Comprehensive обработка edge cases&lt;/li>
+&lt;li>✅ Гибкий API с разными арностями&lt;/li>
+&lt;li>✅ Ясное разделение ответственности&lt;/li>
+&lt;li>✅ Баланс между точностью и производительностью&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Финальный вердикт:&lt;/strong> Стохастик остался в &lt;code>simple&lt;/code> как пример того, как сложная концепция может иметь простую и elegant реализацию.&lt;/p>
+&lt;p>Исходный код доступен на &lt;a href="https://gitflic.ru/project/konkin/taljure">GitFlic&lt;/a>.&lt;/p>
+&lt;p>&lt;strong>А какой ваш любимый осциллятор и почему?&lt;/strong>&lt;/p></content></item><item><title>Разработка индикатора ATR</title><link>https://program-mister.ru/posts/taljure-atr/</link><pubDate>Thu, 28 Aug 2025 00:00:00 +0000</pubDate><author/><guid>https://program-mister.ru/posts/taljure-atr/</guid><description>В этой статье я хочу рассказать о разработке индикатора Average True Range (ATR) — индикатора, который заставил меня пересмотреть границы между "простыми" и "сложными" индикаторами в моей библиотеке Taljure.</description><content type="html">&lt;h1 id="разработка-индикатора-atr">Разработка индикатора ATR&lt;/h1>
+&lt;h2 id="разработка-индикатора-atr-пограничный-случай-между-простым-и-сложным">&lt;strong>Разработка индикатора ATR: Пограничный случай между простым и сложным&lt;/strong>&lt;/h2>
+&lt;p>&lt;img src="https://program-mister.ru/images/posts/taljure/taljure-atr.png" alt="Разработка индикатора ATR">&lt;/p>
+&lt;p>В этой статье я хочу рассказать о разработке индикатора Average True Range (ATR) — индикатора, который заставил меня пересмотреть границы между &amp;ldquo;простыми&amp;rdquo; и &amp;ldquo;сложными&amp;rdquo; индикаторами в моей библиотеке Taljure.&lt;/p>
+&lt;h3 id="почему-atr--особенный-индикатор">&lt;strong>Почему ATR — особенный индикатор?&lt;/strong>&lt;/h3>
+&lt;p>ATR измеряет волатильность рынка, но его реализация содержит несколько интересных особенностей:&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>Требует структурных данных&lt;/strong> (бары с high, low, close)&lt;/li>
+&lt;li>&lt;strong>Имеет рекуррентную формулу&lt;/strong> как EMA&lt;/li>
+&lt;li>&lt;strong>Использует вспомогательную функцию&lt;/strong> (True Range)&lt;/li>
+&lt;li>&lt;strong>Имеет специальный случай&lt;/strong> для period=1&lt;/li>
+&lt;/ol>
+&lt;h3 id="архитектурные-решения">&lt;strong>Архитектурные решения&lt;/strong>&lt;/h3>
+&lt;h4 id="1-вспомогательная-функция-calculate-tr">&lt;strong>1. Вспомогательная функция calculate-tr&lt;/strong>&lt;/h4>
+&lt;p>Первое важное решение — вынесение расчета True Range в отдельную функцию:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">defn- &lt;/span>calculate-tr
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;Вычисляет истинный диапазон (True Range) для одного бара&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [prev-close bar]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#66d9ef">let &lt;/span>[h (&lt;span style="color:#e6db74">:high&lt;/span> bar)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> l (&lt;span style="color:#e6db74">:low&lt;/span> bar)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> c (&lt;span style="color:#e6db74">:close&lt;/span> bar)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> prev-close (or prev-close c) &lt;span style="color:#75715e">; Умное использование or для первого бара&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> tr1 (- h l)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> tr2 (&lt;span style="color:#a6e22e">Math/abs&lt;/span> (- h prev-close))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> tr3 (&lt;span style="color:#a6e22e">Math/abs&lt;/span> (- l prev-close))]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (max tr1 tr2 tr3)))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Почему это важно:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Изоляция сложности&lt;/strong> — основная функция &lt;code>atr&lt;/code> остается чистой&lt;/li>
+&lt;li>&lt;strong>Тестируемость&lt;/strong> — &lt;code>calculate-tr&lt;/code> можно тестировать отдельно&lt;/li>
+&lt;li>&lt;strong>Повторное использование&lt;/strong> — True Range может пригодиться elsewhere&lt;/li>
+&lt;/ul>
+&lt;h4 id="2-обработка-специального-случая-period1">&lt;strong>2. Обработка специального случая period=1&lt;/strong>&lt;/h4>
+&lt;p>Для period=1 ATR превращается в простой диапазон:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(= &lt;span style="color:#ae81ff">1&lt;/span> period) (&lt;span style="color:#a6e22e">-&amp;gt;&amp;gt;&lt;/span> bars
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (map &lt;span style="color:#f92672">#&lt;/span>(- (&lt;span style="color:#e6db74">:high&lt;/span> %) (&lt;span style="color:#e6db74">:low&lt;/span> %)))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (map &lt;span style="color:#f92672">#&lt;/span>(&lt;span style="color:#a6e22e">Math/abs&lt;/span> (double %)))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> last)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Инсайт:&lt;/strong> Специальные случаи часто упрощают вычисления и улучшают производительность.&lt;/p>
+&lt;h4 id="3-рекуррентная-формула-atr">&lt;strong>3. Рекуррентная формула ATR&lt;/strong>&lt;/h4>
+&lt;p>Основная формула использует рекуррентное вычисление как EMA:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(reduce (&lt;span style="color:#66d9ef">fn &lt;/span>[prev tr]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (double
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (/ (+ (* prev (dec period)) tr)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> period)))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> initial-atr
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> remaining-trs)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Красота:&lt;/strong> Та же элегантность, что и в EMA, но с другой математикой.&lt;/p>
+&lt;h3 id="почему-я-поместил-atr-в-simple">&lt;strong>Почему я поместил ATR в &amp;ldquo;simple&amp;rdquo;?&lt;/strong>&lt;/h3>
+&lt;p>Это был сознательный и неочевидный выбор. Вот мои доводы:&lt;/p>
+&lt;h4 id="аргументы-за-размещение-в-simple">&lt;strong>Аргументы ЗА размещение в simple:&lt;/strong>&lt;/h4>
+&lt;ol>
+&lt;li>&lt;strong>Математическая простота&lt;/strong> — в основе лежит макс(3 значения)&lt;/li>
+&lt;li>&lt;strong>Отсутствие сложных зависимостей&lt;/strong> — не зависит от других индикаторов&lt;/li>
+&lt;li>&lt;strong>Широкая распространенность&lt;/strong> — базовый индикатор волатильности&lt;/li>
+&lt;li>&lt;strong>Прозрачность алгоритма&lt;/strong> — логику легко понять и проверить&lt;/li>
+&lt;/ol>
+&lt;h4 id="аргументы-против">&lt;strong>Аргументы ПРОТИВ:&lt;/strong>&lt;/h4>
+&lt;ol>
+&lt;li>&lt;strong>Требует структурных данных&lt;/strong> — в отличие от простых числовых последовательностей&lt;/li>
+&lt;li>&lt;strong>Имеет рекуррентную природу&lt;/strong> — как &amp;ldquo;advanced&amp;rdquo; индикаторы&lt;/li>
+&lt;li>&lt;strong>Нужна вспомогательная функция&lt;/strong> — усложняет архитектуру&lt;/li>
+&lt;/ol>
+&lt;h4 id="компромиссное-решение">&lt;strong>Компромиссное решение:&lt;/strong>&lt;/h4>
+&lt;p>Разместил ATR в &lt;code>simple&lt;/code>, но:&lt;/p>
+&lt;ul>
+&lt;li>Сделал &lt;code>calculate-tr&lt;/code> private-функцией&lt;/li>
+&lt;li>Добавил тестирование&lt;/li>
+&lt;li>Подробно документировал особенности&lt;/li>
+&lt;/ul>
+&lt;h3 id="подводные-камни-реализации">&lt;strong>Подводные камни реализации&lt;/strong>&lt;/h3>
+&lt;h4 id="1-проблема-обработка-первого-бара">&lt;strong>1. Проблема: Обработка первого бара&lt;/strong>&lt;/h4>
+&lt;p>Как рассчитать TR для первого бара, если нет предыдущего close?&lt;/p>
+&lt;p>&lt;strong>Решение:&lt;/strong> Умное использование &lt;code>or&lt;/code>:&lt;/p>
+&lt;p>prev-close (or prev-close c) ; Используем текущий close если предыдущего нет&lt;/p>
+&lt;h4 id="2-проблема-производительность-на-больших-данных">&lt;strong>2. Проблема: Производительность на больших данных&lt;/strong>&lt;/h4>
+&lt;p>Рекуррентный &lt;code>reduce&lt;/code> может быть не оптимальным для очень больших временных рядов.&lt;/p>
+&lt;p>&lt;strong>Решение:&lt;/strong> Я оставил читаемость, но отметил возможность оптимизации:&lt;/p>
+&lt;p>;; Для оптимизации можно использовать transient и persistent!
+;; но оставил reduce для читаемости&lt;/p>
+&lt;h4 id="3-проблема-валидация-структуры-баров">&lt;strong>3. Проблема: Валидация структуры баров&lt;/strong>&lt;/h4>
+&lt;p>Что если бар не содержит нужных ключей?&lt;/p>
+&lt;p>&lt;strong>Решение:&lt;/strong> Добавил проверки в тестах, но в продакшене нужно больше валидации:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; В идеале добавить:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(when (or (not (every? &lt;span style="color:#f92672">#&lt;/span>(contains? % &lt;span style="color:#e6db74">:high&lt;/span>) bars))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (not (every? &lt;span style="color:#f92672">#&lt;/span>(contains? % &lt;span style="color:#e6db74">:low&lt;/span>) bars))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (not (every? &lt;span style="color:#f92672">#&lt;/span>(contains? % &lt;span style="color:#e6db74">:close&lt;/span>) bars)))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">throw&lt;/span> (&lt;span style="color:#a6e22e">Exception.&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Некорректная структура баров&amp;#34;&lt;/span>)))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="тестирование">&lt;strong>Тестирование&lt;/strong>&lt;/h3>
+&lt;p>Тесты для ATR особенно важны из-за сложной логики:&lt;/p>
+&lt;h4 id="тест-граничных-случаев">&lt;strong>Тест граничных случаев&lt;/strong>&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">testing&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Период 1 возвращает абсолютную разницу между максимумом и минимумом&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#66d9ef">let &lt;/span>[bars [{&lt;span style="color:#e6db74">:high&lt;/span> &lt;span style="color:#ae81ff">100.0&lt;/span> &lt;span style="color:#e6db74">:low&lt;/span> &lt;span style="color:#ae81ff">90.0&lt;/span> &lt;span style="color:#e6db74">:close&lt;/span> &lt;span style="color:#ae81ff">95.0&lt;/span>}]]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">is&lt;/span> (= &lt;span style="color:#ae81ff">10.0&lt;/span> (&lt;span style="color:#a6e22e">atr&lt;/span> bars &lt;span style="color:#ae81ff">1&lt;/span>)))))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="тест-недостаточных-данных">&lt;strong>Тест недостаточных данных&lt;/strong>&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">testing&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Недостаточное количество баров вызывает исключение&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#66d9ef">let &lt;/span>[bars [{&lt;span style="color:#e6db74">:high&lt;/span> &lt;span style="color:#ae81ff">100.0&lt;/span> &lt;span style="color:#e6db74">:low&lt;/span> &lt;span style="color:#ae81ff">90.0&lt;/span> &lt;span style="color:#e6db74">:close&lt;/span> &lt;span style="color:#ae81ff">95.0&lt;/span>}]]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">is&lt;/span> (&lt;span style="color:#a6e22e">thrown?&lt;/span> IllegalArgumentException (&lt;span style="color:#a6e22e">atr&lt;/span> bars &lt;span style="color:#ae81ff">2&lt;/span>)))))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="тест-корректности-расчета">&lt;strong>Тест корректности расчета&lt;/strong>&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">testing&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Правильный расчет ATR&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#66d9ef">let &lt;/span>[bars [{&lt;span style="color:#e6db74">:high&lt;/span> &lt;span style="color:#ae81ff">50.0&lt;/span> &lt;span style="color:#e6db74">:low&lt;/span> &lt;span style="color:#ae81ff">40.0&lt;/span> &lt;span style="color:#e6db74">:close&lt;/span> &lt;span style="color:#ae81ff">45.0&lt;/span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> {&lt;span style="color:#e6db74">:high&lt;/span> &lt;span style="color:#ae81ff">55.0&lt;/span> &lt;span style="color:#e6db74">:low&lt;/span> &lt;span style="color:#ae81ff">45.0&lt;/span> &lt;span style="color:#e6db74">:close&lt;/span> &lt;span style="color:#ae81ff">50.0&lt;/span>}]]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">is&lt;/span> (&lt;span style="color:#a6e22e">number?&lt;/span> (&lt;span style="color:#a6e22e">atr&lt;/span> bars &lt;span style="color:#ae81ff">2&lt;/span>)))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">is&lt;/span> (pos? (&lt;span style="color:#a6e22e">atr&lt;/span> bars &lt;span style="color:#ae81ff">2&lt;/span>)))))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="ключевые-особенности">&lt;strong>Ключевые особенности&lt;/strong>&lt;/h3>
+&lt;ol>
+&lt;li>&lt;strong>Границы между &amp;ldquo;simple&amp;rdquo; и &amp;ldquo;advanced&amp;rdquo; размыты&lt;/strong> — классификация субъективна&lt;/li>
+&lt;li>&lt;strong>Вспомогательные функции&lt;/strong> — мощный инструмент для управления сложностью&lt;/li>
+&lt;li>&lt;strong>Специальные случаи&lt;/strong> часто упрощают реализацию&lt;/li>
+&lt;li>&lt;strong>Структурные данные&lt;/strong> требуют особого подхода к валидации&lt;/li>
+&lt;li>&lt;strong>Рекуррентные формулы&lt;/strong> универсальны для многих индикаторов&lt;/li>
+&lt;/ol>
+&lt;h3 id="почему-atr-все-же-отправился-в-simple">&lt;strong>Почему ATR все же отправился в simple&lt;/strong>&lt;/h3>
+&lt;p>В итоге я решил, что ATR уйдет в simple потому что:&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>Концептуальная простота&lt;/strong> — измерение диапазона цен&lt;/li>
+&lt;li>&lt;strong>Отсутствие композиции&lt;/strong> — не строится на других индикаторах&lt;/li>
+&lt;li>&lt;strong>Прозрачность алгоритма&lt;/strong> — можно понять без глубокой математики&lt;/li>
+&lt;/ol>
+&lt;h3 id="заключение-гибкая-классификация-вместо-жестких-правил">&lt;strong>Заключение: Гибкая классификация вместо жестких правил&lt;/strong>&lt;/h3>
+&lt;p>Разработка ATR научила меня, что классификация индикаторов — это не жесткая система, а гибкий инструмент.&lt;/p>
+&lt;p>&lt;strong>Что определяет &amp;ldquo;простоту&amp;rdquo;:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>✅ Концептуальная понятность&lt;/li>
+&lt;li>✅ Отсутствие сложных зависимостей&lt;/li>
+&lt;li>✅ Простота реализации&lt;/li>
+&lt;li>✅ Широта применения&lt;/li>
+&lt;/ul>
+&lt;p>ATR проходит по всем этим критериям, несмотря на некоторые технические сложности.&lt;/p>
+&lt;p>&lt;strong>Финал:&lt;/strong> ATR остался в &lt;code>simple&lt;/code>, но с пометкой о его &amp;ldquo;продвинутых&amp;rdquo; особенностях в документации.&lt;/p>
+&lt;p>Исходный код доступен на &lt;a href="https://gitflic.ru/project/konkin/taljure">GitFlic&lt;/a>.&lt;/p>
+&lt;p>&lt;strong>А как бы вы классифицировали ATR? Simple или advanced?&lt;/strong>&lt;/p></content></item><item><title>Разработка индикатора EMA</title><link>https://program-mister.ru/posts/taljure-ema/</link><pubDate>Wed, 27 Aug 2025 00:00:00 +0000</pubDate><author/><guid>https://program-mister.ru/posts/taljure-ema/</guid><description>В этой статье я хочу рассказать о разработке одного из моих любимых индикаторов — экспоненциальной скользящей средней (EMA). В отличие от простой SMA, EMA обладает математической элегантностью и практической полезностью, что сделало его разработку особенно интересной.</description><content type="html">&lt;h1 id="разработка-индикатора-ema">Разработка индикатора EMA&lt;/h1>
+&lt;h2 id="разработка-индикатора-ema-элегантность-экспоненциального-сглаживания-в-clojure">&lt;strong>Разработка индикатора EMA: Элегантность экспоненциального сглаживания в Clojure&lt;/strong>&lt;/h2>
+&lt;p>&lt;img src="https://program-mister.ru/images/posts/taljure/taljure-ema.png" alt="Разработка индикатора EMA">&lt;/p>
+&lt;p>В этой статье я хочу рассказать о разработке одного из моих любимых индикаторов — экспоненциальной скользящей средней (EMA). В отличие от простой SMA, EMA обладает математической элегантностью и практической полезностью, что сделало его разработку особенно интересной.&lt;/p>
+&lt;h3 id="математическая-красота-ema">&lt;strong>Математическая красота EMA&lt;/strong>&lt;/h3>
+&lt;p>EMA — это не просто среднее значение. Это взвешенное среднее, где более поздние цены имеют больший вес. Формула поражает своей элегантностью:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>EMA_today &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#f92672">(&lt;/span>price_today * k&lt;span style="color:#f92672">)&lt;/span> + &lt;span style="color:#f92672">(&lt;/span>EMA_yesterday * &lt;span style="color:#f92672">(&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span> - k&lt;span style="color:#f92672">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>где k &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">2&lt;/span> / &lt;span style="color:#f92672">(&lt;/span>period + 1&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Ключевое преимущество:&lt;/strong> EMA реагирует на новые данные быстрее, чем SMA, но при этом сохраняет плавность.&lt;/p>
+&lt;h3 id="архитектурные-решения">&lt;strong>Архитектурные решения&lt;/strong>&lt;/h3>
+&lt;h5 id="1-многоарность-для-гибкости">&lt;strong>1. Многоарность для гибкости&lt;/strong>&lt;/h5>
+&lt;p>Реализовал две версии функции:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; Версия без предыдущего значения (расчет с нуля)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>([prices period]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">ema&lt;/span> prices period nil))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; Версия с предыдущим значением (продолжение расчета)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>([prices period prev-ema]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">;; основная логика&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> )
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Это позволяет:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Начинать расчет&lt;/strong> с чистого листа&lt;/li>
+&lt;li>&lt;strong>Продолжать расчет&lt;/strong> с последнего известного значения&lt;/li>
+&lt;li>&lt;strong>Объединять&lt;/strong> данные из разных источников&lt;/li>
+&lt;/ul>
+&lt;h5 id="2-умная-инициализация">&lt;strong>2. Умная инициализация&lt;/strong>&lt;/h5>
+&lt;p>Самое интересное в EMA — инициализация. Если нет предыдущего значения, мы используем SMA:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">let &lt;/span>[initial-ema (&lt;span style="color:#66d9ef">if &lt;/span>(&lt;span style="color:#a6e22e">some?&lt;/span> prev-ema)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> prev-ema
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (/ (reduce + (take period prices)) period))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Это стандартный подход, обеспечивающий плавный старт расчета.&lt;/p>
+&lt;h5 id="3-элегантное-использование-reductions">&lt;strong>3. Элегантное использование reductions&lt;/strong>&lt;/h5>
+&lt;p>Сердце реализации — функция &lt;code>reductions&lt;/code>:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">let &lt;/span>[ema-step (&lt;span style="color:#66d9ef">fn &lt;/span>[prev-ema price]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (+ (* k price) (* (- &lt;span style="color:#ae81ff">1&lt;/span> k) prev-ema)))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ema-values (&lt;span style="color:#a6e22e">reductions&lt;/span> ema-step initial-ema prices-to-process)]
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Почему это красиво:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>reductions&lt;/code> идеально отражает рекуррентную природу EMA&lt;/li>
+&lt;li>Функциональный стиль без изменяемого состояния&lt;/li>
+&lt;li>Читаемость и выразительность&lt;/li>
+&lt;/ul>
+&lt;h3 id="подводные-камни-и-решения">&lt;strong>Подводные камни и решения&lt;/strong>&lt;/h3>
+&lt;h5 id="1-проблема-точность-вычислений">&lt;strong>1. Проблема: Точность вычислений&lt;/strong>&lt;/h5>
+&lt;p>Как и с SMA, float-арифметика преподнесла сюрпризы:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; Было:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">let &lt;/span>[k (/ &lt;span style="color:#ae81ff">2&lt;/span> (inc period))] &lt;span style="color:#75715e">; Целочисленное деление!&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; Стало:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">let &lt;/span>[k (/ &lt;span style="color:#ae81ff">2.0&lt;/span> (inc period))] &lt;span style="color:#75715e">; Явное указание float&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h5 id="2-проблема-специальный-случай-period1">&lt;strong>2. Проблема: Специальный случай period=1&lt;/strong>&lt;/h5>
+&lt;p>При period=1 EMA должна вести себя особым образом:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>;; k &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">2&lt;/span> / &lt;span style="color:#f92672">(&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span> + 1&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#f92672">=&lt;/span> 1.0
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>;; EMA &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#f92672">(&lt;/span>price * 1.0&lt;span style="color:#f92672">)&lt;/span> + &lt;span style="color:#f92672">(&lt;/span>prev_ema * 0.0&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#f92672">=&lt;/span> price
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Но это ломало логику инициализации. Решение:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(when (= period &lt;span style="color:#ae81ff">1&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">vec&lt;/span> (rest prices))) &lt;span style="color:#75715e">; Просто возвращаем цены без первого элемента&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h5 id="3-проблема-валидация-предыдущего-значения">&lt;strong>3. Проблема: Валидация предыдущего значения&lt;/strong>&lt;/h5>
+&lt;p>Что если передадут &lt;code>prev-ema&lt;/code> как &lt;code>NaN&lt;/code> или бесконечность? Добавил проверку:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(when (and (&lt;span style="color:#a6e22e">some?&lt;/span> prev-ema)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (or (&lt;span style="color:#a6e22e">Double/isNaN&lt;/span> prev-ema)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">Double/isInfinite&lt;/span> prev-ema)))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">throw&lt;/span> (&lt;span style="color:#a6e22e">Exception.&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Некорректное предыдущее значение EMA&amp;#34;&lt;/span>)))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="comprehensive-тестирование">&lt;strong>Comprehensive тестирование&lt;/strong>&lt;/h3>
+&lt;p>Тесты для EMA получились особенно интересными:&lt;/p>
+&lt;h5 id="тест-продолжения-расчета">&lt;strong>Тест продолжения расчета&lt;/strong>&lt;/h5>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">deftest&lt;/span> ema-continuation-test
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#66d9ef">let &lt;/span>[prices-part1 [&lt;span style="color:#ae81ff">22.27&lt;/span> &lt;span style="color:#ae81ff">22.19&lt;/span> &lt;span style="color:#ae81ff">22.08&lt;/span> &lt;span style="color:#ae81ff">22.17&lt;/span> &lt;span style="color:#ae81ff">22.18&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> prices-part2 [&lt;span style="color:#ae81ff">22.13&lt;/span> &lt;span style="color:#ae81ff">22.23&lt;/span> &lt;span style="color:#ae81ff">22.43&lt;/span> &lt;span style="color:#ae81ff">22.24&lt;/span> &lt;span style="color:#ae81ff">22.29&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> period &lt;span style="color:#ae81ff">3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> first-ema (&lt;span style="color:#a6e22e">ema&lt;/span> prices-part1 period)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> last-val (last first-ema)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> second-ema (&lt;span style="color:#a6e22e">ema&lt;/span> prices-part2 period last-val)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> full-ema (&lt;span style="color:#a6e22e">ema&lt;/span> (concat prices-part1 prices-part2) period)]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">is&lt;/span> (&lt;span style="color:#a6e22e">approx=&lt;/span> (last second-ema)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (nth full-ema (+ (count first-ema) (count second-ema) &lt;span style="color:#ae81ff">-1&lt;/span>))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ae81ff">0.01&lt;/span>))))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Важность:&lt;/strong> Этот тест гарантирует, что продолжение расчета дает идентичный результат полному расчету.&lt;/p>
+&lt;h4 id="тест-математической-корректности">&lt;strong>Тест математической корректности&lt;/strong>&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">deftest&lt;/span> ema-math-test
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#66d9ef">let &lt;/span>[prices [&lt;span style="color:#ae81ff">1.0&lt;/span> &lt;span style="color:#ae81ff">2.0&lt;/span> &lt;span style="color:#ae81ff">3.0&lt;/span> &lt;span style="color:#ae81ff">4.0&lt;/span> &lt;span style="color:#ae81ff">5.0&lt;/span> &lt;span style="color:#ae81ff">6.0&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> period &lt;span style="color:#ae81ff">2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> result (&lt;span style="color:#a6e22e">ema&lt;/span> prices period)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> k (/ &lt;span style="color:#ae81ff">2.0&lt;/span> (+ period &lt;span style="color:#ae81ff">1&lt;/span>))] &lt;span style="color:#75715e">; k = 2/3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">;; Ручной расчет каждого шага&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#66d9ef">let &lt;/span>[ema1 (+ (* &lt;span style="color:#ae81ff">3.0&lt;/span> k) (* &lt;span style="color:#ae81ff">1.5&lt;/span> (- &lt;span style="color:#ae81ff">1&lt;/span> k))) &lt;span style="color:#75715e">; = 2.5&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ema2 (+ (* &lt;span style="color:#ae81ff">4.0&lt;/span> k) (* ema1 (- &lt;span style="color:#ae81ff">1&lt;/span> k))) &lt;span style="color:#75715e">; = 3.5&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ema3 (+ (* &lt;span style="color:#ae81ff">5.0&lt;/span> k) (* ema2 (- &lt;span style="color:#ae81ff">1&lt;/span> k))) &lt;span style="color:#75715e">; = 4.5&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ema4 (+ (* &lt;span style="color:#ae81ff">6.0&lt;/span> k) (* ema3 (- &lt;span style="color:#ae81ff">1&lt;/span> k)))] &lt;span style="color:#75715e">; = 5.5&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">is&lt;/span> (&lt;span style="color:#a6e22e">approx=&lt;/span> (first result) &lt;span style="color:#ae81ff">2.5&lt;/span> &lt;span style="color:#ae81ff">0.0001&lt;/span>))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">is&lt;/span> (&lt;span style="color:#a6e22e">approx=&lt;/span> (second result) &lt;span style="color:#ae81ff">3.5&lt;/span> &lt;span style="color:#ae81ff">0.0001&lt;/span>)))))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Фишка:&lt;/strong> Рассчитываю ожидаемые значения вручную прямо в тесте — это делает проверку максимально прозрачной.&lt;/p>
+&lt;h3 id="производительность-и-оптимизации">&lt;strong>Производительность и оптимизации&lt;/strong>&lt;/h3>
+&lt;h5 id="1-преобразование-в-вектор">&lt;strong>1. Преобразование в вектор&lt;/strong>&lt;/h5>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">let &lt;/span>[prices (&lt;span style="color:#a6e22e">vec&lt;/span> (map double prices))]
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Зачем? &lt;code>vector&lt;/code> обеспечивает:&lt;/p>
+&lt;ul>
+&lt;li>Быстрый доступ по индексу для &lt;code>take&lt;/code> и &lt;code>drop&lt;/code>&lt;/li>
+&lt;li>Предсказуемую производительность&lt;/li>
+&lt;li>Эффективное использование памяти&lt;/li>
+&lt;/ul>
+&lt;h5 id="2-оптимизация-для-больших-данных">&lt;strong>2. Оптимизация для больших данных&lt;/strong>&lt;/h5>
+&lt;p>Для очень больших временных рядов можно добавить:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">:else&lt;/span> (&lt;span style="color:#a6e22e">persistent!&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (reduce (&lt;span style="color:#66d9ef">fn &lt;/span>[acc price]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">conj!&lt;/span> acc (&lt;span style="color:#a6e22e">ema-step&lt;/span> (last acc) price)))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">transient&lt;/span> [initial-ema])
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> prices-to-process))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Но и оставил читаемость &lt;code>reductions&lt;/code> как более важную.&lt;/p>
+&lt;h3 id="ключевые-инсайты">&lt;strong>Ключевые инсайты&lt;/strong>&lt;/h3>
+&lt;ol>
+&lt;li>&lt;strong>Рекуррентные формулы&lt;/strong> идеально ложатся на &lt;code>reductions&lt;/code>&lt;/li>
+&lt;li>&lt;strong>Многоарность&lt;/strong> — мощный инструмент для гибкого API&lt;/li>
+&lt;li>&lt;strong>Инициализация через SMA&lt;/strong> — классический подход, который работает&lt;/li>
+&lt;li>&lt;strong>Тестирование продолжения&lt;/strong> критически важно для финансовых индикаторов&lt;/li>
+&lt;li>&lt;strong>Явные преобразования типов&lt;/strong> предотвращают едва заметные ошибки&lt;/li>
+&lt;/ol>
+&lt;h3 id="почему-ema-стал-моим-любимцем">&lt;strong>Почему EMA стал моим любимцем&lt;/strong>&lt;/h3>
+&lt;ul>
+&lt;li>&lt;strong>Математическая элегантность&lt;/strong> — простая формула с глубоким смыслом&lt;/li>
+&lt;li>&lt;strong>Практическая полезность&lt;/strong> — широко используется в реальной торговле&lt;/li>
+&lt;li>&lt;strong>Интересная реализация&lt;/strong> — возможность использовать функциональные возможности Clojure&lt;/li>
+&lt;li>&lt;strong>Комплексное тестирование&lt;/strong> — много интересных edge cases&lt;/li>
+&lt;/ul>
+&lt;h3 id="заключение-идеальный-брак-математики-и-кода">&lt;strong>Заключение: Идеальный брак математики и кода&lt;/strong>&lt;/h3>
+&lt;p>Разработка EMA показала мне, как красивая математическая идея может быть элегантно выражена в коде. Сочетание рекуррентной формулы с функциональным программированием создало не просто рабочую функцию, а настоящее произведение инженерного искусства.&lt;/p>
+&lt;p>&lt;strong>Статистика реализации:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>✅ 15 строк математической логики&lt;/li>
+&lt;li>✅ 10 строк валидации&lt;/li>
+&lt;li>✅ 5 специальных случаев&lt;/li>
+&lt;li>✅ 50+ строк тестов с ручными расчетами&lt;/li>
+&lt;li>✅ 2 арности для гибкости&lt;/li>
+&lt;/ul>
+&lt;p>Теперь этот индикатор готов к работе в реальных торговых системах, обеспечивая точность и надежность.&lt;/p>
+&lt;p>Исходный код доступен на &lt;a href="https://gitflic.ru/project/konkin/taljure">GitFlic&lt;/a>.&lt;/p>
+&lt;p>&lt;strong>А какой индикатор ваш любимый и почему?&lt;/strong>&lt;/p></content></item><item><title>Разработка индикатора SMA</title><link>https://program-mister.ru/posts/taljure-sma/</link><pubDate>Tue, 26 Aug 2025 00:00:00 +0000</pubDate><author/><guid>https://program-mister.ru/posts/taljure-sma/</guid><description>В этой статье я хочу показать эволюцию разработки, казалось бы, простой функции — Simple Moving Average (SMA). То, что начиналось как несколько строк математики, превратилось в robust промышленное решение с comprehensive тестированием.</description><content type="html">&lt;h1 id="разработка-индикатора-sma">Разработка индикатора SMA&lt;/h1>
+&lt;h2 id="разработка-индикатора-sma-от-наивной-реализации-к-промышленному-решению">&lt;strong>Разработка индикатора SMA: От наивной реализации к промышленному решению&lt;/strong>&lt;/h2>
+&lt;p>&lt;img src="https://program-mister.ru/images/posts/taljure/taljure-sma.png" alt="Разработка индикатора SMA">&lt;/p>
+&lt;p>В этой статье я хочу показать эволюцию разработки, казалось бы, простой функции — Simple Moving Average (SMA). То, что начиналось как несколько строк математики, превратилось в robust промышленное решение с comprehensive тестированием.&lt;/p>
+&lt;h3 id="начало-наивная-реализация">&lt;strong>Начало: Наивная реализация&lt;/strong>&lt;/h3>
+&lt;p>Изначально SMA казался элементарным:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">defn &lt;/span>naive-sma [prices period]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">-&amp;gt;&amp;gt;&lt;/span> (&lt;span style="color:#a6e22e">partition&lt;/span> period &lt;span style="color:#ae81ff">1&lt;/span> prices)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (map &lt;span style="color:#f92672">#&lt;/span>(/ (apply + %) period))))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>20 минут работы&lt;/strong> — и готово? Как бы не так! Первые же тесты показали, что реальный мир сложнее.&lt;/p>
+&lt;h3 id="этап-1-обнаружение-edge-cases">&lt;strong>Этап 1: Обнаружение edge cases&lt;/strong>&lt;/h3>
+&lt;p>Мои первые тесты выявили шокирующие проблемы:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">naive-sma&lt;/span> [] &lt;span style="color:#ae81ff">5&lt;/span>) &lt;span style="color:#75715e">; NullPointerException!&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">naive-sma&lt;/span> [&lt;span style="color:#ae81ff">1&lt;/span> nil &lt;span style="color:#ae81ff">3&lt;/span>] &lt;span style="color:#ae81ff">2&lt;/span>) &lt;span style="color:#75715e">; Тот же NPE&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">naive-sma&lt;/span> [&lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#ae81ff">2&lt;/span>] &lt;span style="color:#ae81ff">3&lt;/span>) &lt;span style="color:#75715e">; Бессмысленный результат&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Инсайт:&lt;/strong> Математическая корректность ≠ промышленная надежность.&lt;/p>
+&lt;h4 id="этап-2-защитное-программирование">&lt;strong>Этап 2: Защитное программирование&lt;/strong>&lt;/h4>
+&lt;p>Добавил валидацию входных данных:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">defn &lt;/span>sma [prices period]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">;; Проверка, что входные данные являются последовательностью, не пусты и не содержат nil&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (when (or (not (&lt;span style="color:#a6e22e">sequential?&lt;/span> prices))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">empty?&lt;/span> prices)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (some nil? prices))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">throw&lt;/span> (&lt;span style="color:#a6e22e">IllegalArgumentException.&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Некорректный список цен...&amp;#34;&lt;/span>)))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">;; Проверка периода&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (when (or (not (&lt;span style="color:#a6e22e">pos-int?&lt;/span> period))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&amp;gt; period (count prices)))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">throw&lt;/span> (&lt;span style="color:#a6e22e">IllegalArgumentException.&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Некорректный период...&amp;#34;&lt;/span>)))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">;; Основная логика...&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="этап-3-борьба-с-особенностями-float-арифметики">&lt;strong>Этап 3: Борьба с особенностями float-арифметики&lt;/strong>&lt;/h3>
+&lt;p>Новые тесты выявили проблемы с особых значений:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">sma&lt;/span> [&lt;span style="color:#ae81ff">1&lt;/span> Double/NaN &lt;span style="color:#ae81ff">3&lt;/span>] &lt;span style="color:#ae81ff">2&lt;/span>) &lt;span style="color:#75715e">; Непонятное поведение&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">sma&lt;/span> [&lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#f92672">##&lt;/span>Inf &lt;span style="color:#ae81ff">3&lt;/span>] &lt;span style="color:#ae81ff">2&lt;/span>) &lt;span style="color:#75715e">; Бесконечности ломали расчеты&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Решение — явная проверка:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; Проверка на наличие NaN, Infinity или -Infinity&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(when (some &lt;span style="color:#f92672">#&lt;/span>(or (&lt;span style="color:#a6e22e">Double/isNaN&lt;/span> %) (&lt;span style="color:#a6e22e">Double/isInfinite&lt;/span> %)) prices)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">throw&lt;/span> (&lt;span style="color:#a6e22e">IllegalArgumentException.&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Некорректный список цен: содержит NaN или Infinity&amp;#34;&lt;/span>)))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="этап-4-специальный-случай-period1">&lt;strong>Этап 4: Специальный случай period=1&lt;/strong>&lt;/h3>
+&lt;p>Оказалось, что при period=1 логика ломается:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">sma&lt;/span> [&lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#ae81ff">2&lt;/span> &lt;span style="color:#ae81ff">3&lt;/span>] &lt;span style="color:#ae81ff">1&lt;/span>) &lt;span style="color:#75715e">; Ожидалось: [2.0 3.0], получалось: [1.0 2.0 3.0]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Пришлось добавить специальную обработку:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">if &lt;/span>(= period &lt;span style="color:#ae81ff">1&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">-&amp;gt;&amp;gt;&lt;/span> prices
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">rest&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">mapv&lt;/span> double))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">;; Основная логика&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> )
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="этап-5-тестирование-как-дизайн-инструмент">&lt;strong>Этап 5: Тестирование как дизайн-инструмент&lt;/strong>&lt;/h3>
+&lt;p>Создал юнит-тест, который стал моим главным дизайн-инструментом:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">deftest&lt;/span> sma-math-test
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">testing&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Базовые математические расчеты&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">is&lt;/span> (= (&lt;span style="color:#a6e22e">sma&lt;/span> [&lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#ae81ff">2&lt;/span> &lt;span style="color:#ae81ff">3&lt;/span> &lt;span style="color:#ae81ff">4&lt;/span> &lt;span style="color:#ae81ff">5&lt;/span>] &lt;span style="color:#ae81ff">2&lt;/span>) [&lt;span style="color:#ae81ff">1.5&lt;/span> &lt;span style="color:#ae81ff">2.5&lt;/span> &lt;span style="color:#ae81ff">3.5&lt;/span> &lt;span style="color:#ae81ff">4.5&lt;/span>]))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">is&lt;/span> (= (&lt;span style="color:#a6e22e">sma&lt;/span> [&lt;span style="color:#ae81ff">10&lt;/span> &lt;span style="color:#ae81ff">20&lt;/span> &lt;span style="color:#ae81ff">30&lt;/span> &lt;span style="color:#ae81ff">40&lt;/span>] &lt;span style="color:#ae81ff">2&lt;/span>) [&lt;span style="color:#ae81ff">15.0&lt;/span> &lt;span style="color:#ae81ff">25.0&lt;/span> &lt;span style="color:#ae81ff">35.0&lt;/span>]))))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">deftest&lt;/span> sma-special-cases-test
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">testing&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Специальные случаи&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">testing&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Период = 1&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">is&lt;/span> (= (&lt;span style="color:#a6e22e">sma&lt;/span> [&lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#ae81ff">2&lt;/span> &lt;span style="color:#ae81ff">3&lt;/span>] &lt;span style="color:#ae81ff">1&lt;/span>) [&lt;span style="color:#ae81ff">2.0&lt;/span> &lt;span style="color:#ae81ff">3.0&lt;/span>]))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">is&lt;/span> (= (&lt;span style="color:#a6e22e">sma&lt;/span> [&lt;span style="color:#ae81ff">5.5&lt;/span>] &lt;span style="color:#ae81ff">1&lt;/span>) [])))))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="этап-6-тонкая-настройка-числовой-точности">&lt;strong>Этап 6: Тонкая настройка числовой точности&lt;/strong>&lt;/h3>
+&lt;p>Обнаружились проблемы с разными типами чисел:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">sma&lt;/span> [&lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#ae81ff">2.0&lt;/span> &lt;span style="color:#ae81ff">3&lt;/span>/1 &lt;span style="color:#ae81ff">4&lt;/span>N] &lt;span style="color:#ae81ff">2&lt;/span>) &lt;span style="color:#75715e">; Смешанные типы → неожиданные результаты&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Решение — явное приведение к double:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">let &lt;/span>[prices (&lt;span style="color:#a6e22e">vec&lt;/span> (map double prices))] &lt;span style="color:#75715e">; Преобразуем цены в вектор значений с плавающей точкой&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">;; дальнейшие вычисления&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="итоговая-архитектура">&lt;strong>Итоговая архитектура&lt;/strong>&lt;/h3>
+&lt;p>Вот что получилось в результате итераций:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">defn &lt;/span>sma
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;Вычисление простой скользящей средней (SMA).&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [prices period]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">;; Валидация входных данных (3 уровня проверок)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">;; Специальный случай period=1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">;; Основная логика с преобразованием типов&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">;; Обработка числовой точности&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> )
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="ключевые-инсайты-разработки">&lt;strong>Ключевые инсайты разработки&lt;/strong>&lt;/h3>
+&lt;ol>
+&lt;li>&lt;strong>Защитное программирование&lt;/strong> — библиотечные функции должны быть неубиваемыми&lt;/li>
+&lt;li>&lt;strong>Явное лучше неявного&lt;/strong> — явные проверки и преобразования типов&lt;/li>
+&lt;li>&lt;strong>Тестирование граничных случаев&lt;/strong> — happy path покрывает только 20% реального использования&lt;/li>
+&lt;li>&lt;strong>Документация исключений&lt;/strong> — пользователь должен знать, чего ожидать&lt;/li>
+&lt;li>&lt;strong>Производительность vs. надежность&lt;/strong> — сначала надежность, потом оптимизация&lt;/li>
+&lt;/ol>
+&lt;h3 id="что-осталось-за-кадром">&lt;strong>Что осталось за кадром&lt;/strong>&lt;/h3>
+&lt;p>В финальной версии я убрал тесты с очень большими числами и списками из-за проблем с стабильностью в CI/CD, но оставил как комментарии для будущих оптимизаций.&lt;/p>
+&lt;h3 id="заключение-простота-как-сложная-цель">&lt;strong>Заключение: Простота как сложная цель&lt;/strong>&lt;/h3>
+&lt;p>SMA научил меня, что &lt;strong>простота пользовательского API&lt;/strong> требует &lt;strong>сложности внутренней реализации&lt;/strong>. То, что выглядит как элементарная математика, превращается в комплексную инженерную задачу при промышленном использовании.&lt;/p>
+&lt;p>&lt;strong>Финальная статистика:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>✅ 20 строк математической логики&lt;/li>
+&lt;li>✅ 15 строк валидации и проверок&lt;/li>
+&lt;li>✅ 50+ строк тестов&lt;/li>
+&lt;li>✅ 5 специальных случаев&lt;/li>
+&lt;li>✅ 10+ edge cases&lt;/li>
+&lt;/ul>
+&lt;p>Теперь эта функция готова к работе в реальных торговых системах, а не только в учебных примерах.&lt;/p>
+&lt;p>Исходный код доступен на &lt;a href="https://gitflic.ru/project/konkin/taljure">GitFlic&lt;/a>.&lt;/p>
+&lt;p>&lt;strong>С какими подобными моментами сталкивались вы при разработке &amp;ldquo;простых&amp;rdquo; математических функций?&lt;/strong>&lt;/p></content></item><item><title>Разработка индикатора RSI</title><link>https://program-mister.ru/posts/taljure-rsi/</link><pubDate>Mon, 25 Aug 2025 00:00:00 +0000</pubDate><author/><guid>https://program-mister.ru/posts/taljure-rsi/</guid><description>В сегодняшней статье хочу поделиться опытом разработки функции `rsi` — индикатора относительной силы. Это был один из самых интересных и поучительных этапов создания библиотеки Taljure, где теория алготрейдинга встретилась с практикой функционального программирования.</description><content type="html">&lt;h1 id="разработка-индикатора-rsi-на-clojure">Разработка индикатора RSI на Clojure&lt;/h1>
+&lt;h2 id="разработка-индикатора-rsi-на-clojure-подводные-камни-и-прозрения">&lt;strong>Разработка индикатора RSI на Clojure: Подводные камни и прозрения&lt;/strong>&lt;/h2>
+&lt;p>&lt;img src="https://program-mister.ru/images/posts/taljure/taljure-rsi.png" alt="Разработка индикатора RSI">&lt;/p>
+&lt;p>В сегодняшней статье хочу поделиться опытом разработки функции &lt;code>rsi&lt;/code> — индикатора относительной силы. Это был один из самых интересных и поучительных этапов создания библиотеки Taljure, где теория алготрейдинга встретилась с практикой функционального программирования.&lt;/p>
+&lt;h3 id="замысел-элегантная-математика-в-функциональном-стиле">&lt;strong>Замысел: Элегантная математика в функциональном стиле&lt;/strong>&lt;/h3>
+&lt;p>Изначально концепция казалась простой. Формула RSI выглядит элегантно:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>RSI &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">100&lt;/span> - &lt;span style="color:#f92672">(&lt;/span>&lt;span style="color:#ae81ff">100&lt;/span> / &lt;span style="color:#f92672">(&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span> + RS&lt;span style="color:#f92672">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>где RS &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#f92672">(&lt;/span>средний рост&lt;span style="color:#f92672">)&lt;/span> / &lt;span style="color:#f92672">(&lt;/span>среднее падение&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Я представлял себе что-то вроде:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>defn simple-rsi &lt;span style="color:#f92672">[&lt;/span>prices&lt;span style="color:#f92672">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">(&lt;/span>let &lt;span style="color:#f92672">[&lt;/span>diffs &lt;span style="color:#f92672">(&lt;/span>map - &lt;span style="color:#f92672">(&lt;/span>rest prices&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#f92672">(&lt;/span>butlast prices&lt;span style="color:#f92672">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> gains &lt;span style="color:#f92672">(&lt;/span>filter pos? diffs&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> losses &lt;span style="color:#f92672">(&lt;/span>filter neg? diffs&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> rs &lt;span style="color:#f92672">(&lt;/span>/ &lt;span style="color:#f92672">(&lt;/span>mean gains&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#f92672">(&lt;/span>mean losses&lt;span style="color:#f92672">))]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">(&lt;/span>- &lt;span style="color:#ae81ff">100&lt;/span> &lt;span style="color:#f92672">(&lt;/span>/ &lt;span style="color:#ae81ff">100&lt;/span> &lt;span style="color:#f92672">(&lt;/span>inc rs&lt;span style="color:#f92672">)))))&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Наивное предположение:&lt;/strong> &amp;ldquo;Это же просто арифметика! Закончу за 15 минут&amp;rdquo;.&lt;/p>
+&lt;p>Реальность оказалась куда интереснее.&lt;/p>
+&lt;h3 id="подводный-камень-1-коварство-крайних-случаев">&lt;strong>Подводный камень №1: Коварство крайних случаев&lt;/strong>&lt;/h3>
+&lt;p>Первое же тестирование на реальных данных показало проблему. Что если:&lt;/p>
+&lt;ul>
+&lt;li>Все цены одинаковые?&lt;/li>
+&lt;li>Цены только растут?&lt;/li>
+&lt;li>Цены только падают?&lt;/li>
+&lt;li>В данных меньше 15 элементов?&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Мое первое &amp;ldquo;прозрение&amp;rdquo;:&lt;/strong> Хорошая библиотечная функция должна &lt;strong>никогда не падать&lt;/strong> и возвращать предсказуемый результат даже на некорректных данных.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; Было: &lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">defn &lt;/span>rsi [prices] ...) &lt;span style="color:#75715e">; Могла упасть с ArithmeticException&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; Стало:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">defn &lt;/span>rsi [prices period]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">try&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (when (&amp;lt; (count prices) (inc period))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">throw&lt;/span> (&lt;span style="color:#a6e22e">ex-info&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Недостаточно данных&amp;#34;&lt;/span> {...})))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">;; ... сложная логика с проверками&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">catch&lt;/span> Exception e nil))) &lt;span style="color:#75715e">; Возвращаем nil при ошибках&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="подводный-камень-2-разные-интерпретации-среднего-значения">&lt;strong>Подводный камень №2: Разные интерпретации &amp;ldquo;среднего&amp;rdquo; значения&lt;/strong>&lt;/h3>
+&lt;p>Изначально я использовал простое среднее арифметическое для подсчета среднего роста и падения. Но в процессе тестирования обнаружил, что:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Традиционный RSI&lt;/strong> использует сглаженное среднее (smoothed average)&lt;/li>
+&lt;li>&lt;strong>Некоторые реализации&lt;/strong> используют экспоненциальное скользящее среднее (EMA)&lt;/li>
+&lt;li>&lt;strong>Другие подходы&lt;/strong> используют простое среднее арифметическое&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Решение:&lt;/strong> Я выбрал наиболее распространенный подход с простым средним, но &lt;strong>документировал это поведение&lt;/strong> в коде:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; Вспомогательная функция для скользящего среднего&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>moving-avg (&lt;span style="color:#66d9ef">fn &lt;/span>[coll]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (when (seq coll) &lt;span style="color:#75715e">; Важно: проверка на пустую коллекцию!&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (/ (reduce + &lt;span style="color:#ae81ff">0.0&lt;/span> coll) (count coll)))) &lt;span style="color:#75715e">; 0.0 для float-арифметики&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="подводный-камень-3-точность-вычислений-и-float-арифметика">&lt;strong>Подводный камень №3: Точность вычислений и float-арифметика&lt;/strong>&lt;/h3>
+&lt;p>Первые тесты показывали небольшие расхождения с эталонными значениями. Причина:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Целочисленное деление&lt;/strong> в Clojure по умолчанию&lt;/li>
+&lt;li>&lt;strong>Накопление ошибок округления&lt;/strong> при последовательных вычислениях&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Фикс:&lt;/strong> Ясное указание типа чисел:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; Было:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(/ (reduce + coll) (count coll)) &lt;span style="color:#75715e">; Могло возвращать fractions&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; Стало:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(/ (reduce + &lt;span style="color:#ae81ff">0.0&lt;/span> coll) (count coll)) &lt;span style="color:#75715e">; Гарантированно float&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="подводный-камень-4-производительность-на-больших-данных">&lt;strong>Подводный камень №4: Производительность на больших данных&lt;/strong>&lt;/h3>
+&lt;p>Изначальная версия использовала несколько проходов по данным:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">let &lt;/span>[diffs (map - (rest prices) prices)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> gains (map &lt;span style="color:#f92672">#&lt;/span>(max % &lt;span style="color:#ae81ff">0&lt;/span>) diffs) &lt;span style="color:#75715e">; Первый проход&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> losses (map &lt;span style="color:#f92672">#&lt;/span>(max (- %) &lt;span style="color:#ae81ff">0&lt;/span>) diffs) &lt;span style="color:#75715e">; Второй проход&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> avg-gain (&lt;span style="color:#a6e22e">mean&lt;/span> (&lt;span style="color:#a6e22e">take-last&lt;/span> period gains)) &lt;span style="color:#75715e">; Третий проход&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> avg-loss (&lt;span style="color:#a6e22e">mean&lt;/span> (&lt;span style="color:#a6e22e">take-last&lt;/span> period losses))] &lt;span style="color:#75715e">; Четвертый проход&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Оптимизация:&lt;/strong> сократил до одного прохода для вычисления разниц, но осознанно оставил читаемость важнее микрооптимизации.&lt;/p>
+&lt;h3 id="крутейший-опыт-1-многоарность-функций-arity">&lt;strong>Крутейший опыт №1: Многоарность функций (arity)&lt;/strong>&lt;/h3>
+&lt;p>Обнаружил красоту clojure-подхода к арности:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; Версия с периодом по умолчанию (14)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>([prices] (&lt;span style="color:#a6e22e">rsi&lt;/span> prices &lt;span style="color:#ae81ff">14&lt;/span>))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; Основная версия&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>([prices period] ...)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Это позволило сохранить &lt;strong>обратную совместимость&lt;/strong> и &lt;strong>удобство использования&lt;/strong>.&lt;/p>
+&lt;h4 id="крутейший-опыт-2-полноценная-документация-как-код">&lt;strong>Крутейший опыт №2: Полноценная документация как код&lt;/strong>&lt;/h4>
+&lt;p>Я впервые так глубоко использовал docstrings для описания:&lt;/p>
+&lt;ul>
+&lt;li>Математической формулы&lt;/li>
+&lt;li>Граничных условий&lt;/li>
+&lt;li>Примеров использования&lt;/li>
+&lt;li>Поведения в особых случаях&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">&amp;#34;Вычисляет Relative Strength Index (RSI) - индекс относительной силы.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">RSI - это индикатор технического анализа, измеряющий силу ценовых движений
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">и определяющий условия перекупленности/перепроданности.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">...
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">Примеры:
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> (rsi [45.0 45.5 46.0 45.75 46.25] 5) =&amp;gt; ~72.5
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> (rsi (range 10 25)) =&amp;gt; 100.0&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="крутейший-опыт-3-изящная-обработка-исключений">&lt;strong>Крутейший опыт №3: Изящная обработка исключений&lt;/strong>&lt;/h4>
+&lt;p>Комбинация &lt;code>try/catch&lt;/code> с &lt;code>ex-info&lt;/code> дала мощный инструмент:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">catch&lt;/span> Exception e
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (println &lt;span style="color:#e6db74">&amp;#34;Ошибка в RSI:&amp;#34;&lt;/span> (&lt;span style="color:#a6e22e">ex-message&lt;/span> e) &lt;span style="color:#e6db74">&amp;#34;\nДанные:&amp;#34;&lt;/span> (&lt;span style="color:#a6e22e">ex-data&lt;/span> e))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> nil)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Теперь при ошибках я получаю не просто stacktrace, а &lt;strong>структурированную информацию&lt;/strong> для отладки.&lt;/p>
+&lt;h4 id="итоговый-код-гармония-теории-и-практики">&lt;strong>Итоговый код: Гармония теории и практики&lt;/strong>&lt;/h4>
+&lt;p>После всех итераций функция превратилась в &lt;strong>произведение искусства&lt;/strong>:&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>Надежная&lt;/strong> — обрабатывает все крайние случаи&lt;/li>
+&lt;li>&lt;strong>Документированная&lt;/strong> — понятная без чтения реализации&lt;/li>
+&lt;li>&lt;strong>Идиоматичная&lt;/strong> — использует лучшие практики Clojure&lt;/li>
+&lt;li>&lt;strong>Тестируемая&lt;/strong> — предсказуемое поведение&lt;/li>
+&lt;li>&lt;strong>Расширяемая&lt;/strong> — легко добавить новые варианты усреднения&lt;/li>
+&lt;/ol>
+&lt;p>&lt;strong>Вот что я вынес из этого опыта:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>📚 &lt;strong>Теория ≠ практике&lt;/strong> — математические формулы нужно адаптировать к реальному миру&lt;/li>
+&lt;li>🧪 &lt;strong>Крайние случаи важнее&lt;/strong> — они определяют надежность библиотеки&lt;/li>
+&lt;li>📝 &lt;strong>Документация — это код&lt;/strong> — хороший docstring экономит часы отладки&lt;/li>
+&lt;li>⚡ &lt;strong>Производительность vs. читаемость&lt;/strong> — всегда выбираю читаемость сначала&lt;/li>
+&lt;li>🎨 &lt;strong>Красота в деталях&lt;/strong> — многоарность, валидация, обработка ошибок&lt;/li>
+&lt;/ul>
+&lt;p>Теперь этот индикатор не просто вычисляет числа — он &lt;strong>рассказывает историю&lt;/strong> о том, как данные превращаются в торговые сигналы.&lt;/p>
+&lt;p>Исходный код доступен на &lt;a href="https://gitflic.ru/project/konkin/taljure">GitFlic.&lt;/a>&lt;/p>
+&lt;p>&lt;strong>А с какими интересными моментами сталкивались вы при реализации математических алгоритмов?&lt;/strong>&lt;/p></content></item><item><title>Библиотека для трейдинга: архитектура 2</title><link>https://program-mister.ru/posts/taljure-3/</link><pubDate>Sun, 24 Aug 2025 00:00:00 +0000</pubDate><author/><guid>https://program-mister.ru/posts/taljure-3/</guid><description>В сегодняшней статье я хочу раскрыть логику одного из ключевых архитектурных решений в библиотеке Taljure — **разделения индикаторов по уровню сложности** на модули `simple`, `advanced` и будущие `complex`.</description><content type="html">&lt;h1 id="библиотека-для-трейдинга-архитектура-2">Библиотека для трейдинга: архитектура 2&lt;/h1>
+&lt;h3 id="архитектура-библиотеки-почему-индикаторы-делятся-на-simple-advanced-и-complex">&lt;strong>Архитектура библиотеки: Почему индикаторы делятся на simple, advanced и complex&lt;/strong>&lt;/h3>
+&lt;p>&lt;img src="https://program-mister.ru/images/posts/taljure/taljure-3.png" alt="Архитектура taljure 2">&lt;/p>
+&lt;p>В сегодняшней статье я хочу раскрыть логику одного из ключевых архитектурных решений в библиотеке Taljure — &lt;strong>разделения индикаторов по уровню сложности&lt;/strong> на модули &lt;code>simple&lt;/code>, &lt;code>advanced&lt;/code> и будущие &lt;code>complex&lt;/code>.&lt;/p>
+&lt;h4 id="текущая-структура">&lt;strong>Текущая структура&lt;/strong>&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">ns &lt;/span>taljure.core
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#e6db74">:require&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [taljure.indicators.simple &lt;span style="color:#e6db74">:as&lt;/span> simple]))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">def &lt;/span>sma simple/sma) &lt;span style="color:#75715e">; Простое скользящее среднее&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">def &lt;/span>ema simple/ema) &lt;span style="color:#75715e">; Экспоненциальное скользящее среднее &lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">def &lt;/span>atr simple/atr) &lt;span style="color:#75715e">; Average True Range&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">def &lt;/span>rsi simple/rsi) &lt;span style="color:#75715e">; Relative Strength Index&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="почему-не-просто-свалка-в-одном-модуле">&lt;strong>Почему не просто свалка в одном модуле?&lt;/strong>&lt;/h4>
+&lt;p>&lt;strong>1. Ментальное разделение ответственности&lt;/strong>&lt;/p>
+&lt;p>&lt;code>simple&lt;/code> — это индикаторы, которые:&lt;/p>
+&lt;ul>
+&lt;li>Имеют простую математическую формулу&lt;/li>
+&lt;li>Вычисляются за один проход по данным&lt;/li>
+&lt;li>Не требуют сложного контекста или состояния&lt;/li>
+&lt;li>Идеальны для изучения основ алготрейдинга&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Пример SMA:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">; По сути, это скользящее окно и среднее арифметическое&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">defn &lt;/span>sma [data period]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (map &lt;span style="color:#f92672">#&lt;/span>(when (&amp;gt;= (count %) period)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (/ (reduce + (take period %)) period))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">partition&lt;/span> period &lt;span style="color:#ae81ff">1&lt;/span> data)))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>2. Путь обучения и onboarding&lt;/strong>&lt;/p>
+&lt;p>Новичок в алготрейдинге может:&lt;/p>
+&lt;ol>
+&lt;li>Изучить индикаторы из &lt;code>simple&lt;/code> → понять базовые концепции&lt;/li>
+&lt;li>Перейти к &lt;code>advanced&lt;/code> → разобраться в более сложной математике&lt;/li>
+&lt;li>Освоить &lt;code>complex&lt;/code> → понять составные индикаторы и стратегии&lt;/li>
+&lt;/ol>
+&lt;p>Это соответствует дидактическому принципу «от простого к сложному».&lt;/p>
+&lt;p>&lt;strong>3. Технические характеристики и производительность&lt;/strong>&lt;/p>
+&lt;p>&lt;strong>Simple индикаторы:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>Легковесные вычисления&lt;/li>
+&lt;li>Минимальная память&lt;/li>
+&lt;li>Подходят для real-time вычислений&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Advanced индикаторы&lt;/strong> (например, MACD, Bollinger Bands):&lt;/p>
+&lt;ul>
+&lt;li>Многоуровневые вычисления (индикаторы от индикаторов)&lt;/li>
+&lt;li>Требуют больше ресурсов&lt;/li>
+&lt;li>Могут нуждаться в кешировании&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Complex индикаторы&lt;/strong> (например, машина состояний для стратегий):&lt;/p>
+&lt;ul>
+&lt;li>Требуют контекста исполнения&lt;/li>
+&lt;li>Могут иметь внутреннее состояние&lt;/li>
+&lt;li>Сложные зависимости между данными&lt;/li>
+&lt;/ul>
+&lt;h4 id="как-будет-развиваться-архитектура">&lt;strong>Как будет развиваться архитектура&lt;/strong>&lt;/h4>
+&lt;p>&lt;strong>Сегодня:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>src/taljure/indicators/
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>└── simple.clj &lt;span style="color:#75715e"># SMA, EMA, RSI, ATR...&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Завтра:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>src/taljure/indicators/
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>├── simple.clj &lt;span style="color:#75715e"># Базовые: SMA, EMA, RSI, ATR&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>├── advanced.clj &lt;span style="color:#75715e"># MACD, Bollinger Bands, Ichimoku...&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>└── complex.clj &lt;span style="color:#75715e"># Составные индикаторы, машины состояний&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Пример advanced индикатора:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>; MACD &lt;span style="color:#f92672">=&lt;/span> разница между EMA&lt;span style="color:#f92672">(&lt;/span>12&lt;span style="color:#f92672">)&lt;/span> и EMA&lt;span style="color:#f92672">(&lt;/span>26&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>; Signal &lt;span style="color:#f92672">=&lt;/span> EMA&lt;span style="color:#f92672">(&lt;/span>9&lt;span style="color:#f92672">)&lt;/span> от MACD
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>; Гистограмма &lt;span style="color:#f92672">=&lt;/span> MACD - Signal
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>; Уже требует композиции нескольких индикаторов!
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>4. Гибкость подключения зависимостей&lt;/strong>&lt;/p>
+&lt;p>Разделение позволяет:&lt;/p>
+&lt;ul>
+&lt;li>Подключать только нужные модули&lt;/li>
+&lt;li>Избегать ненужных зависимостей&lt;/li>
+&lt;li>Оптимизировать bundle size для разных use cases&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">; Если пользователю нужны только простые индикаторы&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#e6db74">:require&lt;/span> [taljure.indicators.simple &lt;span style="color:#e6db74">:as&lt;/span> indicators])
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">; Если нужны все возможности &lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#e6db74">:require&lt;/span> [taljure.indicators.simple &lt;span style="color:#e6db74">:as&lt;/span> simple]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [taljure.indicators.advanced &lt;span style="color:#e6db74">:as&lt;/span> advanced]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [taljure.indicators.complex &lt;span style="color:#e6db74">:as&lt;/span> complex])
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>5. Тестирование и сопровождение&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Простая логика&lt;/strong> → простые тесты&lt;/li>
+&lt;li>&lt;strong>Сложная логика&lt;/strong> → комплексные тестовые сценарии&lt;/li>
+&lt;li>Разделение упрощает поиск и исправление ошибок&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Тест для simple индикатора:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">deftest&lt;/span> sma-test
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">is&lt;/span> (= [nil nil &lt;span style="color:#ae81ff">2.0&lt;/span> &lt;span style="color:#ae81ff">3.0&lt;/span> &lt;span style="color:#ae81ff">4.0&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">sma&lt;/span> [&lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#ae81ff">2&lt;/span> &lt;span style="color:#ae81ff">3&lt;/span> &lt;span style="color:#ae81ff">4&lt;/span> &lt;span style="color:#ae81ff">5&lt;/span>] &lt;span style="color:#ae81ff">3&lt;/span>))))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Тест для advanced индикатора&lt;/strong> уже потребует setup с готовыми данными и может проверять несколько аспектов поведения.&lt;/p>
+&lt;h4 id="почему-это-лучше-альтернатив">&lt;strong>Почему это лучше альтернатив?&lt;/strong>&lt;/h4>
+&lt;p>&lt;strong>Альтернатива 1:&lt;/strong> По одному модулю на индикатор&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>indicators/
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>├── sma.clj
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>├── ema.clj
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>├── rsi.clj
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>└── ...
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>→ Слишком дробно, сложно управлять&lt;/p>
+&lt;p>&lt;strong>Альтернатива 2:&lt;/strong> Все в одном модуле &lt;code>indicators.clj&lt;/code>&lt;br>
+→ 2000+ строк кода, сложно ориентироваться&lt;/p>
+&lt;p>&lt;strong>Альтернатива 3:&lt;/strong> Группировка по назначению (trend, volatility, volume)&lt;br>
+→ Субъективно, многие индикаторы многозадачны&lt;/p>
+&lt;p>&lt;strong>Мое решение:&lt;/strong> Группировка по &lt;strong>сложности реализации&lt;/strong> — объективный и технически обоснованный критерий.&lt;/p>
+&lt;h4 id="заключение-архитектура-как-отражение-доменной-области">&lt;strong>Заключение: Архитектура как отражение доменной области&lt;/strong>&lt;/h4>
+&lt;p>Разделение на simple/advanced/complex — это не просто технический прием. Это:&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>Отражение реальности&lt;/strong> — в трейдинге действительно есть простые и сложные индикаторы&lt;/li>
+&lt;li>&lt;strong>Организационный принцип&lt;/strong> — помогает структурировать код и мысли&lt;/li>
+&lt;li>&lt;strong>Масштабируемость&lt;/strong> — позволяет библиотеке расти органически&lt;/li>
+&lt;li>&lt;strong>Эргономика&lt;/strong> — пользователи быстро находят нужный уровень сложности&lt;/li>
+&lt;/ol>
+&lt;p>В следующей статье реализуем первый индикатор SMA и посмотрим, как эта архитектура работает на практике.&lt;/p>
+&lt;p>&lt;strong>Как вы организуете сложные доменные области в своих проектах? Сталкивались ли с подобными архитектурными дилеммами?&lt;/strong>&lt;/p></content></item><item><title>Библиотека для трейдинга: архитектура</title><link>https://program-mister.ru/posts/taljure-2/</link><pubDate>Sat, 23 Aug 2025 00:00:00 +0000</pubDate><author/><guid>https://program-mister.ru/posts/taljure-2/</guid><description>Сегодня хочу подробно разобрать архитектурное решение, которое может показаться неочевидным: **плоскую структуру неймспейсов** в основном модуле.</description><content type="html">&lt;h1 id="библиотека-для-трейдинга-архитектура">Библиотека для трейдинга: архитектура&lt;/h1>
+&lt;h2 id="архитектура-clojure-библиотеки-почему-я-выбрал-плоскую-структуру-неймспейсов">&lt;strong>Архитектура Clojure-библиотеки: Почему я выбрал плоскую структуру неймспейсов&lt;/strong>&lt;/h2>
+&lt;p>&lt;img src="https://program-mister.ru/images/posts/taljure/taljure-2.png" alt="Архитектура taljure">&lt;/p>
+&lt;p>В предыдущих статьях я показывал, как настроить окружение и структуру проекта для библиотеки алготрейдинга Taljure. Сегодня хочу подробно разобрать архитектурное решение, которое может показаться неочевидным: &lt;strong>плоскую структуру неймспейсов&lt;/strong> в основном модуле.&lt;/p>
+&lt;p>Вот как выглядит &lt;code>src/taljure/core.clj&lt;/code>:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">ns &lt;/span>taljure.core
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#e6db74">:require&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [taljure.indicators.simple &lt;span style="color:#e6db74">:as&lt;/span> simple]))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">def &lt;/span>moving-avg simple/moving-avg)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">def &lt;/span>rsi simple/rsi)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">def &lt;/span>sma simple/sma)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">def &lt;/span>ema simple/ema)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">def &lt;/span>atr simple/atr)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">def &lt;/span>stochastic simple/stochastic)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">def &lt;/span>vwap simple/vwap)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Почему именно так? Давайте разбираться.&lt;/p>
+&lt;h4 id="1-контроль-версий-и-стабильность-api-самое-главное">&lt;strong>1. Контроль версий и стабильность API (Самое главное)&lt;/strong>&lt;/h4>
+&lt;p>&lt;strong>Внутренняя структура может меняться:&lt;/strong> Сегодня &lt;code>sma&lt;/code> лежит в &lt;code>taljure.indicators.simple&lt;/code>. Завтра я могу понять, что правильнее перенести его в &lt;code>taljure.indicators.core&lt;/code> или даже оптимизировать и переписать с нуля в другом неймспейсе.&lt;/p>
+&lt;p>&lt;strong>Если пользователь импортирует напрямую:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">; У пользователя в коде:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#e6db74">:require&lt;/span> [taljure.indicators.simple &lt;span style="color:#e6db74">:as&lt;/span> simple])
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">simple/sma&lt;/span> data) &lt;span style="color:#75715e">; ← Прямая привязка к внутренней структуре&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Что происходит при изменении?&lt;/strong> Я ломаю обратную совместимость. Пользовательское приложение перестает компилироваться.&lt;/p>
+&lt;p>&lt;strong>С моим подходом:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">; У пользователя:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#e6db74">:require&lt;/span> [taljure.core &lt;span style="color:#e6db74">:as&lt;/span> t])
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">t/sma&lt;/span> data) &lt;span style="color:#75715e">; ← Интерфейс стабилен&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">; У себя внутри могу менять реализацию:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">ns &lt;/span>taljure.core
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#e6db74">:require&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [taljure.indicators.v2.optimized &lt;span style="color:#e6db74">:as&lt;/span> optim])) &lt;span style="color:#75715e">; ← Новый модуль!&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">def &lt;/span>sma optim/super-fast-sma) &lt;span style="color:#75715e">; ← API не изменилось!&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Выигрыш:&lt;/strong> могу радикально менять внутреннюю организацию кода, не ломая существующие приложения. &lt;code>taljure.core&lt;/code> выступает как &lt;strong>буфер совместимости&lt;/strong>.&lt;/p>
+&lt;h4 id="2-единая-точка-входа-facade-pattern">&lt;strong>2. Единая точка входа (Facade Pattern)&lt;/strong>&lt;/h4>
+&lt;p>Я сознательно реализую шаблон &lt;strong>«Фасад»&lt;/strong>. Модуль &lt;code>taljure.core&lt;/code> выступает единой точкой входа в библиотеку.&lt;/p>
+&lt;p>&lt;strong>Преимущества:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Сокрытие сложности:&lt;/strong> Пользователю не нужно знать о внутренней структуре (&lt;code>indicators.simple&lt;/code>, &lt;code>indicators.advanced&lt;/code> и т.д.).&lt;/li>
+&lt;li>&lt;strong>Гибкость развития:&lt;/strong> Я могу перекладывать реализации между внутренними модулями, не ломая API пользователей. Сегодня &lt;code>sma&lt;/code> лежит в &lt;code>simple&lt;/code>, завтра перенесу в &lt;code>core&lt;/code> — и никто не заметит.&lt;/li>
+&lt;li>&lt;strong>Простота документирования:&lt;/strong> Вся публичная API описана в одном месте.&lt;/li>
+&lt;/ul>
+&lt;h4 id="3-идиоматичный-clojure-подход">&lt;strong>3. Идиоматичный Clojure-подход&lt;/strong>&lt;/h4>
+&lt;p>В Clojure принято предоставлять ключевые функции в корневом неймспейсе библиотеки. Посмотрите на популярные библиотеки:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">; Пример с clojure.java-time&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#e6db74">:require&lt;/span> [java-time &lt;span style="color:#e6db74">:as&lt;/span> jt])
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">jt/local-date&lt;/span>) &lt;span style="color:#75715e">; а не jt.api/local-date&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">; Пример с ring&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#e6db74">:require&lt;/span> [ring.adapter.jetty &lt;span style="color:#e6db74">:as&lt;/span> jetty])
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">; jetty/run-jetty, а не ring.adapters.jetty/run-jetty&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Подход соответствует идиомам экосистемы Clojure.&lt;/p>
+&lt;h4 id="4-подготовка-к-расширению">&lt;strong>4. Подготовка к расширению&lt;/strong>&lt;/h4>
+&lt;p>Сейчас у меня только один модуль с индикаторами — &lt;code>simple&lt;/code>. Но в будущем обязательно появятся:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>taljure.indicators.advanced&lt;/code>&lt;/li>
+&lt;li>&lt;code>taljure.indicators.volatility&lt;/code>&lt;/li>
+&lt;li>&lt;code>taljure.signals&lt;/code>&lt;/li>
+&lt;li>&lt;code>taljure.backtest&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;p>Плоская структура позволяет легко добавлять новые функции без усложнения API:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">; Будущее расширение&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">ns &lt;/span>taljure.core
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#e6db74">:require&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [taljure.indicators.simple &lt;span style="color:#e6db74">:as&lt;/span> simple]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [taljure.indicators.advanced &lt;span style="color:#e6db74">:as&lt;/span> advanced]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [taljure.signals &lt;span style="color:#e6db74">:as&lt;/span> signals]))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">; Простые индикаторы&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">def &lt;/span>sma simple/sma)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">def &lt;/span>ema simple/ema)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">; Сложные индикаторы&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">def &lt;/span>macd advanced/macd)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">def &lt;/span>bollinger-bands advanced/bollinger-bands)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">; Сигналы&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">def &lt;/span>crossover signals/crossover)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Пользователь продолжит использовать &lt;code>taljure.core&lt;/code> и не заметит изменений.&lt;/p>
+&lt;h4 id="5-контроль-над-публичным-api">&lt;strong>5. Контроль над публичным API&lt;/strong>&lt;/h4>
+&lt;p>Явное объявление функций через &lt;code>def&lt;/code> — это форма &lt;strong>документирования намерений&lt;/strong>. Я показываю, какие функции являются стабильным публичным API, а какие — внутренними.&lt;/p>
+&lt;p>Если функция не экспортирована в &lt;code>core&lt;/code>, значит она:&lt;/p>
+&lt;ul>
+&lt;li>Нестабильна&lt;/li>
+&lt;li>Предназначена для внутреннего использования&lt;/li>
+&lt;li>Экспериментальна&lt;/li>
+&lt;/ul>
+&lt;p>Это защищает пользователей от случайного использования нестабильного API.&lt;/p>
+&lt;h4 id="6-производительность-миф-и-реальность">&lt;strong>6. Производительность (миф и реальность)&lt;/strong>&lt;/h4>
+&lt;p>Возможное возражение: &amp;ldquo;Но ведь это лишние вызовы &lt;code>def&lt;/code>! Это медленнее!&amp;rdquo;&lt;/p>
+&lt;p>На практике:&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>Время компиляции:&lt;/strong> Разница ничтожна — микросекунды.&lt;/li>
+&lt;li>&lt;strong>Время выполнения:&lt;/strong> Нулевая разница — JIT-компилятор оптимизирует такие вещи.&lt;/li>
+&lt;li>&lt;strong>Читаемость vs. микрооптимизация:&lt;/strong> Выигрыш в читаемости и поддерживаемости несоизмеримо важнее.&lt;/li>
+&lt;/ol>
+&lt;h4 id="7-альтернативы-которые-отверг">&lt;strong>7. Альтернативы, которые отверг&lt;/strong>&lt;/h4>
+&lt;p>Рассматривал другие варианты:&lt;/p>
+&lt;p>&lt;strong>Автогенерация через &lt;code>:refer&lt;/code>:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">ns &lt;/span>taljure.core
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#e6db74">:refer&lt;/span> taljure.indicators.simple &lt;span style="color:#e6db74">:all&lt;/span>))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Недостаток: нет контроля над API, импортируется &lt;em>всё&lt;/em>.&lt;/p>
+&lt;p>&lt;strong>Макросы-генераторы:&lt;/strong>&lt;br>
+Слишком сложно для такой простой задачи.&lt;/p>
+&lt;p>&lt;strong>Многочисленные импорты пользователя:&lt;/strong>&lt;br>
+Заставлять пользователя импортировать 10 неймспейсов — плохой UX.&lt;/p>
+&lt;p>Мое решение оказалось самым сбалансированным.&lt;/p>
+&lt;h4 id="заключение-простота-как-результат-сложной-работы">&lt;strong>Заключение: Простота как результат сложной работы&lt;/strong>&lt;/h4>
+&lt;p>Кажущаяся простота плоского API — это результат продуманного дизайна. Я сознательно пошел на:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Небольшое дублирование&lt;/strong> в виде &lt;code>def&lt;/code>&lt;/li>
+&lt;li>&lt;strong>Дополнительный уровень абстракции&lt;/strong> (фасад)&lt;/li>
+&lt;li>&lt;strong>Явное объявление&lt;/strong> публичного API&lt;/li>
+&lt;/ul>
+&lt;p>Взамен я получаю:&lt;/p>
+&lt;ul>
+&lt;li>✅ Чистый и понятный API для пользователей&lt;/li>
+&lt;li>✅ Гибкость для будущего развития библиотеки&lt;/li>
+&lt;li>✅ Соответствие Clojure-идиомам&lt;/li>
+&lt;li>✅ Контроль над стабильностью API&lt;/li>
+&lt;/ul>
+&lt;p>В следующей статье мы реализуем первый индикатор (SMA) и напишем тесты, которые подтвердят, что архитектура работает на практике.&lt;/p>
+&lt;p>&lt;strong>А что вы думаете о таком подходе? Сталкивались ли с подобными архитектурными дилеммами в своих проектах?&lt;/strong>&lt;/p></content></item><item><title>Библиотека для трейдинга: cоздаем проект</title><link>https://program-mister.ru/posts/taljure-1/</link><pubDate>Fri, 22 Aug 2025 00:00:00 +0000</pubDate><author/><guid>https://program-mister.ru/posts/taljure-1/</guid><description>Разберем самый первый и важный этап — настройку рабочего окружения с помощью Docker. Это гарантирует, что у всех разработчиков, независимо от ОС, будет идентичная среда для работы с проектом.</description><content type="html">&lt;h1 id="библиотека-для-трейдинга-cоздаем-проект">Библиотека для трейдинга: cоздаем проект&lt;/h1>
+&lt;h2 id="создаем-проект-на-clojure-настраиваем-docker-окружение-для-библиотеки-алготрейдинга">Создаем проект на Clojure: Настраиваем Docker-окружение для библиотеки алготрейдинга&lt;/h2>
+&lt;p>&lt;img src="https://program-mister.ru/images/posts/taljure/taljure-1.png" alt="Создание проекта taljure">&lt;/p>
+&lt;p>В предыдущем посте я анонсировал создание open-source библиотеки для алготрейдинга на Clojure. Сегодня разберем самый первый и важный этап — настройку рабочего окружения с помощью Docker. Это гарантирует, что у всех разработчиков, независимо от ОС, будет идентичная среда для работы с проектом.&lt;/p>
+&lt;p>В моей ОС не установлен Clojure, Clojure-LSP, JDK и прочие нужные программы и утилиты, для разработки, поэтому все нужное буду запускать в докер-контейнере.&lt;/p>
+&lt;h4 id="структура-проекта">&lt;strong>Структура проекта&lt;/strong>&lt;/h4>
+&lt;p>Для начала создадим базовую структуру каталогов. Она может меняться по мере развития проекта, но стартовая выглядит так:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>├── deps.edn
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>├── _docker
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>│ └── app
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>│ └── Dockerfile
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>├── docker-compose.yml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>├── Makefile
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>├── README.md
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>├── src
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>│ └── taljure
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>│ ├── core.clj
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>│ └── indicators
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>│ └── simple.clj
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>└── test
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> └── taljure
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> └── indicators
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> └── simple
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ├── atr_test.clj
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ├── ema_test.clj
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ├── rsi_test.clj
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ├── sma_test.clj
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ├── stochastic_test.clj
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> └── vwap_test.clj
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Ключевые моменты:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>&lt;code>_docker/app/Dockerfile&lt;/code>&lt;/strong> — инструкция для сборки нашего контейнера.&lt;/li>
+&lt;li>&lt;strong>&lt;code>docker-compose.yml&lt;/code>&lt;/strong> — для управления сервисами (пока что одним — &lt;code>app&lt;/code>).&lt;/li>
+&lt;li>&lt;strong>&lt;code>src/&lt;/code>&lt;/strong> — исходный код библиотеки с модулями для индикаторов.&lt;/li>
+&lt;li>&lt;strong>&lt;code>test/&lt;/code>&lt;/strong> — тесты, сразу заложенные под будущие индикаторы.&lt;/li>
+&lt;/ul>
+&lt;h4 id="dockerfile-основа-нашего-окружения">&lt;strong>Dockerfile: основа нашего окружения&lt;/strong>&lt;/h4>
+&lt;p>Начнем с Dockerfile. Нам нужен образ с последней версией Clojure и базовыми утилитами.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-dockerfile" data-lang="dockerfile">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># _docker/app/Dockerfile&lt;/span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>&lt;span style="color:#75715e"># Используем официальный образ Clojure&lt;/span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>&lt;span style="color:#66d9ef">FROM&lt;/span>&lt;span style="color:#e6db74"> clojure:latest&lt;/span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>&lt;span style="color:#75715e"># Устанавливаем необходимые пакеты&lt;/span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>&lt;span style="color:#66d9ef">RUN&lt;/span> apt-get update &lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> apt-get install -y &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> curl &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> git &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> wget &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> rlwrap &lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> apt-get clean &lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> rm -rf /var/lib/apt/lists/*&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>&lt;span style="color:#75715e"># Создаём пользователя с тем же UID/GID, что и на хосте&lt;/span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>&lt;span style="color:#66d9ef">ARG&lt;/span> USER_ID&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">1000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">ARG&lt;/span> GROUP_ID&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">1000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">RUN&lt;/span> groupadd -g &lt;span style="color:#e6db74">${&lt;/span>GROUP_ID&lt;span style="color:#e6db74">}&lt;/span> clojure-user &lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> useradd -u &lt;span style="color:#e6db74">${&lt;/span>USER_ID&lt;span style="color:#e6db74">}&lt;/span> -g clojure-user -m clojure-user&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>&lt;span style="color:#75715e"># Устанавливаем рабочую директорию&lt;/span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>&lt;span style="color:#66d9ef">WORKDIR&lt;/span>&lt;span style="color:#e6db74"> /usr/src/taljure/&lt;/span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>&lt;span style="color:#75715e"># Меняем владельца рабочей директории&lt;/span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>&lt;span style="color:#66d9ef">RUN&lt;/span> chown -R clojure-user:clojure-user /usr/src/taljure&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>&lt;span style="color:#75715e"># Переключаемся на созданного пользователя&lt;/span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>&lt;span style="color:#66d9ef">USER&lt;/span>&lt;span style="color:#e6db74"> clojure-user&lt;/span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>&lt;span style="color:#75715e"># Открываем порт для REPL&lt;/span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>&lt;span style="color:#66d9ef">EXPOSE&lt;/span>&lt;span style="color:#e6db74"> 4444&lt;/span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>&lt;span style="color:#75715e"># Запускаем nREPL-сервер при старте контейнера&lt;/span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>&lt;span style="color:#66d9ef">CMD&lt;/span> [&lt;span style="color:#e6db74">&amp;#34;clojure&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;-Sdeps&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;{:deps {nrepl/nrepl {:mvn/version \&amp;#34;1.0.0\&amp;#34;}}}&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;-M&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;-m&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;nrepl.cmdline&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;--port&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;4444&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;--bind&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;0.0.0.0&amp;#34;&lt;/span>]&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Что здесь важно:&lt;/strong>&lt;/p>
+&lt;ol>
+&lt;li>Создаем пользователя &lt;code>clojure-user&lt;/code> с вашими ID из хостовой системы, чтобы избежать проблем с правами на монтируемые файлы.&lt;/li>
+&lt;li>Устанавливаем &lt;code>rlwrap&lt;/code> для удобной работы с REPL в контейнере.&lt;/li>
+&lt;li>По умолчанию контейнер запускает nREPL-сервер на порту 4444.&lt;/li>
+&lt;/ol>
+&lt;h4 id="docker-compose-управляем-сервисами">&lt;strong>Docker Compose: управляем сервисами&lt;/strong>&lt;/h4>
+&lt;p>Файл &lt;code>docker-compose.yml&lt;/code> упрощает запуск и управление контейнером.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># docker-compose.yml&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">services&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">app&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">build&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">context&lt;/span>: &lt;span style="color:#ae81ff">.&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">dockerfile&lt;/span>: &lt;span style="color:#ae81ff">_docker/app/Dockerfile&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;${PROJECT_NAME}_app&amp;#34;&lt;/span> &lt;span style="color:#75715e"># Имя контейнера&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./:/usr/src/taljure/&lt;/span> &lt;span style="color:#75715e"># Монтирование текущей директории&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">4444&lt;/span>:&lt;span style="color:#ae81ff">4444&lt;/span> &lt;span style="color:#75715e"># Проброс порта REPL&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">environment&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">NREPL_HOST=0.0.0.0&lt;/span> &lt;span style="color:#75715e"># Разрешить подключение к REPL извне&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">NREPL_PORT=4444&lt;/span> &lt;span style="color:#75715e"># Порт для REPL&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">LANG=C.UTF-8&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">clojure-net&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">clojure-net&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">driver&lt;/span>: &lt;span style="color:#ae81ff">bridge&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="конфигурация-в-env">Конфигурация в .env&lt;/h4>
+&lt;p>Файл &lt;code>.env&lt;/code> :&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>DOMAIN&lt;span style="color:#f92672">=&lt;/span>local.local
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>PROJECT_NAME&lt;span style="color:#f92672">=&lt;/span>taljure
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Makefile:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>up:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> docker-compose up -d
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>stop:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> docker-compose stop
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>build:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> docker-compose up -d --build
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>restart:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> make stop &lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span> make up
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Пояснения:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>volumes&lt;/code> монтирует текущую директорию проекта в контейнер, позволяя работать с кодом в реальном времени.&lt;/li>
+&lt;li>&lt;code>ports&lt;/code> пробрасывает порт 4444 для подключения к nREPL из IDE на вашей машине.&lt;/li>
+&lt;li>Переменная &lt;code>PROJECT_NAME&lt;/code> задается через &lt;code>.env&lt;/code> файл или прямо в командной строке.&lt;/li>
+&lt;/ul>
+&lt;h4 id="проверка-работоспособности-hello-world">&lt;strong>Проверка работоспособности: Hello World!&lt;/strong>&lt;/h4>
+&lt;p>Создадим простой namespace &lt;code>taljure.core&lt;/code> для проверки.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; src/taljure/core.clj&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">ns &lt;/span>taljure.core)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">defn &lt;/span>-main
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;Точка входа в приложение. Пока что просто Hello World.&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [&lt;span style="color:#f92672">&amp;amp;&lt;/span> args]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (println &lt;span style="color:#e6db74">&amp;#34;Hello, World! 🚀&amp;#34;&lt;/span>))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="теперь-соберем-и-запустим-наш-проект">Теперь соберем и запустим наш проект.&lt;/h3>
+&lt;p>&lt;strong>Собираем и запускаем контейнер:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>make up
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Запускаем наше приложение внутри контейнера:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>make run
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Если все настроено корректно, в логах видим:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>Hello, World! 🚀
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Проверяем REPL:&lt;/strong>&lt;br>
+Подключитесь к nREPL на &lt;code>localhost:4444&lt;/code> из вашей IDE (Calva, CIDER и др.). Если подключение прошло успешно — окружение готово к разработке!&lt;/p>
+&lt;h4 id="что-дальше">&lt;strong>Что дальше?&lt;/strong>&lt;/h4>
+&lt;p>Мы успешно создали изолированное и воспроизводимое окружение для разработки на Clojure. В следующей статье:&lt;/p>
+&lt;ul>
+&lt;li>Разберем &lt;code>deps.edn&lt;/code> и подключим основные зависимости.&lt;/li>
+&lt;li>Напишем первые тесты и реализацию простейшего индикатора (SMA).&lt;/li>
+&lt;li>Настроим CI для автоматического прогона тестов.&lt;/li>
+&lt;/ul>
+&lt;p>Исходный код базового приложения будет доступен на &lt;a href="https://gitflic.ru/project/konkin/slj_base_docker_cli">GitFlic&lt;/a> (можно участвовать).&lt;/p>
+&lt;p>Если у вас есть вопросы или предложения по настройке окружения — добро пожаловать в комментарии!&lt;/p></content></item><item><title>Библиотека для трейдинга: начало</title><link>https://program-mister.ru/posts/taljure-0/</link><pubDate>Thu, 21 Aug 2025 00:00:00 +0000</pubDate><author/><guid>https://program-mister.ru/posts/taljure-0/</guid><description>Этим и начинаю цикл статей, в котором с чистого листа буду разрабатывать open-source библиотеку для алгоритмического трейдинга.</description><content type="html">&lt;h1 id="библиотека-для-трейдинга-начало">Библиотека для трейдинга: начало&lt;/h1>
+&lt;h2 id="запуск-open-source-проекта-clojure-библиотека-для-алготрейдинга-с-нуля">Запуск Open-Source проекта: Clojure библиотека для алготрейдинга с нуля&lt;/h2>
+&lt;p>&lt;img src="https://program-mister.ru/images/posts/taljure/taljure-0.png" alt="Запуск open-source taljure">&lt;/p>
+&lt;p>Запуск open-source taljure&lt;/p>
+&lt;p>Этим и начинаю цикл статей, в котором с чистого листа буду разрабатывать open-source библиотеку для алгоритмического трейдинга. Цель — создать инструмент, который будет максимально кложур-френдли, прозрачным в работе и полезным как для изучения основ алготрейдинга, так и для использования в более серьезных проектах.&lt;/p>
+&lt;h3 id="зачем-это-нужно">Зачем это нужно?&lt;/h3>
+&lt;p>Существует множество готовых решений, но они часто представляют собой обертки над ta-lib, написанным на C++. Мне же хотелось создать что-то на Clojure — языке, где мощь в обработке данных и многопоточности идеально подходит для финансовых вычислений. Я хочу:&lt;/p>
+&lt;p>Глубже разобраться в индикаторах: Не просто использовать ta-lib, а понять, как работают SMA, EMA, RSI и другие метрики «под капотом».&lt;/p>
+&lt;p>Сделать Clojure-way библиотеку: Иммутабельные данные, чистые функции, последовательности — все это идеально ложится на концепцию обработки временных рядов.&lt;/p>
+&lt;p>Предложить альтернативу: Сообществу трейдеров-разработчиков, интересующихся Clojure, не хватает своих, идиоматических инструментов.&lt;/p>
+&lt;h3 id="технический-стек-и-философия">Технический стек и философия&lt;/h3>
+&lt;p>Проект будет строго придерживаться принципов простоты и прозрачности:&lt;/p>
+&lt;p>Чистый Clojure: Никаких фреймворков. Только язык и его стандартная библиотека.&lt;/p>
+&lt;p>Docker-окружение: Чтобы у любого желающего не возникло проблем с запуском, вся разработка будет вестись в изолированном контейнере. deps.edn + docker-compose — наш выбор.&lt;/p>
+&lt;p>Тесты с первого дня: Каждый индикатор будет покрыт тестами, чтобы можно было быть уверенным в корректности расчетов.&lt;/p>
+&lt;p>Промышленный подход: Библиотека с первого дня будет оформлена как настоящий open-source проект: с качественным README, документацией, лицензией и примерами использования.&lt;/p>
+&lt;h3 id="о-чем-будем-говорить-в-следующих-статьях">О чем будем говорить в следующих статьях&lt;/h3>
+&lt;p>В этом посте я лишь намечаю контуры проекта. В следующих выпусках мы детально разберем каждый этап:&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>настроим идеальное окружение для Clojure-разработки с помощью Docker;&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>разберем deps.edn: какие зависимости нам понадобятся и зачем;&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>напишем свои первые индикаторы (SMA, EMA) и тесты к ним;&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>сравним наши расчеты с эталонными реализациями;&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>собирем библиотеку и пробуем подключить ее к «боевому» проекту;&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>документируем код и публикуем первую версию на Clojars.&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>Этот проект — эксперимент и образовательный путь. Приглашаю всех заинтересованных присоединиться: следить за циклом статей, предлагать идеи или даже контрибьютить в репозитории.&lt;/p>
+&lt;p>Исходный код будет доступен на &lt;a href="https://gitflic.ru/project/konkin/taljure">GitFlic&lt;/a> (можно участвовать).&lt;/p>
+&lt;p>Что вы думаете о такой идее? Какие индикаторы или функционал вам было бы интересно увидеть в первую очередь? Делитесь мыслями в комментариях!&lt;/p></content></item></channel></rss>

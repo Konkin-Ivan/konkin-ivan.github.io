@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Programming on Мой крутой блог на Hugo</title>
+    <link>http://localhost:1313/categories/programming/</link>
+    <description>Recent content in Programming on Мой крутой блог на Hugo</description>
+    <generator>Hugo</generator>
+    <language>ru-ru</language>
+    <lastBuildDate>Wed, 06 Aug 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/categories/programming/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Код как живой организм: от говнокода к архитектуре</title>
+      <link>http://localhost:1313/posts/shitcode/</link>
+      <pubDate>Wed, 06 Aug 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/shitcode/</guid>
+      <description>&lt;h1 id=&#34;код-как-живой-организм-от-говнокода-к-архитектуре&#34;&gt;Код как живой организм: от говнокода к архитектуре&lt;/h1&gt;&#xA;&lt;h3 id=&#34;как-страх-плохого-кода-мешает-развиваться&#34;&gt;&lt;strong&gt;Как страх «плохого кода» мешает развиваться&lt;/strong&gt;&lt;/h3&gt;&#xA;&lt;p&gt;Когда я только начинал программировать, мне казалось, что хороший код должен выглядеть идеально с первой строчки:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Чистые функции,&lt;/li&gt;&#xA;&lt;li&gt;Правильные паттерны,&lt;/li&gt;&#xA;&lt;li&gt;Идеальная архитектура&amp;hellip;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;Я боялся браться за задачи, потому что думал:&lt;br&gt;&#xA;&lt;em&gt;«А вдруг сделаю не по SOLID? А если нарушу DRY? А если опытные разработчики увидят мой код и назовут его говнокодом?»&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;Результат? &lt;strong&gt;Паралич&lt;/strong&gt;. Вместо кода — пустой файл, бесконечные раздумья и ноль результата.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

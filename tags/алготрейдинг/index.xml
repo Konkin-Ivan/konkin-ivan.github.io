@@ -1,0 +1,979 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Mr.Proger</title><link>https://program-mister.ru/tags/%D0%B0%D0%BB%D0%B3%D0%BE%D1%82%D1%80%D0%B5%D0%B9%D0%B4%D0%B8%D0%BD%D0%B3/</link><description>Описание моего блога</description><generator>Hugo</generator><language>ru-ru</language><lastBuildDate>Wed, 15 Oct 2025 14:55:20 +0000</lastBuildDate><atom:link href="https://program-mister.ru/tags/%D0%B0%D0%BB%D0%B3%D0%BE%D1%82%D1%80%D0%B5%D0%B9%D0%B4%D0%B8%D0%BD%D0%B3/" rel="self" type="application/rss+xml"/><item><title>Алгоритмическая торговля на максимумах: Что делать, когда сопротивления просто нет?</title><link>https://program-mister.ru/posts/trading-without-resistance/</link><pubDate>Wed, 24 Sep 2025 00:00:00 +0000</pubDate><author/><guid>https://program-mister.ru/posts/trading-without-resistance/</guid><description>Привет, коллега. Ты когда-нибудь сталкивался с ситуацией, когда твой торговый алгоритм, идельно работающий в середине графика, вдруг глупеет на самых свежих данных? Цена растет, обновляет максимумы, а твой бот беспомощно моргает светодиодиками — потому что не видит ни одного уровня сопротивления впереди. Сегодня мы разберем эту проблему и реализуем изящное решение.</description><content type="html">&lt;h1 id="алгоритмическая-торговля-на-максимумах-что-делать-когда-сопротивления-просто-нет">Алгоритмическая торговля на максимумах: Что делать, когда сопротивления просто нет?&lt;/h1>
+&lt;h2 id="разбираем-реальную-проблему-торгового-робота-и-даем-рабочее-решение-на-clojure">Разбираем реальную проблему торгового робота и даем рабочее решение на Clojure&lt;/h2>
+&lt;p>Привет, коллега. Ты когда-нибудь сталкивался с ситуацией, когда твой торговый алгоритм, идельно работающий в середине графика, вдруг глупеет на самых свежих данных? Цена растет, обновляет максимумы, а твой бот беспомощно моргает светодиодиками — потому что не видит ни одного уровня сопротивления впереди. Сегодня мы разберем эту проблему и реализуем изящное решение.&lt;/p>
+&lt;p>Представь классическую стратегию торговли по уровням. Берём график, находим ключевые максимумы и минимумы, строим горизонтальные линии. Всё просто: покупаем у поддержки, продаём у сопротивления, стоп за ближайшим экстремумом. Стратегия работает десятилетиями.&lt;/p>
+&lt;p>Но что происходит, когда цена выходит в зону, где этих самых уровней&amp;hellip; просто нет?&lt;/p>
+&lt;h2 id="реальная-проблема-рынок-без-потолка">Реальная проблема: рынок без потолка&lt;/h2>
+&lt;p>Возьмём конкретный пример — фьючерс, который начал торговаться несколько месяцев назад. Вот его полная история:&lt;/p>
+&lt;p>&lt;img src="https://program-mister.ru/images/posts/strategies/resistance.png" alt="История фьючерса на таймфрейме 1Д.">&lt;/p>
+&lt;p>Видишь? Цена дважды тестировала дно, потом начала рост с коррекциями — классическая картина. Но сейчас она находится &lt;strong>выше всей своей истории&lt;/strong>. Выше предыдущих максимумов!&lt;/p>
+&lt;p>&lt;strong>Где мы сейчас?&lt;/strong> На зоне вопроса — то уже конец роста или середина? А может быть все только начинается и мы в начале пути?&lt;/p>
+&lt;h2 id="классическая-проблема-слепая-зона-алгоритма">Классическая проблема: Слепая зона алгоритма&lt;/h2>
+&lt;p>Представь: твой алгоритм определяет уровни поддержки и сопротивления через кластеризацию исторических экстремумов. Все работает отлично, пока цена движется внутри проторгованного диапазона. Но что происходит, когда фьючерс обновляет абсолютный максимум за несколько лет?&lt;/p>
+&lt;p>Правильно. Алгоритм честно отрабатывает свою логику:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; Ищем сопротивление выше текущей цены&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#a6e22e">-&amp;gt;&amp;gt;&lt;/span> resistance-levels
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (filter &lt;span style="color:#f92672">#&lt;/span>(&amp;gt; (&lt;span style="color:#e6db74">:level&lt;/span> %) current-price))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (sort-by &lt;span style="color:#e6db74">:level&lt;/span> &amp;lt;)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> first)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; =&amp;gt; nil&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Вот он, корень проблемы. &lt;strong>Сопротивления нет.&lt;/strong> &lt;code>nil&lt;/code>. И вся тщательно выстроенная стратегия летит к чертям. Бот не может выставить тейк-профит, не видит целей для пробоя — он слеп.&lt;/p>
+&lt;h2 id="философия-решения-если-истории-нет-её-нужно-спрогнозировать">Философия решения: Если истории нет, её нужно спрогнозировать&lt;/h2>
+&lt;p>Когда у нас нет исторических данных, мы переходим от анализа к прогнозированию. Нам нужен инструмент, который даст обоснованную гипотезу о том, где цена может встретить сопротивление.&lt;/p>
+&lt;p>Мы не будем использовать ATR (который слишком статичен) или случайные числа. Вместо этого возьмем проверенный временем инструмент — &lt;strong>уровни расширения Фибоначчи&lt;/strong>.&lt;/p>
+&lt;p>Почему именно Фибо? Потому что это не просто абстрактные линии, а математическая проекция текущего импульса. Мы берем последнее значимое движение (от поддержки до текущей цены) и проецируем его в будущее.&lt;/p>
+&lt;h2 id="реализация-clojure-модуль-для-виртуальных-уровней">Реализация: Clojure-модуль для виртуальных уровней&lt;/h2>
+&lt;p>Создадим модуль &lt;code>app.trader.fibonacci&lt;/code>:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">ns &lt;/span>app.trader.fibonacci)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">def &lt;/span>fib-levels {&lt;span style="color:#e6db74">:level-0.618&lt;/span> &lt;span style="color:#ae81ff">0.618&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:level-1.000&lt;/span> &lt;span style="color:#ae81ff">1.000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:level-1.618&lt;/span> &lt;span style="color:#ae81ff">1.618&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:level-2.618&lt;/span> &lt;span style="color:#ae81ff">2.618&lt;/span>})
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">defn &lt;/span>calculate-fibonacci-extensions [low-price high-price]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;Рассчитываем уровни Фибоначчи для расширения движения&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#66d9ef">let &lt;/span>[distance (- high-price low-price)]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">-&amp;gt;&amp;gt;&lt;/span> fib-levels
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (map (&lt;span style="color:#66d9ef">fn &lt;/span>[[level-key multiplier]]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [level-key (+ high-price (* distance multiplier))]))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (into {}))))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">defn &lt;/span>create-virtual-resistance [current-support-level current-price]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;Создаем виртуальный уровень сопротивления на основе Фибоначчи&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (when current-support-level
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#66d9ef">let &lt;/span>[support-price (&lt;span style="color:#e6db74">:level&lt;/span> current-support-level)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> fib-levels (&lt;span style="color:#a6e22e">calculate-fibonacci-extensions&lt;/span> support-price current-price)]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> {&lt;span style="color:#e6db74">:level&lt;/span> (get fib-levels &lt;span style="color:#e6db74">:level-1.618&lt;/span>) &lt;span style="color:#75715e">;; Уровень 161.8% - самый важный&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:type&lt;/span> &lt;span style="color:#e6db74">:fibonacci-virtual&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:source-price&lt;/span> support-price
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:fib-levels&lt;/span> fib-levels})))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Всего 20 строк кода — а сколько пользы!&lt;/p>
+&lt;h2 id="интеграция-в-существующую-систему">Интеграция в существующую систему&lt;/h2>
+&lt;p>Теперь модифицируем наш основной &lt;code>levels-calculator&lt;/code>:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">ns &lt;/span>app.trader.levels-calculator
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#e6db74">:require&lt;/span> [app.trader.fibonacci &lt;span style="color:#e6db74">:as&lt;/span> fib]))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">defn &lt;/span>calculate [cluster-data current-price config]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#66d9ef">let &lt;/span>[&lt;span style="color:#75715e">;; ... старая логика поиска уровней ...&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> historical-resistance (&lt;span style="color:#a6e22e">-&amp;gt;&amp;gt;&lt;/span> resistance-levels ... first)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">;; НОВАЯ ЛОГИКА: проверяем, нужно ли создать виртуальный уровень&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> virtual-resistance (when (or (nil? historical-resistance)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&amp;lt; (&lt;span style="color:#e6db74">:strength&lt;/span> historical-resistance) &lt;span style="color:#ae81ff">0.5&lt;/span>))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">fib/create-virtual-resistance&lt;/span> nearest-support
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> current-price))]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> {&lt;span style="color:#e6db74">:support&lt;/span> nearest-support
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:resistance&lt;/span> (or virtual-resistance historical-resistance) &lt;span style="color:#75715e">;; Виртуальный уровень имеет приоритет!&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:resistance-type&lt;/span> (&lt;span style="color:#66d9ef">if &lt;/span>virtual-resistance &lt;span style="color:#e6db74">:virtual&lt;/span> &lt;span style="color:#e6db74">:historical&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:all-support&lt;/span> support-levels
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:all-resistance&lt;/span> resistance-levels}))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Ключевой момент — оператор &lt;code>or&lt;/code>, который гарантирует, что у нас всегда будет валидный уровень сопротивления.&lt;/p>
+&lt;h2 id="результат-в-бою">Результат в бою&lt;/h2>
+&lt;p>Посмотрим на реальные логи работы системы:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>INFO: Current price: 44.14
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>INFO: Historical resistance: nil
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>INFO: Creating virtual Fibonacci resistance
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>INFO: Virtual resistance: 46.50228
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> :support &lt;span style="color:#f92672">{&lt;/span>:level 42.68, ...&lt;span style="color:#f92672">}&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> :resistance &lt;span style="color:#f92672">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> :level 46.50228, ;; ВИРТУАЛЬНЫЙ УРОВЕНЬ!
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> :type :fibonacci-virtual,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> :source-price 42.68
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">}&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> :resistance-type :virtual
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Алгоритм больше не слеп! Даже на исторических максимумах у него есть ориентир — уровень 46.50, рассчитанный как 161.8% расширение Фибоначчи от последней значимой поддержки.&lt;/p>
+&lt;h2 id="полное-техническое-задание-на-алгоритм">Полное техническое задание на алгоритм&lt;/h2>
+&lt;p>&lt;strong>🎯 Цель:&lt;/strong> Создать устойчивого бота, способного определять флэт и торговать на пробой с фильтрацией по объему.&lt;/p>
+&lt;hr>
+&lt;h3 id="-этап-1-умные-уровни-с-отслеживанием-состояния">&lt;strong>✅ ЭТАП 1: Умные уровни с отслеживанием состояния&lt;/strong>&lt;/h3>
+&lt;p>&lt;strong>1.1. Базовый расчет Фибо&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>Функция &lt;code>calculate-fibonacci-extensions&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>1.2. Интеграция в калькулятор&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>Проверка на &lt;code>(nil? или weak?)&lt;/code> исторического сопротивления&lt;/li>
+&lt;li>Создание виртуального уровня с меткой &lt;code>:type :fibonacci-virtual&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>1.3. ✅ ДОБАВЛЯЕМ НОВЫЙ ПУНКТ: Механизм отслеживания состояния&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;strong>Создать &lt;code>Level State Manager&lt;/code>&lt;/strong> – отдельный компонент, который:&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Хранит все активные уровни (и исторические, и виртуальные) с их &lt;strong>статусом&lt;/strong> (&lt;code>:hypothesis&lt;/code>, :active&lt;code>,&lt;/code>:confirmed&lt;code>,&lt;/code>:broken`).&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>На каждом новом баре (или тике) проверяет, достигла ли цена уровня.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Обновляет статус&lt;/strong> на основе реакции цены (объем, паттерны).&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Модифицировать &lt;code>levels-calculator&lt;/code>&lt;/strong>: чтобы он не просто возвращал уровень, а &lt;strong>регистрировал&lt;/strong> новый виртуальный уровень в &lt;code>Level State Manager&lt;/code>.&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>1.4. Тестирование сценариев (РАСШИРЯЕМ)&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>Тест 1: Историческое сопротивление -&amp;gt; используется без изменения статуса.&lt;/li>
+&lt;li>Тест 2: Виртуальный уровень создан -&amp;gt; проверяется его регистрация в менеджере состояний.&lt;/li>
+&lt;li>&lt;strong>Тест 3: Цена достигает виртуального уровня -&amp;gt; статус меняется с &lt;code>:hypothesis&lt;/code> на &lt;code>:confirmed&lt;/code> или &lt;code>:broken&lt;/code>.&lt;/strong>&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Выход с этапа:&lt;/strong> Алгоритм всегда возвращает валидный уровень сопротивления.&lt;/p>
+&lt;hr>
+&lt;h3 id="-этап-2-логика-анализа-рынка-и-генерации-сигналов">&lt;strong>✅ ЭТАП 2: Логика анализа рынка и генерации сигналов&lt;/strong>&lt;/h3>
+&lt;p>&lt;strong>Цель:&lt;/strong> Научить бота определять момент для входа.&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;strong>2.1. Функция &lt;code>detect-flat?&lt;/code>&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Рассчитывает ширину канала между ближайшими поддержкой и сопротивлением.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Возвращает &lt;code>true&lt;/code>, если ширина меньше заданного % от цены (например, &amp;lt; 2%).&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>2.2. Функция &lt;code>detect-squeeze?&lt;/code> (Определение сжатия)&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Анализирует, сужается ли диапазон флэта с течением времени (понижающиеся максимумы и повышающиеся минимумы внутри канала).&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>2.3. Функция &lt;code>check-breakout-volume&lt;/code> (Фильтр объема)&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>На входе: &lt;code>current-price&lt;/code>, &lt;code>key-level&lt;/code> (уровень пробоя), &lt;code>1m-volume-data&lt;/code>.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Сравнивает объем текущей/прошлой свечи со средним объемом за последние N периодов.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Возвращает &lt;code>true&lt;/code>, если объем аномально высокий (например, &amp;gt; 150% от среднего).&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Выход с этапа:&lt;/strong> Алгоритм может отличить флэт от тренда и оценить силу пробоя.&lt;/p>
+&lt;hr>
+&lt;h3 id="-этап-3-механика-исполнения-заявок-стратегия-пробоя">&lt;strong>✅ ЭТАП 3: Механика исполнения заявок («Стратегия пробоя»)&lt;/strong>&lt;/h3>
+&lt;p>&lt;strong>Цель:&lt;/strong> Реализовать корректную логику выставления и управления ордерами.&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;strong>3.1. Реализовать логику выставления отложенных ордеров&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>При обнаружении флэта автоматически выставляются:&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Buy Stop&lt;/strong> на &lt;code>resistance-level + 0.1%&lt;/code>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Sell Stop&lt;/strong> на &lt;code>support-level - 0.1%&lt;/code>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>3.2. Реализовать отмену противостоящего ордера&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Как только один стоп-ордер активируется (например, Buy Stop), второй ордер (Sell Stop) должен быть немедленно отменен.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>3.3. Интегрировать фильтр объема&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>ВАЖНО:&lt;/strong> Активация стоп-ордера (пробой уровня) должна быть проверена по объему.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Если &lt;code>check-breakout-volume&lt;/code> возвращает &lt;code>false&lt;/code> (пробой на слабом объеме), позиция &lt;strong>не открывается&lt;/strong> (или сразу закрывается по малому убытку).&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Выход с этапа:&lt;/strong> Бот может автоматически &amp;ldquo;дежурить&amp;rdquo; на границах флэта и входить в пробой с фильтрацией ложных срабатываний.&lt;/p>
+&lt;hr>
+&lt;h3 id="-этап-4-интеграция-и-тестирование">&lt;strong>✅ ЭТАП 4: Интеграция и тестирование&lt;/strong>&lt;/h3>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;strong>4.1. Соединить все модули в единый рабочий поток&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>4.2. Написать интеграционные тесты на исторических данных&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Сценарий &amp;ldquo;Успешный пробой флэта на высоком объеме&amp;rdquo;.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Сценарий &amp;ldquo;Ложный пробой (отскок от уровня)&amp;rdquo;.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>4.3. Запуск на демо-счете&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Тестирование в реальных условиях без риска.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Сбор статистики и тонкая настройка параметров.&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h3 id="-этап-5-победа">&lt;strong>🎉 ЭТАП 5: Победа&lt;/strong>&lt;/h3>
+&lt;ul>
+&lt;li>&lt;strong>Открыть шомпанское и праздновать!&lt;/strong>&lt;/li>
+&lt;/ul>
+&lt;h2 id="что-дальше-от-гипотезы-к-подтверждению">Что дальше? От гипотезы к подтверждению&lt;/h2>
+&lt;p>Важно понимать: виртуальный уровень — это гипотеза, а не истина в последней инстанции. Наша следующая задача — научить бота проверять эти гипотезы.&lt;/p>
+&lt;p>В следующей статье мы реализуем:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Механизм отслеживания состояния уровней&lt;/strong> (гипотеза/подтвержден/пробит)&lt;/li>
+&lt;li>&lt;strong>Фильтрацию ложных пробоев&lt;/strong> через анализ объема&lt;/li>
+&lt;li>&lt;strong>Стратегию торговли на пробой&lt;/strong> с использованием отложенных стоп-ордеров&lt;/li>
+&lt;/ul>
+&lt;h2 id="выводы">Выводы&lt;/h2>
+&lt;p>Проблема отсутствия сопротивления на исторических максимумах — не приговор для алгоритмической торговли. С помощью уровней Фибоначчи мы можем:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Избежать простоев&lt;/strong> бота в самых прибыльных движениях&lt;/li>
+&lt;li>&lt;strong>Получить обоснованные цели&lt;/strong> для тейк-профитов&lt;/li>
+&lt;li>&lt;strong>Сохранить единую логику работы&lt;/strong> алгоритма в любых условиях&lt;/li>
+&lt;/ul>
+&lt;p>Код готов к использованию и легко адаптируется под любую торговую платформу. Главное — понять принцип: когда история молчит, мы используем математическую проекцию текущей рыночной динамики.&lt;/p>
+&lt;p>&lt;strong>А ты сталкивался с подобными проблемами в своих торговых роботах? Делись опытом в комментариях!&lt;/strong>&lt;/p></content></item><item><title>Архитектурная эволюция торговой системы: от монолита к модульному пайплайну</title><link>https://program-mister.ru/posts/pipeline-refactoring/</link><pubDate>Wed, 24 Sep 2025 00:00:00 +0000</pubDate><author/><guid>https://program-mister.ru/posts/pipeline-refactoring/</guid><description>Настал день, когда нужно было добавить анализ свечных паттернов. Я открыл код и понял — **это очень сложно**. Нужно прилагать усилия, чтобы вникнуть в обстановку и понять куда внедрить новое.</description><content type="html">&lt;h1 id="архитектурная-эволюция-торговой-системы-от-монолита-к-модульному-пайплайну">Архитектурная эволюция торговой системы: от монолита к модульному пайплайну&lt;/h1>
+&lt;h2 id="как-моя-функция-превратилась-в-франкенштейна-и-что-я-с-этим-сделал">Как моя функция превратилась в Франкенштейна и что я с этим сделал&lt;/h2>
+&lt;p>&lt;img src="https://program-mister.ru/images/posts/strategies/pipeline.png" alt="Рефакторинг по принципу пайплайн">&lt;/p>
+&lt;p>Жил-был у меня код. Простой такой, милый:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">defn &lt;/span>generate-signal [candles price]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#66d9ef">let &lt;/span>[levels (&lt;span style="color:#a6e22e">calculate-levels&lt;/span> candles)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> trend (&lt;span style="color:#a6e22e">detect-trend&lt;/span> candles)]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#66d9ef">if &lt;/span>(&amp;gt; price (&lt;span style="color:#e6db74">:level&lt;/span> levels))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:buy&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:hold&lt;/span>)))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Жил не тупил, сигналы генерировал. Но потом пошло-поехало&amp;hellip;&lt;/p>
+&lt;h2 id="как-я-своего-монстра-создавал">Как я своего монстра создавал&lt;/h2>
+&lt;p>Сначала добавил проверку пробития уровней:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; Окей, добавим мониторинг пробитий...&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">let &lt;/span>[level-status (&lt;span style="color:#a6e22e">monitor-breakthroughs&lt;/span> price levels)])
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Потом понадобился анализ объема:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; А Volume глянем, вдруг там дивергенция...&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">let &lt;/span>[volume-analysis (&lt;span style="color:#a6e22e">analyze-volume&lt;/span> candles)])
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Затем virtual levels подъехали:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; Тут еще виртуальные уровни проверить надо...&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">let &lt;/span>[virtual-levels (&lt;span style="color:#a6e22e">validate-virtual-levels&lt;/span> price levels)])
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>И понеслась&amp;hellip; Функция раздулась до 50+ строк, вложенных условий, и я сам перестал понимать, что где происходит.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">defn &lt;/span>generate-signal
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [candle-history current-price]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#66d9ef">let &lt;/span>[ordered-candles (&lt;span style="color:#66d9ef">if &lt;/span>(&amp;gt; (&lt;span style="color:#e6db74">:time&lt;/span> (first candle-history))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#e6db74">:time&lt;/span> (last candle-history)))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (reverse candle-history)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> candle-history)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> price (&lt;span style="color:#e6db74">:close&lt;/span> (last current-price))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> last-timestamp (&lt;span style="color:#e6db74">:time&lt;/span> (last candle-history))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> candle-count (count candle-history)]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">log/info&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Тайм Штамп свечи:&amp;#34;&lt;/span> last-timestamp)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (when (&lt;span style="color:#a6e22e">should-recalculate-levels?&lt;/span> ordered-candles)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#66d9ef">let &lt;/span>[extremums (&lt;span style="color:#a6e22e">trend-detector/find-extremums&lt;/span> ordered-candles)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> levels (&lt;span style="color:#a6e22e">aggregate-candles&lt;/span> ordered-candles price DEFAULT-CONFIG)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> trend (&lt;span style="color:#a6e22e">trend-detector/determine-trend&lt;/span> extremums price DEFAULT-CONFIG)]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">;; 1. ОБНОВЛЯЕМ АТОМЫ с новыми уровнями (СНАЧАЛА!)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">swap!&lt;/span> levels-state assoc &lt;span style="color:#e6db74">:active-levels&lt;/span> levels)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">;; 2. BRAIN: мониторинг пробитий (ПОТОМ мониторим)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#66d9ef">let &lt;/span>[level-status (&lt;span style="color:#a6e22e">smart/monitor-level-breakthrough&lt;/span> price levels-state)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">;; 3. ВАЛИДАЦИЯ ВИРТУАЛЬНЫХ УРОВНЕЙ (после мониторинга)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> validation-result (&lt;span style="color:#a6e22e">smart/validate-virtual-levels&lt;/span> price levels-state candle-history)]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (when (&lt;span style="color:#e6db74">:virtual-validation?&lt;/span> validation-result)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">log/info&lt;/span> &lt;span style="color:#e6db74">&amp;#34;✅ Виртуальный уровень подтвержден! Обновляем состояние...&amp;#34;&lt;/span>))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">;; 4. УМНЫЙ ПЕРЕСЧЕТ (если уровень пробит)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (when-let [recalc-type (&lt;span style="color:#a6e22e">smart/recalculation-needed?&lt;/span> levels-state)]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">case&lt;/span> recalc-type
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:recalculate-support&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">do&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">log/info&lt;/span> &lt;span style="color:#e6db74">&amp;#34;🔄 Выполняем пересчет поддержки&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#66d9ef">let &lt;/span>[updated-levels (&lt;span style="color:#a6e22e">smart/recalculate-support-level&lt;/span> levels ordered-candles price)]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">swap!&lt;/span> levels-state assoc &lt;span style="color:#e6db74">:active-levels&lt;/span> updated-levels)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">log/info&lt;/span> &lt;span style="color:#e6db74">&amp;#34;✅ Поддержка пересчитана&amp;#34;&lt;/span>)))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:recalculate-resistance&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">do&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">log/info&lt;/span> &lt;span style="color:#e6db74">&amp;#34;🔄 Выполняем пересчет сопротивления&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#66d9ef">let &lt;/span>[updated-levels (&lt;span style="color:#a6e22e">smart/recalculate-resistance-level&lt;/span> levels ordered-candles price)]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">swap!&lt;/span> levels-state assoc &lt;span style="color:#e6db74">:active-levels&lt;/span> updated-levels)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">log/info&lt;/span> &lt;span style="color:#e6db74">&amp;#34;✅ Сопротивление пересчитана&amp;#34;&lt;/span>)))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> nil))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">;; 5. Если уровень пробит - НЕ генерируем сигналы&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#66d9ef">if &lt;/span>(&lt;span style="color:#e6db74">:level-breached?&lt;/span> level-status)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">do&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">log/info&lt;/span> &lt;span style="color:#e6db74">&amp;#34;🔴 Уровень пробит, пропускаем генерацию сигналов&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">reset!&lt;/span> levels-cache {&lt;span style="color:#e6db74">:timestamp&lt;/span> last-timestamp,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:candle-count&lt;/span> candle-count,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:levels&lt;/span> levels,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:extremums&lt;/span> extremums})
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> nil)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">;; 6. FAST КОНТУР: генерация сигналов&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#66d9ef">let &lt;/span>[current-levels (&lt;span style="color:#e6db74">:active-levels&lt;/span> &lt;span style="color:#f92672">@&lt;/span>levels-state)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> signal (&lt;span style="color:#a6e22e">signal-generator&lt;/span> current-levels price trend extremums)]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">reset!&lt;/span> levels-cache {&lt;span style="color:#e6db74">:timestamp&lt;/span> last-timestamp,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:candle-count&lt;/span> candle-count,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:levels&lt;/span> current-levels,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:extremums&lt;/span> extremums})
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (when signal
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#66d9ef">let &lt;/span>[signal-type (&lt;span style="color:#e6db74">:type&lt;/span> signal)]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (when (&lt;span style="color:#f92672">#&lt;/span>{&lt;span style="color:#e6db74">:buy&lt;/span> &lt;span style="color:#e6db74">:sell&lt;/span>} signal-type)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">log/info&lt;/span> &lt;span style="color:#e6db74">&amp;#34;🎯 GENERATED TRADING SIGNAL: &amp;#34;&lt;/span> signal-type
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;в тренде:&amp;#34;&lt;/span> (name trend))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#66d9ef">let &lt;/span>[{&lt;span style="color:#e6db74">:keys&lt;/span> [support resistance]} (&lt;span style="color:#e6db74">:levels&lt;/span> signal)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> params {&lt;span style="color:#e6db74">:risk-reward-ratio&lt;/span> &lt;span style="color:#ae81ff">2.0&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:support-level&lt;/span> (&lt;span style="color:#e6db74">:level&lt;/span> support),
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:resistance-level&lt;/span> (&lt;span style="color:#e6db74">:level&lt;/span> resistance),
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:current-levels&lt;/span> (&lt;span style="color:#e6db74">:levels&lt;/span> signal),
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:trend&lt;/span> trend,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:extremums&lt;/span> extremums}]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">reset!&lt;/span> last-cache {&lt;span style="color:#e6db74">:timestamp&lt;/span> last-timestamp,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:levels&lt;/span> current-levels,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:signal&lt;/span> (assoc signal &lt;span style="color:#e6db74">:params&lt;/span> params),
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:trend&lt;/span> trend})
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (assoc signal &lt;span style="color:#e6db74">:params&lt;/span> params))))))))))))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="момент-истины">Момент истины&lt;/h2>
+&lt;p>Настал день, когда нужно было добавить анализ свечных паттернов. Я открыл код и понял — &lt;strong>это очень сложно&lt;/strong>. Нужно прилагать усилия, чтобы вникнуть в обстановку и понять куда внедрить новое.&lt;/p>
+&lt;p>Вот что на самом деле происходило в коде (хоть это и было скрыто в хаосе):&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">[&lt;/span>Уровни&lt;span style="color:#f92672">]&lt;/span> → &lt;span style="color:#f92672">[&lt;/span>Мониторинг&lt;span style="color:#f92672">]&lt;/span> → &lt;span style="color:#f92672">[&lt;/span>Валидация&lt;span style="color:#f92672">]&lt;/span> → &lt;span style="color:#f92672">[&lt;/span>Анализ&lt;span style="color:#f92672">]&lt;/span> → &lt;span style="color:#f92672">[&lt;/span>Сигналы&lt;span style="color:#f92672">]&lt;/span> → &lt;span style="color:#f92672">[&lt;/span>Кеширование&lt;span style="color:#f92672">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>И все в одной функции! Как в той шутке: &amp;ldquo;Я не программист, я сборщик кода методом копипасты&amp;rdquo;.&lt;/p>
+&lt;h2 id="что-попробовал-сделать">Что попробовал сделать&lt;/h2>
+&lt;p>&lt;strong>Попытка 1: Разделить по смыслу&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; Просто вынес куски в отдельные функции&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">defn &lt;/span>prepare-data [candles price] ...)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">defn &lt;/span>calculate-levels [data] ...)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">defn &lt;/span>monitor-breakthroughs [data] ...)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Стало чуть лучше, но все равно каша.&lt;/p>
+&lt;p>&lt;strong>Попытка 2: Сделать как умные ребята советуют&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; Начитался статей, сделал &amp;#34;правильно&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">defmulti &lt;/span>process-phase &lt;span style="color:#e6db74">:phase&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">defmethod &lt;/span>process-phase &lt;span style="color:#e6db74">:calculation&lt;/span> [state] ...)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Получилось красиво, но я сам через неделю не мог понять, как это работает. Выкинул.&lt;/p>
+&lt;p>&lt;strong>Попытка 3: Как заядлый Линуксоид&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; Просто последовательность шагов&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">defn &lt;/span>process-tick [candles price]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (-&amp;gt; {&lt;span style="color:#e6db74">:candles&lt;/span> candles &lt;span style="color:#e6db74">:price&lt;/span> price}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> prepare-data
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> find-levels
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> check-breakthroughs
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> analyze-patterns
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> generate-signal))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>И вот это сработало! Каждый шаг делает одну понятную вещь, добавить новый функционал — просто вставить еще один шаг в цепочку.&lt;/p>
+&lt;p>Вместо того чтобы городить сложные архитектуры, просто сделал как в bash:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>cat data | prepare | analyze | filter | generate_signal
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Только на Clojure это выглядит еще элегантнее:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">defn &lt;/span>process-tick [candles price]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (-&amp;gt; {&lt;span style="color:#e6db74">:candles&lt;/span> candles &lt;span style="color:#e6db74">:price&lt;/span> price} &lt;span style="color:#75715e">;; &amp;lt;- как будто cat data&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> prepare-data &lt;span style="color:#75715e">;; &amp;lt;- подготовка&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> find-levels &lt;span style="color:#75715e">;; &amp;lt;- поиск уровней &lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> check-breakthroughs &lt;span style="color:#75715e">;; &amp;lt;- мониторинг пробитий&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> analyze-patterns &lt;span style="color:#75715e">;; &amp;lt;- анализ паттернов&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> generate-signal)) &lt;span style="color:#75715e">;; &amp;lt;- финальный результат&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Почему пайплайн — это мне было известно:&lt;/strong>&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>вместо сложных интерфейсов&lt;/strong> — каждый шаг принимает данные и возвращает данные, никаких скрытых состояний&lt;/li>
+&lt;li>&lt;strong>Можно легко дебажить&lt;/strong> — вставляешь &lt;code>tap&amp;gt;&lt;/code> между шагами как будто &lt;code>tee&lt;/code> в конвейере&lt;/li>
+&lt;li>&lt;strong>Простота добавления нового функционала&lt;/strong> — хочешь добавить анализ объема? Просто вставляешь еще один шаг:&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(-&amp;gt; data
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> prepare-data
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> find-levels
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> check-breakthroughs
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> analyze-volume &lt;span style="color:#75715e">;; &amp;lt;- новый шаг, вставил за 2 секунды&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> analyze-patterns
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> generate-signal)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;ol>
+&lt;li>&lt;strong>Логично для торговли&lt;/strong> — ведь анализ рынка это и есть последовательность шагов: данные → уровни → пробития → сигнал&lt;/li>
+&lt;/ol>
+&lt;p>И главное — никакой магии. Открываешь код через месяц и сразу видишь всю цепочку преобразований. Не нужно вспоминать, какие там были состояния или фазы — просто читаешь сверху вниз, как книгу.&lt;/p>
+&lt;p>Финальный вариант:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">;; ===== ОСНОВНОЙ PIPELINE =====&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">defn &lt;/span>generate-signal
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [candle-history current-price]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#66d9ef">let &lt;/span>[pipeline [prepare-market-data
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> calculate-levels-phase &lt;span style="color:#75715e">;; 1. Расчет уровней&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> monitor-levels-phase &lt;span style="color:#75715e">;; 2. Мониторинг пробитий &lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> market-analysis-phase &lt;span style="color:#75715e">;; 3. Анализ рынка (флэт/сжатие)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> minute-volume-analysis-phase &lt;span style="color:#75715e">;; ← НОВАЯ ФАЗА: минутный объем!&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> smart-recalculation-phase &lt;span style="color:#75715e">;; 4. Пересчет&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> generate-signals-phase &lt;span style="color:#75715e">;; 5. Генерация сигналов&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> update-cache-phase] &lt;span style="color:#75715e">;; 6. Кеширование&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> initial-data {&lt;span style="color:#e6db74">:candle-history&lt;/span> candle-history &lt;span style="color:#e6db74">:current-price&lt;/span> current-price}]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">try&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#66d9ef">let &lt;/span>[result (reduce (&lt;span style="color:#66d9ef">fn &lt;/span>[data phase-fn]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (if-let [result (&lt;span style="color:#a6e22e">phase-fn&lt;/span> data)]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> result
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">reduced&lt;/span> nil)))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> initial-data
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pipeline)]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#e6db74">:signal&lt;/span> result))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">catch&lt;/span> Exception e
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">log/error&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Ошибка в торговом пайплайне:&amp;#34;&lt;/span> e)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> nil))))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="разбор-пайплайна">Разбор пайплайна&lt;/h2>
+&lt;h3 id="1-pipeline--это-не-массив-переменных-а-вектор-функций">1. &lt;code>pipeline&lt;/code> — это не массив переменных, а &lt;strong>вектор функций&lt;/strong>&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>pipeline [prepare-market-data &lt;span style="color:#75715e">;; &amp;lt;- это функция!&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> calculate-levels-phase &lt;span style="color:#75715e">;; &amp;lt;- и это функция!&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> monitor-levels-phase] &lt;span style="color:#75715e">;; &amp;lt;- и это тоже функция!&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Каждая из этих функций определена выше, например:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">defn &lt;/span>prepare-market-data [{&lt;span style="color:#e6db74">:keys&lt;/span> [candle-history current-price]}]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">;; ... логика подготовки&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> {&lt;span style="color:#e6db74">:candles&lt;/span> ordered-candles &lt;span style="color:#e6db74">:price&lt;/span> price}) &lt;span style="color:#75715e">;; возвращает данные для следующей фазы&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">defn &lt;/span>calculate-levels-phase [{&lt;span style="color:#e6db74">:keys&lt;/span> [candles price] &lt;span style="color:#e6db74">:as&lt;/span> data}]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">;; ... расчёт уровней &lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (assoc data &lt;span style="color:#e6db74">:levels&lt;/span> calculated-levels)) &lt;span style="color:#75715e">;; добавляет уровни к данным&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="2-reduce--это-конвейерная-лента">2. &lt;code>reduce&lt;/code> — это конвейерная лента&lt;/h3>
+&lt;p>Представь себе заводской конвейер:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(reduce (&lt;span style="color:#66d9ef">fn &lt;/span>[data phase-fn] (&lt;span style="color:#a6e22e">phase-fn&lt;/span> data)) &lt;span style="color:#75715e">;; ← рабочий на конвейере&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> initial-data &lt;span style="color:#75715e">;; ← сырьё в начале ленты &lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pipeline) &lt;span style="color:#75715e">;; ← последовательность операций&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Как это работает пошагово:&lt;/strong>&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>Начало:&lt;/strong> &lt;code>initial-data = {:candle-history [...], :current-price [...]}&lt;/code>&lt;/li>
+&lt;li>&lt;strong>Шаг 1:&lt;/strong> &lt;code>(prepare-market-data initial-data)&lt;/code> → возвращает &lt;code>{:candles [...], :price 43.77, ...}&lt;/code>&lt;/li>
+&lt;li>&lt;strong>Шаг 2:&lt;/strong> &lt;code>(calculate-levels-phase результат-шага-1)&lt;/code> → возвращает данные + &lt;code>:levels&lt;/code>&lt;/li>
+&lt;li>&lt;strong>Шаг 3:&lt;/strong> &lt;code>(monitor-levels-phase результат-шага-2)&lt;/code> → возвращает данные + &lt;code>:level-status&lt;/code>&lt;/li>
+&lt;li>&lt;strong>&amp;hellip; и так далее по всему пайплайну&lt;/strong>&lt;/li>
+&lt;/ol>
+&lt;h3 id="3-reduced--аварийный-останов">3. &lt;code>reduced&lt;/code> — аварийный останов&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#66d9ef">fn &lt;/span>[data phase-fn]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (if-let [result (&lt;span style="color:#a6e22e">phase-fn&lt;/span> data)] &lt;span style="color:#75715e">;; пробуем выполнить фазу&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> result &lt;span style="color:#75715e">;; если получилось — идём дальше&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#a6e22e">reduced&lt;/span> nil))) &lt;span style="color:#75715e">;; если фаза вернула nil — останавливаем конвейер&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Это как аварийная кнопка на конвейере. Если какая-то фаза возвращает &lt;code>nil&lt;/code> (например, данные невалидные), пайплайн останавливается и сразу возвращает &lt;code>nil&lt;/code>.&lt;/p>
+&lt;h3 id="4-всё-вместе--это-преобразование-данных">4. Всё вместе — это преобразование данных&lt;/h3>
+&lt;p>&lt;strong>На входе:&lt;/strong> сырые свечи и цена&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>{&lt;span style="color:#e6db74">:candle-history&lt;/span> [...], &lt;span style="color:#e6db74">:current-price&lt;/span> [...]}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>На выходе:&lt;/strong> готовый торговый сигнал (или &lt;code>nil&lt;/code>)&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>{&lt;span style="color:#e6db74">:type&lt;/span> &lt;span style="color:#e6db74">:buy&lt;/span>, &lt;span style="color:#e6db74">:params&lt;/span> {...}, &lt;span style="color:#e6db74">:levels&lt;/span> {...}}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Что происходит внутри:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>Сырые данные
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>→ prepare-market-data &lt;span style="color:#f92672">(&lt;/span>упорядочивание свечей&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>→ calculate-levels-phase &lt;span style="color:#f92672">(&lt;/span>расчёт уровней поддержки/сопротивления&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>→ monitor-levels-phase &lt;span style="color:#f92672">(&lt;/span>проверка пробитий уровней&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>→ ... и т.д.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>→ generate-signals-phase &lt;span style="color:#f92672">(&lt;/span>генерация сигнала buy/sell&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Тоесть, результат работы предыдущей функции передается следующей.&lt;/p>
+&lt;h2 id="почему-это-круто">Почему это круто&lt;/h2>
+&lt;ol>
+&lt;li>&lt;strong>Видна вся логика&lt;/strong> — просто читаешь вектор &lt;code>pipeline&lt;/code> и понимаешь последовательность&lt;/li>
+&lt;li>&lt;strong>Легко менять&lt;/strong> — хочешь добавить анализ объема? Просто вставляешь функцию в вектор&lt;/li>
+&lt;li>&lt;strong>Легко дебажить&lt;/strong> — можно пройти пайплайн пошагово&lt;/li>
+&lt;li>&lt;strong>Каждая функция простая&lt;/strong> — делает одну конкретную вещь&lt;/li>
+&lt;/ol>
+&lt;p>По сути, это функциональный аналог UNIX pipe: &lt;code>cat data | prepare | analyze | generate&lt;/code>, только типобезопасный и на Clojure.&lt;/p>
+&lt;h2 id="почему-clojure-идеально-подходит-для-пайплайнов">Почему Clojure идеально подходит для пайплайнов&lt;/h2>
+&lt;p>Самое красивое в этом всём — то, что &lt;strong>Clojure буквально создан для таких пайплайнов&lt;/strong>. В отличие от императивных языков, где ты постоянно мучаешься с промежуточными переменными и побочными эффектами, в Clojure пайплайн выглядит как естественный поток данных.&lt;/p>
+&lt;p>Возьмём тот же пример на Python (условно):&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">def &lt;/span>generate_signal(&lt;span style="color:#a6e22e">candle_history&lt;/span>, current_price)&lt;span style="color:#960050;background-color:#1e0010">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> data = prepare_market_data(&lt;span style="color:#a6e22e">candle_history&lt;/span>, current_price) &lt;span style="color:#f92672">#&lt;/span> шаг &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> data = calculate_levels_phase(&lt;span style="color:#a6e22e">data&lt;/span>) &lt;span style="color:#f92672">#&lt;/span> шаг &lt;span style="color:#ae81ff">2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> data = monitor_levels_phase(&lt;span style="color:#a6e22e">data&lt;/span>) &lt;span style="color:#f92672">#&lt;/span> шаг &lt;span style="color:#ae81ff">3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">#&lt;/span> ... и так &lt;span style="color:#ae81ff">7&lt;/span> раз с повторяющимся присваиванием
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> return data[&lt;span style="color:#e6db74">&amp;#39;signal&lt;/span>&lt;span style="color:#f92672">&amp;#39;&lt;/span>]
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>А в Clojure благодаря threading macro &lt;code>-&amp;gt;&lt;/code> это выглядит элегантно:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-clojure" data-lang="clojure">&lt;span style="display:flex;">&lt;span>(-&amp;gt; {&lt;span style="color:#e6db74">:candle-history&lt;/span> candle-history &lt;span style="color:#e6db74">:current-price&lt;/span> current-price}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> prepare-market-data
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> calculate-levels-phase
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> monitor-levels-phase
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">;; ... и ещё 4 фазы без лишнего шума&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">:signal&lt;/span>)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Что даёт такой подход на практике:&lt;/strong>&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>Неизменяемые данные&lt;/strong> — каждая фаза получает данные, возвращает новые данные, не ломая исходные. Можно спокойно дебажить каждый шаг.&lt;/li>
+&lt;li>&lt;strong>Композируемость&lt;/strong> — функции как кубики Лего. Хочешь добавить анализ VWAP? Просто вставляешь ещё один &amp;ldquo;кубик&amp;rdquo; в пайплайн.&lt;/li>
+&lt;li>&lt;strong>Прозрачность&lt;/strong> — видишь всю бизнес-логику как на ладони. Не нужно прыгать по классам и интерфейсам.&lt;/li>
+&lt;/ol>
+&lt;p>И самое главное — &lt;strong>это идиоматично для Clojure&lt;/strong>. Threading macros (&lt;code>-&amp;gt;&lt;/code>, &lt;code>-&amp;gt;&amp;gt;&lt;/code>) это не какая-то магия, а базовая конструкция языка. Когда пишешь на Clojure, ты просто думаешь в терминах &amp;ldquo;данные проходят через серию преобразований&amp;rdquo; — и код естественным образом получается в виде пайплайна.&lt;/p>
+&lt;p>По сути, я не придумал ничего нового — просто использовал язык так, как он и задумывался. И это оказалось самым эффективным решением.&lt;/p></content></item><item><title>⚔️ СОВЕТ ТРЕХ: Вече Верховных Эльфов</title><link>https://program-mister.ru/posts/the-council-of-three/</link><pubDate>Wed, 03 Sep 2025 00:00:00 +0000</pubDate><author/><guid>https://program-mister.ru/posts/the-council-of-three/</guid><description>Уже точно никто не вспомнит истоки этого противостояния. Испокон веков **доблестные воины-быки**, облаченные в сияющие доспехи Эльфов, штурмовали неприступные стены Серебряного замка. И столько же веков мрачные **медведи-защитники** отстаивали свою цитадель.</description><content type="html">&lt;h1 id="-совет-трех-вече-верховных-эльфов">⚔️ СОВЕТ ТРЕХ: Вече Верховных Эльфов&lt;/h1>
+&lt;h2 id="хроники-битвы-у-серебряного-замка">Хроники битвы у Серебряного замка&lt;/h2>
+&lt;p>Уже точно никто не вспомнит истоки этого противостояния. Испокон веков &lt;strong>доблестные воины-быки&lt;/strong>, облаченные в сияющие доспехи Эльфов, штурмовали неприступные стены Серебряного замка. И столько же веков мрачные &lt;strong>медведи-защитники&lt;/strong> отстаивали свою цитадель.&lt;/p>
+&lt;p>Битва длилась вечность. Попеременный успех — то быки яростным натиском проламывали оборону, оттесняя медведей вглубь крепостных дворов, то медведи, собравшись с силами, отражали атаку и переходили в яростное контрнаступление, сметая атакующих прочь от стен.&lt;/p>
+&lt;p>Исход очередной битвы был неясен. Генерал, наблюдавший за сражением с высокого холма, видел лишь хаос и ярость. Чтобы принять верное решение — бросить ли резервы на подмогу штурмующим или ударить по флангам обороняющихся — он воззвал к древней магии и созвал &lt;strong>Совет Трех Верховных Эльфов&lt;/strong>.&lt;/p>
+&lt;p>Явились три фигуры, окутанные сиянием магии предков.&lt;/p>
+&lt;p>🧝‍♂️ &lt;strong>Эльф-Стратег&lt;/strong>, чей взгляд видел саму суть битвы, произнес первым:&lt;br>
+«Сила натиска велика — сорок единиц! Нынешняя сеча — не мелкая стычка, а полномасштабная битва. Но я лишь измеряю ее ярость, а не исход».&lt;/p>
+&lt;p>🔮 &lt;strong>Эльф-Целитель&lt;/strong>, чувствующий усталость душ воинов, поднял хрустальный шар:&lt;br>
+«Дух штурмующих иссякает! Их ярость достигла семидесяти градусов и теперь опаляет их самих. Они рвались к стенам слишком стремительно и теперь выдыхаются. Скоро им потребуется передышка».&lt;/p>
+&lt;p>🌘 &lt;strong>Эльф-Провидец&lt;/strong>, слепой, но видящий больше зрячих, прислушался к ритму сражения:&lt;br>
+«Гул их ярости уже не нарастает. Импульс, что нес их вперед, иссякает. Момент наивысшей силы позади. Грядет перелом».&lt;/p>
+&lt;p>Выслушав совет, Генерал увидел то, что было скрыто от его глаз. Он не стал бросать резервы в угасающий штурм. Вместо этого он дождался, когда быки дрогнут и начали отступать под давлением медведей, и именно тогда нанес свой удар.&lt;/p>
+&lt;p>Так Совет Трех Эльфов, что собирается каждые несколько минут у магического кристалла, позволяет полководцу видеть не просто хаос сражения, а его скрытую структуру, силу и момент.&lt;/p>
+&lt;p>Эта история — не просто сказка. Это точная метафора работы торгового индикатора, где быки — покупатели, медведи — продавцы, а эльфы — это математические алгоритмы (ADX, RSI, MACD), анализирующие силу тренда, перекупленность и момент импульса. Каждая свеча на графике — новый виток бесконечной битвы.&lt;/p>
+&lt;h2 id="установка">Установка&lt;/h2>
+&lt;p>Копируем код:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-javascript" data-lang="javascript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">//
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="-устав-генерала-как-толковать-советы-эльфов">📜 УСТАВ ГЕНЕРАЛА: Как толковать советы Эльфов&lt;/h2>
+&lt;p>Получив в свое распоряжение магический кристалл, что дает совет трех эльфов, каждый полководец обязан знать, как верно толковать их слова.&lt;/p>
+&lt;h3 id="-язык-эльфа-стратега-adx">🧝‍♂️ Язык Эльфа-Стратега (ADX)&lt;/h3>
+&lt;ul>
+&lt;li>«&lt;strong>Сила натиска велика (≥20)&lt;/strong>» — битва серьезная, движение сильное. Стоит готовиться к долгому сражению.&lt;/li>
+&lt;li>«&lt;strong>Сеча незначительна (&amp;lt;20)&lt;/strong>» — силы сторон равны, идет вялая перестрелка у стен. Бросать резервы в такую мясорубку — безумие.&lt;/li>
+&lt;li>&lt;strong>Совет&lt;/strong>: Слушайте Стратега первым. Если он говорит о слабости — все остальные советы теряют смысл.&lt;/li>
+&lt;/ul>
+&lt;h3 id="-язык-эльфа-целителя-rsi">🔮 Язык Эльфа-Целителя (RSI)&lt;/h3>
+&lt;ul>
+&lt;li>«&lt;strong>Дух быков иссякает (≥70)&lt;/strong>» / «&lt;strong>Дух медведей надломлен (≤30)&lt;/strong>» — одна из сторон зашла слишком далеко и выдохлась. Высока вероятность скорого отката, даже если натиск продолжается.&lt;/li>
+&lt;li>«&lt;strong>Дух крепок (30-70)&lt;/strong>» — у воинов есть еще силы для боя. Движение может продолжаться.&lt;/li>
+&lt;li>&lt;strong>Совет&lt;/strong>: Целитель не говорит, кто победит. Он предупреждает, что одна из сторон устала.&lt;/li>
+&lt;/ul>
+&lt;h3 id="-язык-эльфа-провидца-macd">🌘 Язык Эльфа-Провидца (MACD)&lt;/h3>
+&lt;ul>
+&lt;li>«Импульс нарастает» (столбцы гистограммы растут) — атака набирает силу, волна несется к стенам.&lt;/li>
+&lt;li>«Импульс иссякает» (столбцы гистограммы уменьшаются) — волна идет на спад, хотя цена еще может какое-то время двигаться по инерции.&lt;/li>
+&lt;li>«Перекрестие мечей» (линии MACD и Signal пересекаются) — момент смены импульса. Это не команда к атаке, а сигнал: «Внимание! Ритм боя меняется!».&lt;/li>
+&lt;li>Совет: Провидец видит &lt;strong>моментальный ритм&lt;/strong> боя, а не его общую силу.&lt;/li>
+&lt;/ul>
+&lt;h3 id="-как-принимать-решение-искусство-генерала">⚔️ КАК ПРИНИМАТЬ РЕШЕНИЕ: Искусство генерала&lt;/h3>
+&lt;ol>
+&lt;li>&lt;strong>Сначала выслушай Стратега (ADX)&lt;/strong>. Есть ли тренд? Если нет — отложи меч, вступать в бой нечего.&lt;/li>
+&lt;li>&lt;strong>Посмотри на Целителя (RSI)&lt;/strong>. Не слишком ли увлеклись атакующие? Если они устали — готовься к их откату.&lt;/li>
+&lt;li>&lt;strong>Проверь у Провидца (MACD)&lt;/strong>. Нарастает ли импульс или уже спадает? Это подскажет точный момент для удара.&lt;/li>
+&lt;li>&lt;strong>Действуй на опережение.&lt;/strong> Не жди, пока быки уже пробьют стену или медведи уже отбросят штурмующих далеко назад. Действуй в &lt;em>момент наивысшего напряжения сил&lt;/em>, предсказанный эльфами.&lt;/li>
+&lt;/ol>
+&lt;p>&lt;strong>Помни&lt;/strong>: Эльфы дают совет на &lt;strong>текущий момент&lt;/strong>. Завтра битва изменится, и совет будет другим. Твоя задача — быть гибким и принимать решения здесь и сейчас, опираясь на их мудрость.&lt;/p>
+&lt;p>P.S. В кристалле можно настроить, какого эльфа слушать внимательнее, а чьи советы считать лишь второстепенными (настройки индикатора). Но мудрый генерал всегда слушает всех троих.&lt;/p>
+&lt;h2 id="практическое-руководство-по-использованию-индикатора-вече-верховных-эльфов-не-эпичное">Практическое руководство по использованию индикатора &amp;ldquo;Вече Верховных Эльфов&amp;rdquo; (не эпичное)&lt;/h2>
+&lt;p>Этот индикатор объединяет три ключевых индикатора: ADX, RSI и MACD. Его цель — не дать один волшебный сигнал, а предоставить вам сводную картину рынка для принятия взвешенного решения.&lt;/p>
+&lt;p>&lt;strong>Как интерпретировать показатели:&lt;/strong>&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>ADX (Эльф-Стратег): Показывает СИЛУ тренда.&lt;/strong>&lt;/li>
+&lt;/ol>
+&lt;ul>
+&lt;li>&lt;strong>ADX &amp;gt; 20-25:&lt;/strong> Тренд сильный. Можно рассматривать сделки по направлению тренда.&lt;/li>
+&lt;li>&lt;strong>ADX &amp;lt; 20:&lt;/strong> Тренда нет, рынок в фазе консолидации (боковик). Следует избегать трендовых стратегий. Сигналы других индикаторов ненадежны.&lt;/li>
+&lt;li>&lt;em>Важно:&lt;/em> ADX не показывает направление, только силу. Направление определяют линии +DI и -DI.&lt;/li>
+&lt;/ul>
+&lt;ol start="3">
+&lt;li>&lt;strong>RSI (Эльф-Импульса): Показывает ПЕРЕГРЕТОСТЬ рынка.&lt;/strong>&lt;/li>
+&lt;/ol>
+&lt;ul>
+&lt;li>&lt;strong>RSI &amp;gt; 70:&lt;/strong> Зона перекупленности. Вероятность коррекции (отката) вниз повышается. Не команда &amp;ldquo;продавать!&amp;rdquo;, а сигнал к осторожности для покупателей.&lt;/li>
+&lt;li>&lt;strong>RSI &amp;lt; 30:&lt;/strong> Зона перепроданности. Вероятность отскока вверх повышается. Не команда &amp;ldquo;покупать!&amp;rdquo;, а сигнал к осторожности для продавцов.&lt;/li>
+&lt;li>&lt;strong>RSI между 30 и 70:&lt;/strong> Нейтральная зона. Рынок не перегрет.&lt;/li>
+&lt;/ul>
+&lt;ol start="5">
+&lt;li>&lt;strong>MACD (Эльф-Провидец): Показывает МОМЕНТУМ и СМЕНУ ИМПУЛЬСА.&lt;/strong>&lt;/li>
+&lt;/ol>
+&lt;ul>
+&lt;li>&lt;strong>Линия MACD выше Signal:&lt;/strong> Бычий импульс.&lt;/li>
+&lt;li>&lt;strong>Линия MACD ниже Signal:&lt;/strong> Медвежий импульс.&lt;/li>
+&lt;li>&lt;strong>Пересечение линий:&lt;/strong> Возможное изменение краткосрочного импульса.&lt;/li>
+&lt;li>&lt;strong>Расхождение (дивергенция):&lt;/strong> Самый сильный сигнал. Когда цена делает новый максимум, а MACD — нет (медвежья дивергенция), это часто предвещает разворот. И наоборот.&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Как этим пользоваться: Пошаговый алгоритм&lt;/strong>&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>Определи тренд по ADX.&lt;/strong> Первый и главный вопрос: &amp;ldquo;Есть ли тренд?&amp;rdquo; Если ADX &amp;lt; 20 — отложите сделки в сторону. Большинство сигналов в боковике ложные.&lt;/li>
+&lt;li>&lt;strong>Определи направление тренда.&lt;/strong> Смотри на положение цены относительно скользящих средних (SMA/EMA) или на линии +DI/-DI самого индикатора ADX.&lt;/li>
+&lt;li>&lt;strong>Ищи точку входа с помощью RSI и MACD в сторону тренда.&lt;/strong>&lt;/li>
+&lt;/ol>
+&lt;ul>
+&lt;li>&lt;em>Для покупки (в восходящем тренде):&lt;/em> Дождись отката цены и ищи признаки окончания этого отката: выход RSI из зоны перепроданности (выше 30) и разворот MACD вверх.&lt;/li>
+&lt;li>&lt;em>Для продажи (в нисходящем тренде):&lt;/em> Дождись отскока цены и ищи признаки окончания этого отскока: выход RSI из зоны перекупленности (ниже 70) и разворот MACD вниз.&lt;/li>
+&lt;/ul>
+&lt;ol start="5">
+&lt;li>&lt;strong>Избегай сделок против тренда,&lt;/strong> когда RSI или MACD показывают экстремальные значения (сигналы на разворот). Это рискованно и требует большого опыта.&lt;/li>
+&lt;/ol>
+&lt;h2 id="пример-вече">Пример вече&lt;/h2>
+&lt;h3 id="ждать">Ждать:&lt;/h3>
+&lt;p>&lt;img src="https://program-mister.ru/images/posts/strategies/council-1.png" alt="Вече Эльфов - ждать">&lt;/p>
+&lt;p>Вече Эльфов - ждать&lt;/p>
+&lt;h3 id="купить">Купить:&lt;/h3>
+&lt;p>&lt;img src="https://program-mister.ru/images/posts/strategies/council-2.png" alt="Вече Эльфов - купить">&lt;/p>
+&lt;p>Вече Эльфов - купить&lt;/p>
+&lt;h3 id="продать">Продать:&lt;/h3>
+&lt;p>&lt;img src="https://program-mister.ru/images/posts/strategies/council-2.png" alt="Вече Эльфов - продать">&lt;/p>
+&lt;p>Вече Эльфов - продать&lt;/p>
+&lt;h2 id="принципы-работы-не-эпичное-объяснение">Принципы работы (не эпичное объяснение)&lt;/h2>
+&lt;h3 id="эльф-стратег-atr">Эльф-Стратег (ATR)&lt;/h3>
+&lt;ul>
+&lt;li>Измеряет реальную волатильность рынка&lt;/li>
+&lt;li>Определяет интенсивность движения&lt;/li>
+&lt;li>Имеет highest priority в принятии решений&lt;/li>
+&lt;/ul>
+&lt;h3 id="эльф-целитель-rsi">Эльф-Целитель (RSI)&lt;/h3>
+&lt;ul>
+&lt;li>Оценивает momentum&lt;/li>
+&lt;li>Определяет перекупленность/перепроданность&lt;/li>
+&lt;li>Сигнализирует о потенциальной &amp;ldquo;усталости&amp;rdquo; тренда&lt;/li>
+&lt;/ul>
+&lt;h3 id="эльф-провидец-macd">Эльф-Провидец (MACD)&lt;/h3>
+&lt;ul>
+&lt;li>Анализирует направление и силу тренда&lt;/li>
+&lt;li>Определяет возможные разворотные точки&lt;/li>
+&lt;li>Подтверждает или опровергает сигналы других индикаторов&lt;/li>
+&lt;/ul>
+&lt;h3 id="стратегия-консенсуса">Стратегия консенсуса&lt;/h3>
+&lt;ol>
+&lt;li>Каждый &amp;ldquo;эльф&amp;rdquo; дает свою оценку&lt;/li>
+&lt;li>Финальное решение принимается только при согласовании&lt;/li>
+&lt;li>Приоритет отдается ATR как наиболее объективному индикатору&lt;/li>
+&lt;/ol>
+&lt;h3 id="зоны-принятия-решений">Зоны принятия решений&lt;/h3>
+&lt;ul>
+&lt;li>&lt;strong>Long&lt;/strong>: Согласованный бычий сигнал от всех эльфов&lt;/li>
+&lt;li>&lt;strong>Short&lt;/strong>: Согласованный медвежий сигнал от всех эльфов&lt;/li>
+&lt;/ul>
+&lt;h2 id="-почему-это-работает">🎯 Почему это работает:&lt;/h2>
+&lt;ol>
+&lt;li>&lt;strong>Голосование индикаторов&lt;/strong> — исключает субъективизм&lt;/li>
+&lt;li>&lt;strong>Учет противоречий&lt;/strong> — STOCH в перекупленности, но STOCHRSI покупает&lt;/li>
+&lt;li>&lt;strong>Четкий вердикт&lt;/strong> — не оставляет места для двусмысленности&lt;/li>
+&lt;/ol>
+&lt;p>&lt;strong>Итог:&lt;/strong> Индикатор не торгует за тебя. Он твои &amp;ldquo;дополнительные глаза&amp;rdquo;, которые суммируют информацию с трех разных инструментов. Ты принимаешь окончательное решение, сверяя их &amp;ldquo;совет&amp;rdquo; с ценой на графике. Сначала всегда смотри на силу тренда (ADX), и только потом на моментум (MACD) и перекупленность (RSI).&lt;/p></content></item><item><title>Алебарда Тщедушного Канцлера</title><link>https://program-mister.ru/posts/the-halberd-of-the-puny-chancellor/</link><pubDate>Fri, 29 Aug 2025 00:00:00 +0000</pubDate><author/><guid>https://program-mister.ru/posts/the-halberd-of-the-puny-chancellor/</guid><description>Приветствую, алготорговцы! Сегодня у меня на повестке дня не просто новая стратегия, а целая философская концепция в коде. Знакомьтесь: **«Алебарда Тщедушного Канцлера»** — алгоритм, который доказывает, что в трейдинге сила часто кроется в точности, а не в грубой мощи.</description><content type="html">&lt;h1 id="алебарда-тщедушного-канцлера">Алебарда Тщедушного Канцлера&lt;/h1>
+&lt;h2 id="алебарда-тщедушного-канцлера-абсурдное-название-скрывающее-под-собой-точный-алготрейдинг">Алебарда Тщедушного Канцлера: абсурдное название скрывающее под собой точный алготрейдинг&lt;/h2>
+&lt;p>&lt;img src="https://program-mister.ru/images/posts/strategies/halberd.webp" alt="Алебарда Тщедушного Канцлера">&lt;/p>
+&lt;p>Приветствую, алготорговцы! Сегодня у меня на повестке дня не просто новая стратегия, а целая философская концепция в коде. Знакомьтесь: &lt;strong>«Алебарда Тщедушного Канцлера»&lt;/strong> — алгоритм, который доказывает, что в трейдинге сила часто кроется в точности, а не в грубой мощи.&lt;/p>
+&lt;h3 id="-философия-парадокса">📜 Философия парадокса&lt;/h3>
+&lt;p>Почему «Алебарда»? И почему «Тщедушный Канцлер»? Все просто:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Алебарда&lt;/strong> — это большое, неповоротливое оружие. В нашем случае — это индикатор &lt;strong>Supertrend&lt;/strong>. Он грубоват, запаздывает и на флэте может изрядно «попилить» депозит.&lt;/li>
+&lt;li>&lt;strong>Тщедушный Канцлер&lt;/strong> — это наш алгоритм. Он не силен мышцами, но невероятно умен. Он не размахивает алебардой как попало, а использует её для &lt;strong>точечных, выверенных ударов&lt;/strong>.&lt;/li>
+&lt;/ul>
+&lt;p>Абсурдный образ хитрого стратега с неподъемным оружием идеально описывает подход: мы берем «грубый» инструмент и применяем его с ювелирной точностью.&lt;/p>
+&lt;h3 id="-что-под-капотом">⚙️ Что под капотом?&lt;/h3>
+&lt;p>Стратегия построена на трех китах:&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>Supertrend&lt;/strong> — определяет основное направление тренда (русло реки).&lt;/li>
+&lt;li>&lt;strong>Уровни Фибоначчи&lt;/strong> — определяют &lt;strong>«Золотые Отмели»&lt;/strong>, места скопления ликвидности, где течение замедляется и готовится к развороту.&lt;/li>
+&lt;li>&lt;strong>ADX-фильтр&lt;/strong> — наш &lt;strong>«Совет Мудрецов»&lt;/strong>, который не дает Канцлеру совершать глупости в период бестолкового флэта.&lt;/li>
+&lt;/ol>
+&lt;p>Логика проста: мы входим только тогда, когда есть сильный тренд (ADX &amp;gt; 25), и цена отскакивает от ключевого уровня Фибо, подтверждая это свечной моделью (Пин-бар, Поглощение).&lt;/p>
+&lt;h3 id="-почему-это-работает">💡 Почему это работает?&lt;/h3>
+&lt;p>Эффективность стратегии строится на &lt;strong>отсечении мусора&lt;/strong>. 90% времени рынок находится во флэте. «Совет Мудрецов» (ADX-фильтр) заставляет нас пропускать все эти ложные движения и работать только в те 10% времени, когда на рынке есть четкое направление. Это кратно повышает точность входов.&lt;/p>
+&lt;h3 id="-для-кого-этот-алгоритм">🚀 Для кого этот алгоритм?&lt;/h3>
+&lt;ul>
+&lt;li>&lt;strong>Для начинающих:&lt;/strong> Код отлично структурирован и снабжен комментариями. Это готовая учебная лаборатория.&lt;/li>
+&lt;li>&lt;strong>Для практиков:&lt;/strong> Стратегия уже настроена под реальную торговлю с учетом комиссий и управления рисками.&lt;/li>
+&lt;li>&lt;strong>Для Мосбиржи:&lt;/strong> оптимизирую и тестирую на различных фьючерсах срочного рынка.&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Исходный код и бэктесты&lt;/strong> вы можете найти и протестировать в &lt;a href="https://www.tradingview.com/">TradingView&lt;/a>.&lt;/p>
+&lt;h2 id="установка">Установка&lt;/h2>
+&lt;p>Копируем код:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-javascript" data-lang="javascript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">//@version=6
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#a6e22e">strategy&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;Алебарда Тщедушного Канцлера&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">overlay&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">true&lt;/span>, &lt;span style="color:#a6e22e">default_qty_type&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">strategy&lt;/span>.&lt;span style="color:#a6e22e">percent_of_equity&lt;/span>, &lt;span style="color:#a6e22e">default_qty_value&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">15&lt;/span>, &lt;span style="color:#a6e22e">commission_type&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">strategy&lt;/span>.&lt;span style="color:#a6e22e">commission&lt;/span>.&lt;span style="color:#a6e22e">percent&lt;/span>, &lt;span style="color:#a6e22e">commission_value&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0.05&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// === НАСТРОЙКИ ===
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">groupMain&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Указы Канцлера&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">atrPeriod&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">input&lt;/span>(&lt;span style="color:#ae81ff">10&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;Длина Алебарды (ATR Length)&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">group&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">groupMain&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">factor&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">input&lt;/span>.&lt;span style="color:#66d9ef">float&lt;/span>(&lt;span style="color:#ae81ff">3.0&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;Мощность Удара (Factor)&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">step&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0.01&lt;/span>, &lt;span style="color:#a6e22e">group&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">groupMain&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">groupAdx&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Совет Мудрецов (защита от флэта)&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">useAdxFilter&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">input&lt;/span>.&lt;span style="color:#a6e22e">bool&lt;/span>(&lt;span style="color:#66d9ef">true&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;Слушать Совета&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">group&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">groupAdx&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">adxLength&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">input&lt;/span>.&lt;span style="color:#66d9ef">int&lt;/span>(&lt;span style="color:#ae81ff">14&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;Период Совета (ADX Period)&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">group&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">groupAdx&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">adxThreshold&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">input&lt;/span>.&lt;span style="color:#66d9ef">int&lt;/span>(&lt;span style="color:#ae81ff">25&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;Мудрость Порога (ADX Min Level)&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">minval&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">15&lt;/span>, &lt;span style="color:#a6e22e">maxval&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">40&lt;/span>, &lt;span style="color:#a6e22e">group&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">groupAdx&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">groupRisk&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Канцлерская Безопасность&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">coolDownBars&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">input&lt;/span>.&lt;span style="color:#66d9ef">int&lt;/span>(&lt;span style="color:#ae81ff">5&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;Отдых между Указами (Задержка между сделками)&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">minval&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#a6e22e">group&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">groupRisk&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">useHardStop&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">input&lt;/span>.&lt;span style="color:#a6e22e">bool&lt;/span>(&lt;span style="color:#66d9ef">true&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;Стража Дворца&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">group&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">groupRisk&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">hardStopPct&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">input&lt;/span>.&lt;span style="color:#66d9ef">float&lt;/span>(&lt;span style="color:#ae81ff">2.0&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;Сила Стражи %&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">minval&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0.5&lt;/span>, &lt;span style="color:#a6e22e">maxval&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">10.0&lt;/span>, &lt;span style="color:#a6e22e">group&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">groupRisk&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">groupVisual&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Канцлерские Свитки&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">showAdxLabel&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">input&lt;/span>.&lt;span style="color:#a6e22e">bool&lt;/span>(&lt;span style="color:#66d9ef">true&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;Показывать Мудрость (ADX)&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">group&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">groupVisual&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// === РАСЧЕТ ИНДИКАТОРОВ ===
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>[&lt;span style="color:#a6e22e">supertrend&lt;/span>, &lt;span style="color:#a6e22e">direction&lt;/span>] &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">ta&lt;/span>.&lt;span style="color:#a6e22e">supertrend&lt;/span>(&lt;span style="color:#a6e22e">factor&lt;/span>, &lt;span style="color:#a6e22e">atrPeriod&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// ADX для фильтрации флэта
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>[&lt;span style="color:#a6e22e">dip&lt;/span>, &lt;span style="color:#a6e22e">din&lt;/span>, &lt;span style="color:#a6e22e">adx&lt;/span>] &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">ta&lt;/span>.&lt;span style="color:#a6e22e">dmi&lt;/span>(&lt;span style="color:#a6e22e">adxLength&lt;/span>, &lt;span style="color:#a6e22e">adxLength&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">adxOk&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">adx&lt;/span> &lt;span style="color:#f92672">&amp;gt;=&lt;/span> &lt;span style="color:#a6e22e">adxThreshold&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">trendStrength&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">adx&lt;/span> &lt;span style="color:#75715e">// Сила тренда для информации
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// === ВИЗУАЛИЗАЦИЯ ===
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Стили для Supertrend
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#a6e22e">plot&lt;/span>(&lt;span style="color:#a6e22e">supertrend&lt;/span>, &lt;span style="color:#a6e22e">color&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">direction&lt;/span> &lt;span style="color:#f92672">&amp;lt;&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span> &lt;span style="color:#f92672">?&lt;/span> &lt;span style="color:#a6e22e">color&lt;/span>.&lt;span style="color:#a6e22e">green&lt;/span> &lt;span style="color:#f92672">:&lt;/span> &lt;span style="color:#a6e22e">color&lt;/span>.&lt;span style="color:#a6e22e">red&lt;/span>, &lt;span style="color:#a6e22e">linewidth&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">2&lt;/span>, &lt;span style="color:#a6e22e">title&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;Путь Алебарды&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Зоны покупок/продаж
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#a6e22e">bgcolor&lt;/span>(&lt;span style="color:#a6e22e">direction&lt;/span> &lt;span style="color:#f92672">&amp;lt;&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span> &lt;span style="color:#f92672">?&lt;/span> &lt;span style="color:#a6e22e">color&lt;/span>.&lt;span style="color:#66d9ef">new&lt;/span>(&lt;span style="color:#a6e22e">color&lt;/span>.&lt;span style="color:#a6e22e">green&lt;/span>, &lt;span style="color:#ae81ff">95&lt;/span>) &lt;span style="color:#f92672">:&lt;/span> &lt;span style="color:#a6e22e">color&lt;/span>.&lt;span style="color:#66d9ef">new&lt;/span>(&lt;span style="color:#a6e22e">color&lt;/span>.&lt;span style="color:#a6e22e">red&lt;/span>, &lt;span style="color:#ae81ff">95&lt;/span>), &lt;span style="color:#a6e22e">title&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;Земли Канцлера&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Переменная для хранения последней метки мудрости
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">label&lt;/span> &lt;span style="color:#a6e22e">lastAdxLabel&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">na&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Метка статуса ADX (обновляем существующую, а не создаем новую)
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">barstate&lt;/span>.&lt;span style="color:#a6e22e">islast&lt;/span> &lt;span style="color:#a6e22e">and&lt;/span> &lt;span style="color:#a6e22e">showAdxLabel&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">labelColor&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">useAdxFilter&lt;/span> &lt;span style="color:#a6e22e">and&lt;/span> &lt;span style="color:#a6e22e">adxOk&lt;/span> &lt;span style="color:#f92672">?&lt;/span> &lt;span style="color:#a6e22e">color&lt;/span>.&lt;span style="color:#a6e22e">green&lt;/span> &lt;span style="color:#f92672">:&lt;/span> &lt;span style="color:#a6e22e">useAdxFilter&lt;/span> &lt;span style="color:#a6e22e">and&lt;/span> &lt;span style="color:#a6e22e">not&lt;/span> &lt;span style="color:#a6e22e">adxOk&lt;/span> &lt;span style="color:#f92672">?&lt;/span> &lt;span style="color:#a6e22e">color&lt;/span>.&lt;span style="color:#a6e22e">red&lt;/span> &lt;span style="color:#f92672">:&lt;/span> &lt;span style="color:#a6e22e">color&lt;/span>.&lt;span style="color:#a6e22e">gray&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">labelText&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">useAdxFilter&lt;/span> &lt;span style="color:#f92672">?&lt;/span> (&lt;span style="color:#e6db74">&amp;#34;Мудрость: &amp;#34;&lt;/span> &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#a6e22e">str&lt;/span>.&lt;span style="color:#a6e22e">tostring&lt;/span>(&lt;span style="color:#a6e22e">math&lt;/span>.&lt;span style="color:#a6e22e">round&lt;/span>(&lt;span style="color:#a6e22e">adx&lt;/span>)) &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#e6db74">&amp;#34;/&amp;#34;&lt;/span> &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#a6e22e">str&lt;/span>.&lt;span style="color:#a6e22e">tostring&lt;/span>(&lt;span style="color:#a6e22e">adxThreshold&lt;/span>)) &lt;span style="color:#f92672">:&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Совет Отдыхает&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">na&lt;/span>(&lt;span style="color:#a6e22e">lastAdxLabel&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// Создаем метку в первый раз
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#a6e22e">lastAdxLabel&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">label&lt;/span>.&lt;span style="color:#66d9ef">new&lt;/span>(&lt;span style="color:#a6e22e">bar_index&lt;/span>, &lt;span style="color:#a6e22e">high&lt;/span>, &lt;span style="color:#a6e22e">labelText&lt;/span>, &lt;span style="color:#a6e22e">color&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">labelColor&lt;/span>, &lt;span style="color:#a6e22e">style&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">label&lt;/span>.&lt;span style="color:#a6e22e">style_label_down&lt;/span>, &lt;span style="color:#a6e22e">textcolor&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">color&lt;/span>.&lt;span style="color:#a6e22e">white&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">else&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// Обновляем существующую метку
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#a6e22e">label&lt;/span>.&lt;span style="color:#a6e22e">set_text&lt;/span>(&lt;span style="color:#a6e22e">lastAdxLabel&lt;/span>, &lt;span style="color:#a6e22e">labelText&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">label&lt;/span>.&lt;span style="color:#a6e22e">set_color&lt;/span>(&lt;span style="color:#a6e22e">lastAdxLabel&lt;/span>, &lt;span style="color:#a6e22e">labelColor&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">label&lt;/span>.&lt;span style="color:#a6e22e">set_x&lt;/span>(&lt;span style="color:#a6e22e">lastAdxLabel&lt;/span>, &lt;span style="color:#a6e22e">bar_index&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">label&lt;/span>.&lt;span style="color:#a6e22e">set_y&lt;/span>(&lt;span style="color:#a6e22e">lastAdxLabel&lt;/span>, &lt;span style="color:#a6e22e">high&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// === ЛОГИКА ТОРГОВЛИ ===
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#a6e22e">lastTradeBar&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">na&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Условия для входа
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#a6e22e">longCondition&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">ta&lt;/span>.&lt;span style="color:#a6e22e">change&lt;/span>(&lt;span style="color:#a6e22e">direction&lt;/span>) &lt;span style="color:#f92672">&amp;lt;&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span> &lt;span style="color:#a6e22e">and&lt;/span> (&lt;span style="color:#a6e22e">not&lt;/span> &lt;span style="color:#a6e22e">useAdxFilter&lt;/span> &lt;span style="color:#a6e22e">or&lt;/span> &lt;span style="color:#a6e22e">adxOk&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">shortCondition&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">ta&lt;/span>.&lt;span style="color:#a6e22e">change&lt;/span>(&lt;span style="color:#a6e22e">direction&lt;/span>) &lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span> &lt;span style="color:#a6e22e">and&lt;/span> (&lt;span style="color:#a6e22e">not&lt;/span> &lt;span style="color:#a6e22e">useAdxFilter&lt;/span> &lt;span style="color:#a6e22e">or&lt;/span> &lt;span style="color:#a6e22e">adxOk&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Проверяем задержку между сделками
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#a6e22e">barsSinceLastTrade&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">na&lt;/span>(&lt;span style="color:#a6e22e">lastTradeBar&lt;/span>) &lt;span style="color:#f92672">?&lt;/span> &lt;span style="color:#ae81ff">999&lt;/span> &lt;span style="color:#f92672">:&lt;/span> &lt;span style="color:#a6e22e">bar_index&lt;/span> &lt;span style="color:#f92672">-&lt;/span> &lt;span style="color:#a6e22e">lastTradeBar&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">canTrade&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">barsSinceLastTrade&lt;/span> &lt;span style="color:#f92672">&amp;gt;=&lt;/span> &lt;span style="color:#a6e22e">coolDownBars&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Исполнение ордеров
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">longCondition&lt;/span> &lt;span style="color:#a6e22e">and&lt;/span> &lt;span style="color:#a6e22e">canTrade&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">strategy&lt;/span>.&lt;span style="color:#a6e22e">entry&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;Указ О Закупке&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">strategy&lt;/span>.&lt;span style="color:#66d9ef">long&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">lastTradeBar&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">bar_index&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// Защитный стоп-лосс
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">useHardStop&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">stopPrice&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">close&lt;/span> &lt;span style="color:#f92672">*&lt;/span> (&lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#f92672">-&lt;/span> &lt;span style="color:#a6e22e">hardStopPct&lt;/span>&lt;span style="color:#f92672">/&lt;/span>&lt;span style="color:#ae81ff">100&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">strategy&lt;/span>.&lt;span style="color:#a6e22e">exit&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;Стража Лонга&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;Указ О Закупке&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">stop&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">stopPrice&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">shortCondition&lt;/span> &lt;span style="color:#a6e22e">and&lt;/span> &lt;span style="color:#a6e22e">canTrade&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">strategy&lt;/span>.&lt;span style="color:#a6e22e">entry&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;Указ О Продаже&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">strategy&lt;/span>.&lt;span style="color:#66d9ef">short&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">lastTradeBar&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">bar_index&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// Защитный стоп-лосс
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">useHardStop&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">stopPrice&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">close&lt;/span> &lt;span style="color:#f92672">*&lt;/span> (&lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#a6e22e">hardStopPct&lt;/span>&lt;span style="color:#f92672">/&lt;/span>&lt;span style="color:#ae81ff">100&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">strategy&lt;/span>.&lt;span style="color:#a6e22e">exit&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;Стража Шорта&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;Указ О Продаже&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">stop&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">stopPrice&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// === СВИТОК ИНФОРМАЦИИ ===
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">table&lt;/span> &lt;span style="color:#a6e22e">infoTable&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">table&lt;/span>.&lt;span style="color:#66d9ef">new&lt;/span>(&lt;span style="color:#a6e22e">position&lt;/span>.&lt;span style="color:#a6e22e">top_right&lt;/span>, &lt;span style="color:#ae81ff">2&lt;/span>, &lt;span style="color:#ae81ff">6&lt;/span>, &lt;span style="color:#a6e22e">bgcolor&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">color&lt;/span>.&lt;span style="color:#66d9ef">new&lt;/span>(&lt;span style="color:#960050;background-color:#1e0010">#&lt;/span>&lt;span style="color:#ae81ff">2&lt;/span>&lt;span style="color:#a6e22e">D2D2D&lt;/span>, &lt;span style="color:#ae81ff">95&lt;/span>), &lt;span style="color:#a6e22e">border_width&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">barstate&lt;/span>.&lt;span style="color:#a6e22e">islast&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">table&lt;/span>.&lt;span style="color:#a6e22e">cell&lt;/span>(&lt;span style="color:#a6e22e">infoTable&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;Канцлерский Свиток&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">text_color&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">color&lt;/span>.&lt;span style="color:#a6e22e">white&lt;/span>, &lt;span style="color:#a6e22e">text_size&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">size&lt;/span>.&lt;span style="color:#a6e22e">normal&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">table&lt;/span>.&lt;span style="color:#a6e22e">cell&lt;/span>(&lt;span style="color:#a6e22e">infoTable&lt;/span>, &lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;Указ №&amp;#34;&lt;/span> &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#a6e22e">str&lt;/span>.&lt;span style="color:#a6e22e">tostring&lt;/span>(&lt;span style="color:#a6e22e">bar_index&lt;/span>), &lt;span style="color:#a6e22e">text_color&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">color&lt;/span>.&lt;span style="color:#a6e22e">orange&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">table&lt;/span>.&lt;span style="color:#a6e22e">cell&lt;/span>(&lt;span style="color:#a6e22e">infoTable&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;Совет Мудрецов:&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">text_color&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">color&lt;/span>.&lt;span style="color:#a6e22e">gray&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">table&lt;/span>.&lt;span style="color:#a6e22e">cell&lt;/span>(&lt;span style="color:#a6e22e">infoTable&lt;/span>, &lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#a6e22e">useAdxFilter&lt;/span> &lt;span style="color:#f92672">?&lt;/span> &lt;span style="color:#e6db74">&amp;#34;ВНИМАЕТ&amp;#34;&lt;/span> &lt;span style="color:#f92672">:&lt;/span> &lt;span style="color:#e6db74">&amp;#34;СПИТ&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">text_color&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">useAdxFilter&lt;/span> &lt;span style="color:#f92672">?&lt;/span> &lt;span style="color:#a6e22e">color&lt;/span>.&lt;span style="color:#a6e22e">green&lt;/span> &lt;span style="color:#f92672">:&lt;/span> &lt;span style="color:#a6e22e">color&lt;/span>.&lt;span style="color:#a6e22e">red&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">table&lt;/span>.&lt;span style="color:#a6e22e">cell&lt;/span>(&lt;span style="color:#a6e22e">infoTable&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#ae81ff">2&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;Мудрость:&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">text_color&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">color&lt;/span>.&lt;span style="color:#a6e22e">gray&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">table&lt;/span>.&lt;span style="color:#a6e22e">cell&lt;/span>(&lt;span style="color:#a6e22e">infoTable&lt;/span>, &lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#ae81ff">2&lt;/span>, &lt;span style="color:#a6e22e">str&lt;/span>.&lt;span style="color:#a6e22e">tostring&lt;/span>(&lt;span style="color:#a6e22e">math&lt;/span>.&lt;span style="color:#a6e22e">round&lt;/span>(&lt;span style="color:#a6e22e">adx&lt;/span>)), &lt;span style="color:#a6e22e">text_color&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">adxOk&lt;/span> &lt;span style="color:#f92672">?&lt;/span> &lt;span style="color:#a6e22e">color&lt;/span>.&lt;span style="color:#a6e22e">green&lt;/span> &lt;span style="color:#f92672">:&lt;/span> &lt;span style="color:#a6e22e">color&lt;/span>.&lt;span style="color:#a6e22e">red&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">table&lt;/span>.&lt;span style="color:#a6e22e">cell&lt;/span>(&lt;span style="color:#a6e22e">infoTable&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#ae81ff">3&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;Настроение:&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">text_color&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">color&lt;/span>.&lt;span style="color:#a6e22e">gray&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">table&lt;/span>.&lt;span style="color:#a6e22e">cell&lt;/span>(&lt;span style="color:#a6e22e">infoTable&lt;/span>, &lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#ae81ff">3&lt;/span>, &lt;span style="color:#a6e22e">direction&lt;/span> &lt;span style="color:#f92672">&amp;lt;&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span> &lt;span style="color:#f92672">?&lt;/span> &lt;span style="color:#e6db74">&amp;#34;БЫЧЬЕ&amp;#34;&lt;/span> &lt;span style="color:#f92672">:&lt;/span> &lt;span style="color:#e6db74">&amp;#34;МЕДВЕЖЬЕ&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">text_color&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">direction&lt;/span> &lt;span style="color:#f92672">&amp;lt;&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span> &lt;span style="color:#f92672">?&lt;/span> &lt;span style="color:#a6e22e">color&lt;/span>.&lt;span style="color:#a6e22e">green&lt;/span> &lt;span style="color:#f92672">:&lt;/span> &lt;span style="color:#a6e22e">color&lt;/span>.&lt;span style="color:#a6e22e">red&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">table&lt;/span>.&lt;span style="color:#a6e22e">cell&lt;/span>(&lt;span style="color:#a6e22e">infoTable&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#ae81ff">4&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;Отдых Канцлера:&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">text_color&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">color&lt;/span>.&lt;span style="color:#a6e22e">gray&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">table&lt;/span>.&lt;span style="color:#a6e22e">cell&lt;/span>(&lt;span style="color:#a6e22e">infoTable&lt;/span>, &lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#ae81ff">4&lt;/span>, &lt;span style="color:#a6e22e">str&lt;/span>.&lt;span style="color:#a6e22e">tostring&lt;/span>(&lt;span style="color:#a6e22e">coolDownBars&lt;/span>) &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#e6db74">&amp;#34; свитков&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">text_color&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">color&lt;/span>.&lt;span style="color:#a6e22e">white&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">table&lt;/span>.&lt;span style="color:#a6e22e">cell&lt;/span>(&lt;span style="color:#a6e22e">infoTable&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#ae81ff">5&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;Стража Дворца:&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">text_color&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">color&lt;/span>.&lt;span style="color:#a6e22e">gray&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">table&lt;/span>.&lt;span style="color:#a6e22e">cell&lt;/span>(&lt;span style="color:#a6e22e">infoTable&lt;/span>, &lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#ae81ff">5&lt;/span>, &lt;span style="color:#a6e22e">useHardStop&lt;/span> &lt;span style="color:#f92672">?&lt;/span> &lt;span style="color:#a6e22e">str&lt;/span>.&lt;span style="color:#a6e22e">tostring&lt;/span>(&lt;span style="color:#a6e22e">hardStopPct&lt;/span>) &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#e6db74">&amp;#34;%&amp;#34;&lt;/span> &lt;span style="color:#f92672">:&lt;/span> &lt;span style="color:#e6db74">&amp;#34;ОТСУТСТВУЕТ&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">text_color&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#a6e22e">useHardStop&lt;/span> &lt;span style="color:#f92672">?&lt;/span> &lt;span style="color:#a6e22e">color&lt;/span>.&lt;span style="color:#a6e22e">orange&lt;/span> &lt;span style="color:#f92672">:&lt;/span> &lt;span style="color:#a6e22e">color&lt;/span>.&lt;span style="color:#a6e22e">red&lt;/span>)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Вставляем в редактор Pine и добавляем на график.&lt;/p>
+&lt;h2 id="использование">Использование&lt;/h2>
+&lt;p>Смотрим на график и ждем указателя на вход в позицию.&lt;/p>
+&lt;h3 id="расшифровка-канцлерского-свитка--информационной-панели">Расшифровка «Канцлерского Свитка» — информационной панели:&lt;/h3>
+&lt;hr>
+&lt;h3 id="-канцлерский-свиток-информационная-панель">📜 &lt;strong>Канцлерский Свиток (Информационная панель)&lt;/strong>&lt;/h3>
+&lt;p>&lt;strong>Строка 1:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Канцлерский Свиток&lt;/strong> — Название стратегии и информационного окна.&lt;/li>
+&lt;li>&lt;strong>Указ №[число]&lt;/strong> — Номер текущего торгового бара. Каждый бар — это новый потенциальный «указ».&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Строка 2:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Совет Мудрецов:&lt;/strong> — Статус ADX-фильтра.&lt;/li>
+&lt;li>&lt;strong>ВНИМАЕТ&lt;/strong> — Фильтр &lt;strong>ВКЛЮЧЕН&lt;/strong>. Совет бдителен и советует входить только в сильные тренды.&lt;/li>
+&lt;li>&lt;strong>СПИТ&lt;/strong> — Фильтр &lt;strong>ВЫКЛЮЧЕН&lt;/strong>. Совет не работает, канцлер принимает решения сам, рискуя нарваться на флэт.&lt;/li>
+&lt;/ul>
+&lt;p>(Включить или отключить можно в настройках стратегии)&lt;/p>
+&lt;p>&lt;strong>Строка 3:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Мудрость:&lt;/strong> — Текущее значение индикатора ADX (сила тренда).&lt;/li>
+&lt;li>&lt;strong>Зеленое число&lt;/strong> — Сила тренда выше порога. Совет одобряет сделки.&lt;/li>
+&lt;li>&lt;strong>Красное число&lt;/strong> — Сила тренда ниже порога. Совет советует подождать.&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Строка 4:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Настроение:&lt;/strong> — Направление тренда по Supertrend.&lt;/li>
+&lt;li>&lt;strong>БЫЧЬЕ&lt;/strong> — &lt;strong>Бычий&lt;/strong> тренд (Supertrend зеленый). Канцлер благосклонен к покупкам.&lt;/li>
+&lt;li>&lt;strong>МЕДВЕЖЬЕ&lt;/strong> — &lt;strong>Медвежий&lt;/strong> тренд (Supertrend красный). Канцлер гневается и велит продавать.&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Строка 5:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Отдых Канцлера:&lt;/strong> — Задержка между сделками (Cooldown).&lt;/li>
+&lt;li>&lt;strong>X свитков&lt;/strong> — Канцлер будет отдыхать и подписывать другие бумаги еще &lt;code>X&lt;/code> баров, прежде чем выпустить новый торговый указ.&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Строка 6:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Стража Дворца:&lt;/strong> — Ваш жесткий стоп-лосс.&lt;/li>
+&lt;li>&lt;strong>X%&lt;/strong> — Стража на посту и отрубит голову убытку при достижении &lt;code>X%&lt;/code>.&lt;/li>
+&lt;li>&lt;strong>ОТСУТСТВУЕТ&lt;/strong> — Защитный стоп-лосс &lt;strong>ВЫКЛЮЧЕН&lt;/strong>. Дворец без защиты, что очень рискованно!&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;p>&lt;strong>Краткая суть:&lt;/strong> Свиток показывает, &lt;strong>благоприятствует ли момент&lt;/strong> для выпуска нового «указа» (сделки) или же Канцлеру следует &lt;strong>подождать и отдохнуть&lt;/strong>, чтобы не наделать глупостей в период суеты и неразберихи (флэта).&lt;/p>
+&lt;hr>
+&lt;h3 id="-техническое-примечание-для-разработчиков">🔧 &lt;strong>Техническое примечание для разработчиков&lt;/strong>&lt;/h3>
+&lt;p>В коде вы можете заметить проверку &lt;code>if barstate.islast&lt;/code> для отрисовки информационной панели. Здесь кроется важный нюанс Pine Script:&lt;/p>
+&lt;p>&lt;strong>Стратегии по умолчанию вычисляются только на закрытых барах.&lt;/strong> Это означает, что на летящем, незакрывшемся баре (realtime bar) условие &lt;code>barstate.islast&lt;/code> может не сработать сразу, так как бар еще не подтвержден.&lt;/p>
+&lt;p>&lt;strong>Решение:&lt;/strong> Если вам критично обновлять информацию &lt;em>до&lt;/em> закрытия бара (например, для индикаторов), в объявлении &lt;code>strategy()&lt;/code> нужно добавить параметр:&lt;/p>
+&lt;p>strategy(&amp;hellip;, calc_on_every_tick=true)&lt;/p>
+&lt;p>&lt;strong>Но для нашей стратегии это не нужно!&lt;/strong> Мы сознательно отказались от постоянных пересчетов, чтобы:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Избежать репинтов:&lt;/strong> Сигналы не меняются после своего появления.&lt;/li>
+&lt;li>&lt;strong>Снизить нагрузку:&lt;/strong> Постоянные пересчеты на каждом тике не нужны для стратегии, работающей на закрытиях баров.&lt;/li>
+&lt;li>&lt;strong>Эмулировать реальную торговлю:&lt;/strong> В реальности мы тоже видим закрытие свечи и лишь потом принимаем решение.&lt;/li>
+&lt;/ul>
+&lt;p>Наш «Канцлер» не суетится. Он выносит свои «указы» лишь после того, как ситуация прояснилась и бар закрылся. Это делает стратегию более надежной и честной при бэктестировании.&lt;/p>
+&lt;h3 id="заключение">&lt;strong>Заключение:&lt;/strong>&lt;/h3>
+&lt;p>«Алебарда Тщедушного Канцлера» — это не просто сборник индикаторов. Это напоминание о том, что успех в трейдинге зависит не от сложности инструмента, а от мудрости его применения. Иногда стоит посмотреть на свои стратегии под новым, пусть и абсурдным, углом.&lt;/p></content></item><item><title>Золотые карманцы Бильбо Беггетса</title><link>https://program-mister.ru/posts/the-golden-pockets-of-bilbo-baggets/</link><pubDate>Thu, 28 Aug 2025 00:00:00 +0000</pubDate><author/><guid>https://program-mister.ru/posts/the-golden-pockets-of-bilbo-baggets/</guid><description>Чтобы глубоко понять логику «Карманцев Бильбо», представьте себе масштабное средневековое сражение. Цена — это поле битвы между двумя армиями: **Быками** (покупатели, атакующие вверх) и **Медведями** (продавцы, атакующие вниз).</description><content type="html">&lt;h1 id="золотые-карманцы-бильбо-беггетса">Золотые карманцы Бильбо Беггетса&lt;/h1>
+&lt;h2 id="карманцы-бильбо-торговая-стратегия-на-отскок-от-уровней-фибоначчи">Карманцы Бильбо: Торговая стратегия на отскок от уровней Фибоначчи&lt;/h2>
+&lt;p>&lt;img src="https://program-mister.ru/images/posts/strategies/bilbo.webp" alt="Карманцы Бильбо: Торговая стратегия на отскок от уровней Фибоначчи">&lt;/p>
+&lt;p>&lt;strong>Война на графике: Стратегия осады и обороны&lt;/strong>&lt;/p>
+&lt;p>Чтобы глубоко понять логику «Карманцев Бильбо», представьте себе масштабное средневековое сражение. Цена — это поле битвы между двумя армиями: &lt;strong>Быками&lt;/strong> (покупатели, атакующие вверх) и &lt;strong>Медведями&lt;/strong> (продавцы, атакующие вниз).&lt;/p>
+&lt;p>&lt;strong>Акт I: Штурм и Контратака&lt;/strong>&lt;br>
+Бычья армия собирает силы и идет на штурм. Она с разбегу захватывает новые территории — мы видим на графике &lt;strong>сильный восходящий импульс&lt;/strong> (длинная зеленая свеча). Но защитники крепости — Медведи — не дремлют. Они контратакуют, отбивая часть территории обратно. На графике это &lt;strong>коррекция&lt;/strong> или &lt;strong>откат&lt;/strong> (несколько красных свечей).&lt;/p>
+&lt;p>&lt;strong>Акт II: Укрепление Рубежей&lt;/strong>&lt;br>
+Вот здесь и начинается самое интересное. Опытный полководец не станет бездумно бросать свежие резервы в бой, пока противник полон сил. Он отведет войска к заранее подготовленным &lt;strong>укрепленным рубежам&lt;/strong> — выгодным позициям, где легко обороняться.&lt;/p>
+&lt;p>В мире трейдинга эти рубежи — &lt;strong>уровни Фибоначчи&lt;/strong>. Пространство между уровнями 0.618 и 0.65 — это и есть наш «&lt;strong>Золотой карман&lt;/strong>» — идеально укрепленный плацдарм для новой атаки.&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Стены крепости&lt;/strong> — это &lt;strong>границы кармана&lt;/strong>.&lt;/li>
+&lt;li>&lt;strong>Запасы, лучники на стенах&lt;/strong> — это &lt;strong>сильный объем&lt;/strong>, который подтверждает, что защитники (быки в случае с лонгом) готовы удерживать этот уровень.&lt;/li>
+&lt;li>&lt;strong>Боевой дух войск&lt;/strong> — это &lt;strong>сила тренда&lt;/strong>, определяемая веером скользящих средних.&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Акт III: Решающий удар&lt;/strong>&lt;br>
+Умный капитан (трейдер) не бежит в первых рядах навстречу стрелам. Он терпеливо ждет у крепостных стен, наблюдая:&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>Достигли ли атакующие (цена) укрепленных стен (кармана)?&lt;/strong>&lt;/li>
+&lt;li>&lt;strong>Начали ли защитники (быки) отбивать атаку?&lt;/strong> (Это видно по формированию паттернов или просто по сильной свече, закрывшейся &lt;em>над&lt;/em> уровнем).&lt;/li>
+&lt;li>&lt;strong>Есть ли у них для этого силы (объем) и высок ли боевой дух (тренд)?&lt;/strong>&lt;/li>
+&lt;/ol>
+&lt;p>Только получив подтверждение на все три вопроса, он подает сигнал к атаке — &lt;strong>открывает позицию&lt;/strong>.&lt;/p>
+&lt;p>&lt;strong>Почему эта аналогия так важна?&lt;/strong>&lt;br>
+Она убивает в зародыше главную проблему — страх упустить возможность. Мы не бросаемся в погоню за уезжающим поездом (растущей ценой). Мы спокойно ждем, когда этот поезд сделает обязательную остановку на станции «Карман», чтобы забрать наш лимитный ордер и поехать дальше.&lt;/p>
+&lt;p>&lt;strong>В этой стратегии главное оружие — не предсказание, а терпение и тактическая дисциплина.&lt;/strong> Мы позволяем рынку самому подойти к нашим укрепленным позициям и дать нам сигнал к действию. Мы не воюем с рынком — мы заставляем его работать на вас.&lt;/p>
+&lt;p>В мире технического анализа особенно ценятся стратегии, которые позволяют системно находить точки входа с благоприятным соотношением риска и прибыли. Сегодня мы разберем одну из таких стратегий — &lt;strong>«Карманцы Бильбо Беггинса»&lt;/strong> — реализованную в индикаторе для TradingView. Эта стратегия не пытается предсказать будущее, а помогает находить моменты, когда несколько факторов складываются в пользу определенного сценария.&lt;/p>
+&lt;h2 id="философия-стратегии-умный-поиск-золотых-возможностей">Философия стратегии: Умный поиск «золотых» возможностей&lt;/h2>
+&lt;p>Название стратегии — забавная отсылка к богатому хоббиту Бильбо Беггинсу, который знал толк в сокровищах. Суть идеи проста: рынок часто делает откаты (коррекции) против основного тренда. Эти откаты — и есть те самые «карманцы», где можно «подобрать» выгодную цену перед продолжением тренда.&lt;/p>
+&lt;p>&lt;strong>На чем основана стратегия?&lt;/strong>&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>Теория Фибоначчи в трейдинге:&lt;/strong> Уровни коррекции Фибоначчи — это математический инструмент, основанный на последовательности чисел Леонардо Пизанского. Трейдеры эмпирическим путем установили, что откаты цены часто заканчиваются на ключевых уровнях Фибо: &lt;strong>23.6%, 38.2%, 50.0%, 61.8% и 78.6%&lt;/strong>. Из них уровень &lt;strong>61.8%&lt;/strong> («золотое сечение») считается одним из самых значимых. Наша стратегия фокусируется на зоне &lt;strong>между 61.8% и 65%&lt;/strong>, что позволяет точнее определить область для входа.&lt;/li>
+&lt;li>&lt;strong>Комплексный подход (Confluence):&lt;/strong> Один только откат к уровню Фибо — слабый сигнал. Сила «Карманцев Бильбо» в использовании &lt;strong>набора фильтров&lt;/strong>:&lt;/li>
+&lt;/ol>
+&lt;ul>
+&lt;li>&lt;strong>Тренд (3 EMA):&lt;/strong> Стратегия использует каскад скользящих средних (9, 21, 50) для определения направления и силы тренда. Мы входим только по направлению тренда.&lt;/li>
+&lt;li>&lt;strong>Объем:&lt;/strong> Сигнал должен подтверждаться всплеском объема относительно его среднего значения. Это говорит о интересе крупных игроков.&lt;/li>
+&lt;li>&lt;strong>Моментум (RSI):&lt;/strong> Индекс относительной силы (RSI) фильтрует входы в зонах перекупленности (для лонгов) и перепроданности (для шортов), предотвращая входы против импульса.&lt;/li>
+&lt;/ul>
+&lt;p>Такой многофакторный анализ резко повышает вероятность успешной сделки.&lt;br>
+Уровни коррекции Фибоначчи (0.618, 0.5, 0.382) — это не магия, а математика. Трейдеры интуитивно фиксируют прибыль на этих уровнях, что делает их самоисполняющимся прогнозом. Мы используем два уровня: &lt;strong>0.618 (золотое сечение)&lt;/strong> и &lt;strong>0.65 (усиленный уровень)&lt;/strong>. Пространство между ними и есть наш «золотой карман» — зона, где высока вероятность остановки коррекции и продолжения тренда.&lt;/p>
+&lt;h3 id="усилители-стратегии">Усилители стратегии&lt;/h3>
+&lt;p>Стратегия использует комплекс фильтров, чтобы избежать ловушек:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Тренд (3 EMA):&lt;/strong> Чтобы торговать только по направлению главной силы.&lt;/li>
+&lt;li>&lt;strong>Объем:&lt;/strong> Чтобы видеть, поддерживают ли крупные игроки отскок.&lt;/li>
+&lt;li>&lt;strong>RSI:&lt;/strong> Чтобы избежать входов в зонах перекупленности/перепроданности, где импульс может иссякнуть.&lt;/li>
+&lt;/ul>
+&lt;p>Это не просто индикатор, а целая система принятия решений.&lt;/p>
+&lt;h2 id="визуальные-элементы-и-их-интерпретация">Визуальные элементы и их интерпретация&lt;/h2>
+&lt;h3 id="золотой-карман">&lt;strong>Золотой карман&lt;/strong>&lt;/h3>
+&lt;p>Золотистая прямоугольная область (бокс) между двумя ценами.&lt;/p>
+&lt;p>Зона между уровнями Фибо 0.618 и 0.65 от последнего значимого свинга. Это наша целевая область для входа.&lt;/p>
+&lt;p>Разновидности карманов:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>🟨 Бледный жёлтый карман:&lt;/strong> Потенциальная зона интереса. «Здесь &lt;em>может&lt;/em> быть бой, но его ещё не было». Наблюдаем.&lt;/li>
+&lt;li>&lt;strong>🧡 Яркий жёлто-оранжевый карман:&lt;/strong> Подтверждённая и активная зона. «Здесь уже &lt;em>были столкновения&lt;/em>, и быки/медведи отстояли этот рубеж». Это приоритетная зона для входа.&lt;/li>
+&lt;li>&lt;strong>💛 Сплошные золотые линии:&lt;/strong> Точные, актуальные границы действующего кармана. «Вот точные координаты для выставления ордеров».&lt;/li>
+&lt;li>&lt;strong>💛 Пунктирные золотые линии:&lt;/strong> Исторические, устаревшие уровни. «Здесь раньше шли бои, но сейчас линия фронта сместилась». Полезны для общего контекста.&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Приоритеты:&lt;/strong> Ваше внимание должно быть приковано к &lt;em>ярким карманам&lt;/em> и &lt;em>сплошным линиям&lt;/em>. Бледные и пунктирные — это фон.&lt;/p>
+&lt;hr>
+&lt;h3 id="сигнальная-метка">&lt;strong>Сигнальная метка&lt;/strong>&lt;/h3>
+&lt;p>Стрелка вверх (лонг) или вниз (шорт) с текстом.&lt;/p>
+&lt;p>Непосредственный сигнал на вход. Появляется, когда цена коснулась «кармана» и сработали все фильтры.&lt;/p>
+&lt;h3 id="метки-sltp">&lt;strong>Метки SL/TP&lt;/strong>&lt;/h3>
+&lt;p>Маленькие пометки &lt;code>SL&lt;/code> (стоп-лосс) и &lt;code>TP&lt;/code> (тейк-профит).&lt;/p>
+&lt;p>Уровни для управления риском. Стоп выставляется за границами «кармана», тейк-профит рассчитывается по соотношению 1:1.5 к риску.&lt;/p>
+&lt;h3 id="информационная-таблица">&lt;strong>Информационная таблица&lt;/strong>&lt;/h3>
+&lt;p>Таблица в правом верхнем углу.&lt;/p>
+&lt;p>Панель управления и статуса. Показывает текущее состояние тренда, объема, RSI и количество активных зон.&lt;/p>
+&lt;h3 id="линии-границ">&lt;strong>Линии границ&lt;/strong>&lt;/h3>
+&lt;p>Пунктирные оранжевые линии на последних барах.&lt;/p>
+&lt;p>Визуализация границ текущего «золотого кармана» для быстрой оценки.&lt;/p>
+&lt;p>&lt;strong>Пример сценария:&lt;/strong>&lt;br>
+Вы видите явный &lt;strong>бычий тренд&lt;/strong> (цена выше EMA, линии EMA в правильном порядке). После роста цена откатывается вниз и формирует &lt;strong>«золотой карман»&lt;/strong>. Вы ждете, когда цена коснется этой зоны на &lt;strong>повышенном объеме&lt;/strong>, а RSI при этом будет не в зоне перепроданности (&amp;lt;30). Как только все условия совпадают — появляется сигнальная стрелка «Бильбо ЛОНГ». Выставляете стоп-лосс на уровне, указанном на графике.&lt;/p>
+&lt;h2 id="гайд-по-торговле-пошаговая-инструкция">Гайд по торговле: Пошаговая инструкция&lt;/h2>
+&lt;ol>
+&lt;li>&lt;strong>Установка:&lt;/strong> Скопируйте код индикатора в TradingView, нажмите «Добавить в график».&lt;/li>
+&lt;li>&lt;strong>Настройка (под себя):&lt;/strong>&lt;/li>
+&lt;/ol>
+&lt;ul>
+&lt;li>&lt;strong>Период поиска пивотов:&lt;/strong> 20 (можно увеличить для большей стабильности на D1, уменьшить для больше количества сигналов на H1).&lt;/li>
+&lt;li>&lt;strong>Уровни Фибо:&lt;/strong> Оставьте по умолчанию (0.618 и 0.65).&lt;/li>
+&lt;li>&lt;strong>Фильтры:&lt;/strong> Рекомендуется включить все (&lt;code>Тренд&lt;/code>, &lt;code>Объем&lt;/code>, &lt;code>RSI&lt;/code>) для начала.&lt;/li>
+&lt;li>&lt;strong>Визуализация:&lt;/strong> Настройте цвета под свой вкус.&lt;/li>
+&lt;/ul>
+&lt;ol start="4">
+&lt;li>&lt;strong>Правила входа в LONG:&lt;/strong>&lt;/li>
+&lt;/ol>
+&lt;ul>
+&lt;li>На графике сформировался «золотой карман» после восходящего движения.&lt;/li>
+&lt;li>Цена коснулась или вошла в верхнюю часть этой зоны.&lt;/li>
+&lt;li>В таблице статус: &lt;code>Тренд: Бычий&lt;/code>, &lt;code>Сила: &amp;gt;60%&lt;/code>, &lt;code>Объем: Сильный&lt;/code>, &lt;code>RSI: между 30 и 70&lt;/code>.&lt;/li>
+&lt;li>Появилась стрелка «Бильбо ЛОНГ».&lt;/li>
+&lt;/ul>
+&lt;ol start="6">
+&lt;li>&lt;strong>Управление риском:&lt;/strong>&lt;/li>
+&lt;/ol>
+&lt;ul>
+&lt;li>&lt;strong>Stop-Loss:&lt;/strong> Выставляется на уровне, отмеченном меткой &lt;code>SL&lt;/code> (чуть ниже нижней границы «кармана»).&lt;/li>
+&lt;li>&lt;strong>Take-Profit:&lt;/strong> Выставляется на уровне метки &lt;code>TP&lt;/code> (рассчитан по риску 1:1.5) или фиксируйте прибыль частично, а частью ловите тренд.&lt;/li>
+&lt;/ul>
+&lt;ol start="8">
+&lt;li>&lt;strong>Правила входа в SHORT:&lt;/strong> Аналогичны, но в обратную сторону.&lt;/li>
+&lt;/ol>
+&lt;h3 id="торговый-алгоритм">Торговый алгоритм&lt;/h3>
+&lt;p>&lt;strong>Шаг 1: Ожидание.&lt;/strong>&lt;br>
+Дождитесь появления &lt;em>яркого кармана&lt;/em> в направлении действующего тренда (бычья тенденция — карман ниже цены, медвежья — выше).&lt;/p>
+&lt;p>&lt;strong>Шаг 2: Подготовка.&lt;/strong>&lt;br>
+Определите границы кармана по сплошным линиям. Проверьте фильтры в информационной таблице: тренд должен быть ясным, объем — сильным, RSI — в нейральной зоне.&lt;/p>
+&lt;p>&lt;strong>Шаг 3: Вход.&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Консервативно:&lt;/strong> Выставьте &lt;strong>лимитный ордер (BUY LIMIT для лонга)&lt;/strong> на нижней границе кармана (уровень 0.618) и ждите, когда цена сама придёт к вам.&lt;/li>
+&lt;li>&lt;strong>Агрессивно:&lt;/strong> Дождитесь касания ценой зоны и момента отскока (закрытия свечи над границей кармана для лонга), войдите &lt;strong>рыночным ордером&lt;/strong>.&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Шаг 4: Защита и цель.&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Стоп-Лосс:&lt;/strong> Чуть за противоположной границей кармана.&lt;/li>
+&lt;li>&lt;strong>Тейк-Профит:&lt;/strong> Рассчитайте от размера стопа. Стартовое соотношение &lt;strong>риск/прибыль = 1:2&lt;/strong>. Например, если риск (R) = $10, цель — +$20 от цены входа.&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Важно!&lt;/strong> Не открывайте сделку, если не сошлись ВСЕ условия. Дисциплина — ключ к успеху.&lt;/p>
+&lt;h2 id="оптимизация-под-разные-инструменты-и-таймфреймы">Оптимизация под разные инструменты и таймфреймы&lt;/h2>
+&lt;p>Универсальных настроек нет. Вот ориентиры для оптимизации:&lt;/p>
+&lt;p>Стратегия гибка. Её можно настроить под разные инструменты и таймфреймы:&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;strong>Для валютных пар (Forex) и больших таймфреймов (H4, D):&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Увеличьте &lt;code>pivotsLookback&lt;/code> (период поиска пивотов) до &lt;strong>30-50&lt;/strong>. Это поможет отсеять мелкий шум и находить более значимые уровни.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Для фьючерсов на малых таймфреймов (M1, M30):&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Уменьшите &lt;code>pivotsLookback&lt;/code> до &lt;strong>10-15&lt;/strong>. Крипторынки более волатильны, здесь пивоты формируются чаще.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Можно ужесточить фильтр RSI, выставив диапазон &lt;strong>40-60&lt;/strong>, чтобы избежать ложных сигналов в условиях ажиотажа.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Для акций:&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Обязательно оставьте включенным &lt;strong>фильтр объема&lt;/strong>. Для акций это один из главных фильтров.&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Главное правило оптимизации:&lt;/strong> меняйте параметры по одному и тестируйте на истории, чтобы понять, как каждое изменение влияет на результат.&lt;/p>
+&lt;p>«Карманцы Бильбо» — это стратегия для терпеливых дисциплинированных трейдеров, которые предпочитают качество количеству. Она учит не бороться с рынком, а использовать его естественные ритмы — откаты к ключевым уровням — в свою пользу.&lt;/p>
+&lt;p>Не каждый день выпадает шанс украсть золото у дракона. Но когда выпадает — нужно иметь при себе хороший лимитный ордер! (с) Хоббитская мудрость.&lt;/p>
+&lt;p>&lt;strong>Удачи на рынках!&lt;/strong>&lt;/p></content></item></channel></rss>

@@ -1,0 +1,8 @@
+{
+  "name": "ProgramMister",
+  "short_name": "Mr.Prog",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#bd93f9",
+  "background_color": "#282a36"
+}
